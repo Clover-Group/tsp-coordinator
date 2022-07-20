@@ -1,0 +1,32 @@
+﻿@page "/"
+
+@using TSPCoordinator.Data
+@inject TSPInstancesService TSPInstancesService
+
+<PageTitle>Index</PageTitle>
+
+<h1>TSP Coordinator</h1>
+
+<p>Welcome to TSP Coordinator!</p>
+
+@if(tspInstanceCount == null)
+{
+    <p>Loading TSP instances...</p>
+}
+else
+{
+    <p>
+        There are <span class="text-primary font-weight-bold">@tspInstanceCount.Value.Item1</span> TSP instances connected
+        (<span class="text-success font-weight-bold">@tspInstanceCount.Value.Item2</span> active
+        and <span class="text-danger font-weight-bold">@(tspInstanceCount.Value.Item1 - tspInstanceCount.Value.Item2)</span> not working).
+    </p>
+}
+
+@code {
+    private (int, int)? tspInstanceCount;
+
+    protected override async Task OnInitializedAsync()
+    {
+        tspInstanceCount = await TSPInstancesService.GetInstancesCountAsync();
+    }
+}

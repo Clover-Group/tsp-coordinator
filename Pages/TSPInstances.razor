@@ -1,0 +1,60 @@
+﻿@page "/tsp-instances"
+
+<PageTitle>TSP instance list</PageTitle>
+
+@using TSPCoordinator.Data
+@inject TSPInstancesService TSPInstancesService
+
+<h1>TSP instance list</h1>
+
+<p>This component demonstrates fetching data from a service.</p>
+
+@if (instances == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Location</th>
+                <th>Version</th>
+                <th>Last health check</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var (instance, index) in instances.Select( (val, idx) => (val, idx + 1) ))
+            {
+                <tr>
+                    <td scope="row">@index</td>
+                    <td>@instance.Location</td>
+                    <td>@instance.Version</td>
+                    <td>@instance.HealthCheckDate.ToShortDateString() @instance.HealthCheckDate.ToShortTimeString()</td>
+                    <td>
+                    @switch(instance.Status)
+                    {
+                        case TSPInstanceStatus.Active:
+                            <span class="badge rounded-pill bg-success">Active</span>
+                            break;
+                        case TSPInstanceStatus.NotWorking:
+                            <span class="badge rounded-pill bg-danger">Not working</span>
+                            break;
+                    }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private TSPInstance[]? instances;
+
+    protected override async Task OnInitializedAsync()
+    {
+        instances = await TSPInstancesService.GetInstancesAsync();
+    }
+}
