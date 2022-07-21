@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Mvc;
-using TSPCoordinator.Data;
+using TspCoordinator.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +10,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddHttpClient();
-builder.Services.AddSingleton<TSPInstancesService>();
+builder.Services.AddSingleton<TspInstancesService>();
 builder.Services.AddSingleton<JobService>();
 builder.Services.AddHostedService<ApplicationPartsLogger>();
 

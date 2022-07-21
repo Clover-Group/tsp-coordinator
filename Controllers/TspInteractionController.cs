@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using TSPCoordinator.Data;
+using TspCoordinator.Data;
 
-namespace TSPCoordinator.Controllers;
+namespace TspCoordinator.Controllers;
 
-public class TSPRegisterInfo
+public class TspRegisterInfo
 {
     public string Version { get; set; }
 }
@@ -23,29 +23,39 @@ public class JobCompletedInfo
 
 [ApiController]
 [Route("api/[controller]")]
-public class TSPInteractionController : ControllerBase
+public class TspInteractionController : ControllerBase
 {
-    TSPInstancesService _instancesService;
+    TspInstancesService _instancesService;
     JobService _jobService;
 
-    public TSPInteractionController(TSPInstancesService instancesService, JobService jobService)
+    public TspInteractionController(TspInstancesService instancesService, JobService jobService)
     {
         _instancesService = instancesService;
         _jobService = jobService;
     }
 
     [HttpPost("register")]
-    public IActionResult Register([FromBody] TSPRegisterInfo info)
+    public IActionResult Register([FromBody] TspRegisterInfo info)
     {
-        TSPInstance instance = new TSPInstance 
+        if (Request.HttpContext.Connection.RemoteIpAddress == null)
         {
-            Host = Request.HttpContext.Connection.RemoteIpAddress.ToString(),
+            return BadRequest();
+        }
+        TspInstance instance = new TspInstance 
+        {
+            Host = Request.HttpContext.Connection.RemoteIpAddress,
             Port = 8080,//Request.HttpContext.Connection.RemotePort,
             Version = info.Version,
             HealthCheckDate = DateTime.Now
         };
-        _instancesService.AddInstance(instance);
-        return CreatedAtAction(nameof(Register), instance);
+        if(_instancesService.AddInstance(instance))
+        {
+            return CreatedAtAction(nameof(Register), instance);
+        }
+        else
+        {
+            return StatusCode(StatusCodes.Status208AlreadyReported);
+        }
     }
 
     [HttpPost("jobstarted")]

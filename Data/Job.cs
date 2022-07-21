@@ -1,4 +1,4 @@
-namespace TSPCoordinator.Data;
+namespace TspCoordinator.Data;
 
 public enum JobStatus {
     Enqueued,

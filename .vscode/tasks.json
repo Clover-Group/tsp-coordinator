@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/TSPCoordinator.csproj",
+                "${workspaceFolder}/TspCoordinator.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -19,7 +19,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/TSPCoordinator.csproj",
+                "${workspaceFolder}/TspCoordinator.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -33,7 +33,7 @@
                 "watch",
                 "run",
                 "--project",
-                "${workspaceFolder}/TSPCoordinator.csproj"
+                "${workspaceFolder}/TspCoordinator.csproj"
             ],
             "problemMatcher": "$msCompile"
         },
@@ -44,14 +44,14 @@
                 "build"
             ],
             "dockerBuild": {
-                "tag": "tspcoordinator:dev",
+                "tag": "clovergrp/tsp-coordinator:dev",
                 "target": "base",
                 "dockerfile": "${workspaceFolder}/Dockerfile",
                 "context": "${workspaceFolder}",
                 "pull": true
             },
             "netCore": {
-                "appProject": "${workspaceFolder}/TSPCoordinator.csproj"
+                "appProject": "${workspaceFolder}/TspCoordinator.csproj"
             }
         },
         {
@@ -61,13 +61,13 @@
                 "build"
             ],
             "dockerBuild": {
-                "tag": "tspcoordinator:latest",
+                "tag": "clovergrp/tsp-coordinator:latest",
                 "dockerfile": "${workspaceFolder}/Dockerfile",
                 "context": "${workspaceFolder}",
                 "pull": true
             },
             "netCore": {
-                "appProject": "${workspaceFolder}/TSPCoordinator.csproj"
+                "appProject": "${workspaceFolder}/TspCoordinator.csproj"
             }
         },
         {
@@ -78,7 +78,7 @@
             ],
             "dockerRun": {},
             "netCore": {
-                "appProject": "${workspaceFolder}/TSPCoordinator.csproj",
+                "appProject": "${workspaceFolder}/TspCoordinator.csproj",
                 "enableDebugging": true
             }
         },
@@ -90,7 +90,7 @@
             ],
             "dockerRun": {},
             "netCore": {
-                "appProject": "${workspaceFolder}/TSPCoordinator.csproj"
+                "appProject": "${workspaceFolder}/TspCoordinator.csproj"
             }
         }
     ]

@@ -2,49 +2,52 @@
 
 <PageTitle>Jobs</PageTitle>
 
-@using TSPCoordinator.Data
+@using TspCoordinator.Data
 @inject JobService JobService
 
 <h1>Jobs</h1>
 
-@if (jobQueue == null) {
+@if (jobQueue == null)
+{
     <h4>Job queue</h4>
     <p>Loading...</p>
-} else {
-    <h4>Job queue (@jobQueue.Length)</h4>
+}
+else
+{
+    <h4>Job queue (@jobQueue.Count())</h4>
     <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Job ID</th>
-                <th>Priority</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var job in jobQueue)
+    <thead>
+        <tr>
+            <th>Job ID</th>
+            <th>Priority</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var job in jobQueue)
             {
                 <tr>
                     <td>@job.JobId</td>
                     <td>@job.Priority</td>
                     <td>
-                    @switch(job.Status)
-                    {
-                        case JobStatus.Enqueued:
-                            <span class="badge rounded-pill bg-secondary">Enqueued</span>
-                            break;
-                        case JobStatus.Running:
-                            <span class="badge rounded-pill bg-primary">Running</span>
-                            break;
-                        case JobStatus.Finished:
-                            <span class="badge rounded-pill bg-success">Finished</span>
-                            break;
-                        case JobStatus.Failed:
-                            <span class="badge rounded-pill bg-danger">Failed</span>
-                            break;
-                        case JobStatus.Canceled:
-                            <span class="badge rounded-pill bg-dark">Canceled</span>
-                            break;
-                    }
+                        @switch (job.Status)
+                        {
+                            case JobStatus.Enqueued:
+                                <span class="badge rounded-pill bg-secondary">Enqueued</span>
+                                break;
+                            case JobStatus.Running:
+                                <span class="badge rounded-pill bg-primary">Running</span>
+                                break;
+                            case JobStatus.Finished:
+                                <span class="badge rounded-pill bg-success">Finished</span>
+                                break;
+                            case JobStatus.Failed:
+                                <span class="badge rounded-pill bg-danger">Failed</span>
+                                break;
+                            case JobStatus.Canceled:
+                                <span class="badge rounded-pill bg-dark">Canceled</span>
+                                break;
+                        }
                     </td>
                 </tr>
             }
@@ -52,23 +55,26 @@
     </table>
 }
 
-@if (runningJobs == null) {
+@if (runningJobs == null)
+{
     <h4>Running jobs</h4>
     <p>Loading...</p>
-} else {
-    <h4>Running jobs (@runningJobs.Length)</h4>
+}
+else
+{
+    <h4>Running jobs (@runningJobs.Count())</h4>
     <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Job ID</th>
-                <th>Priority</th>
-                <th>Rows read</th>
-                <th>Rows written</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var job in runningJobs)
+    <thead>
+        <tr>
+            <th>Job ID</th>
+            <th>Priority</th>
+            <th>Rows read</th>
+            <th>Rows written</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var job in runningJobs)
             {
                 <tr>
                     <td>@job.JobId</td>
@@ -76,24 +82,24 @@
                     <td>@job.RowsRead</td>
                     <td>@job.RowsWritten</td>
                     <td>
-                    @switch(job.Status)
-                    {
-                        case JobStatus.Enqueued:
-                            <span class="badge rounded-pill bg-secondary">Enqueued</span>
-                            break;
-                        case JobStatus.Running:
-                            <span class="badge rounded-pill bg-primary">Running</span>
-                            break;
-                        case JobStatus.Finished:
-                            <span class="badge rounded-pill bg-success">Finished</span>
-                            break;
-                        case JobStatus.Failed:
-                            <span class="badge rounded-pill bg-danger">Failed</span>
-                            break;
-                        case JobStatus.Canceled:
-                            <span class="badge rounded-pill bg-dark">Canceled</span>
-                            break;
-                    }
+                        @switch (job.Status)
+                        {
+                            case JobStatus.Enqueued:
+                                <span class="badge rounded-pill bg-secondary">Enqueued</span>
+                                break;
+                            case JobStatus.Running:
+                                <span class="badge rounded-pill bg-primary">Running</span>
+                                break;
+                            case JobStatus.Finished:
+                                <span class="badge rounded-pill bg-success">Finished</span>
+                                break;
+                            case JobStatus.Failed:
+                                <span class="badge rounded-pill bg-danger">Failed</span>
+                                break;
+                            case JobStatus.Canceled:
+                                <span class="badge rounded-pill bg-dark">Canceled</span>
+                                break;
+                        }
                     </td>
                 </tr>
             }
@@ -101,23 +107,26 @@
     </table>
 }
 
-@if (completedJobs == null) {
+@if (completedJobs == null)
+{
     <h4>Completed jobs</h4>
     <p>Loading...</p>
-} else {
-    <h4>Completed jobs (@completedJobs.Length)</h4>
+}
+else
+{
+    <h4>Completed jobs (@completedJobs.Count())</h4>
     <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Job ID</th>
-                <th>Priority</th>
-                <th>Rows read</th>
-                <th>Rows written</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var job in completedJobs)
+    <thead>
+        <tr>
+            <th>Job ID</th>
+            <th>Priority</th>
+            <th>Rows read</th>
+            <th>Rows written</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var job in completedJobs)
             {
                 <tr>
                     <td>@job.JobId</td>
@@ -125,24 +134,24 @@
                     <td>@job.RowsRead</td>
                     <td>@job.RowsWritten</td>
                     <td>
-                    @switch(job.Status)
-                    {
-                        case JobStatus.Enqueued:
-                            <span class="badge rounded-pill bg-secondary">Enqueued</span>
-                            break;
-                        case JobStatus.Running:
-                            <span class="badge rounded-pill bg-primary">Running</span>
-                            break;
-                        case JobStatus.Finished:
-                            <span class="badge rounded-pill bg-success">Finished</span>
-                            break;
-                        case JobStatus.Failed:
-                            <span class="badge rounded-pill bg-danger">Failed</span>
-                            break;
-                        case JobStatus.Canceled:
-                            <span class="badge rounded-pill bg-dark">Canceled</span>
-                            break;
-                    }
+                        @switch (job.Status)
+                        {
+                            case JobStatus.Enqueued:
+                                <span class="badge rounded-pill bg-secondary">Enqueued</span>
+                                break;
+                            case JobStatus.Running:
+                                <span class="badge rounded-pill bg-primary">Running</span>
+                                break;
+                            case JobStatus.Finished:
+                                <span class="badge rounded-pill bg-success">Finished</span>
+                                break;
+                            case JobStatus.Failed:
+                                <span class="badge rounded-pill bg-danger">Failed</span>
+                                break;
+                            case JobStatus.Canceled:
+                                <span class="badge rounded-pill bg-dark">Canceled</span>
+                                break;
+                        }
                     </td>
                 </tr>
             }
@@ -151,9 +160,9 @@
 }
 
 @code {
-    private Job[]? jobQueue;
-    private Job[]? runningJobs;
-    private Job[]? completedJobs;
+    private List<Job>? jobQueue;
+    private List<Job>? runningJobs;
+    private List<Job>? completedJobs;
 
     protected override async Task OnInitializedAsync()
     {

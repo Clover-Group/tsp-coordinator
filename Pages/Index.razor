@@ -1,7 +1,7 @@
 ﻿@page "/"
 
-@using TSPCoordinator.Data
-@inject TSPInstancesService TSPInstancesService
+@using TspCoordinator.Data
+@inject TspInstancesService TspInstancesService
 
 <PageTitle>Index</PageTitle>
 
@@ -27,6 +27,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        tspInstanceCount = await TSPInstancesService.GetInstancesCountAsync();
+        tspInstanceCount = await TspInstancesService.GetInstancesCountAsync();
     }
 }

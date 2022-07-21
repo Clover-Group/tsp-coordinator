@@ -2,8 +2,8 @@
 
 <PageTitle>TSP instance list</PageTitle>
 
-@using TSPCoordinator.Data
-@inject TSPInstancesService TSPInstancesService
+@using TspCoordinator.Data
+@inject TspInstancesService TSPInstancesService
 
 <h1>TSP instance list</h1>
 
@@ -36,11 +36,14 @@ else
                     <td>
                     @switch(instance.Status)
                     {
-                        case TSPInstanceStatus.Active:
+                        case TspInstanceStatus.Active:
                             <span class="badge rounded-pill bg-success">Active</span>
                             break;
-                        case TSPInstanceStatus.NotWorking:
+                        case TspInstanceStatus.NotWorking:
                             <span class="badge rounded-pill bg-danger">Not working</span>
+                            break;
+                        case TspInstanceStatus.NotResponding:
+                            <span class="badge rounded-pill bg-warning">Not responding</span>
                             break;
                     }
                     </td>
@@ -51,7 +54,7 @@ else
 }
 
 @code {
-    private TSPInstance[]? instances;
+    private TspInstance[]? instances;
 
     protected override async Task OnInitializedAsync()
     {
