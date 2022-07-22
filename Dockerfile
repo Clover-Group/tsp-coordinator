@@ -17,6 +17,7 @@ COPY ["TspCoordinator.csproj", "./"]
 RUN dotnet restore "TspCoordinator.csproj"
 COPY . .
 WORKDIR "/src/."
+RUN dotnet tool install -g nbgv
 RUN dotnet build "TspCoordinator.csproj" -c Release -o /app/build
 
 FROM build AS publish
