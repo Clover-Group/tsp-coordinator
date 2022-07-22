@@ -16,6 +16,19 @@ public class JobService
 
     private List<Job> completedJobs = new List<Job>();
 
+    private IHttpClientFactory _clientFactory;
+    private Timer _queueTimer;
+
+    private TspInstancesService _instancesService;
+
+
+    public JobService(IHttpClientFactory clientFactory, TspInstancesService instancesService)
+    {
+        _clientFactory = clientFactory;
+        _instancesService = instancesService;
+        _queueTimer = new Timer(InspectQueue, null, 10000, 5000);
+    }
+
     public Task<List<Job>> GetJobQueueAsync()
     {
         return Task.FromResult(jobQueue.UnorderedItems.OrderByDescending(x => x.Priority).Select(x => x.Element).ToList());
@@ -31,12 +44,17 @@ public class JobService
         return Task.FromResult(completedJobs);
     }
 
+    public void EnqueueJob(Job job)
+    {
+        jobQueue.Enqueue(job, job.Request?.Priority ?? 0);
+    }
+
     public void OnJobStarted(JobStartedInfo info)
     {
         var job = runningJobs.Find(x => x.JobId == info.JobId);
         if (job == null)
         {
-            
+
         }
         else
         {
@@ -46,6 +64,44 @@ public class JobService
 
     public void OnJobCompleted(JobCompletedInfo info)
     {
-        // TODO: Job completed
+        var job = runningJobs.Find(x => x.JobId == info.JobId);
+        if (job == null)
+        {
+
+        }
+        else
+        {
+            job.Status = info.Success ? JobStatus.Finished : JobStatus.Failed;
+            runningJobs.Remove(job);
+            completedJobs.Add(job);
+        }     
+    }
+
+    public async void InspectQueue(Object? state)
+    {
+        var firstFreeInstance = _instancesService.FindFirstFreeInstance();
+
+        if (firstFreeInstance == null) return;
+
+        var job = jobQueue.Dequeue();
+        runningJobs.Add(job);
+
+        var jobSubmitUrl = $"http://{firstFreeInstance.Host.MapToIPv4()}:{firstFreeInstance.Port}/job/submit/";
+
+        var client = _clientFactory.CreateClient("TspJobRunner");
+        try
+        {
+            var response = await client.PostAsJsonAsync(jobSubmitUrl, job.Request);
+            if (!response.IsSuccessStatusCode)
+            {
+                // TODO: Failed to send job
+                
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            // TODO:
+        }
+
     }
 }

@@ -1,5 +1,7 @@
 namespace TspCoordinator.Data;
 
+using Actual = TspApi.V3;
+
 public enum JobStatus {
     Enqueued,
     Running,
@@ -15,5 +17,7 @@ public class Job {
     public long RowsRead { get; set; }
     public long RowsWritten { get; set; }
 
-    public long Priority { get; set; }
+    public Actual.Request Request { get; set; }
+
+    public TspInstance? RunningOn { get; set; }
 }

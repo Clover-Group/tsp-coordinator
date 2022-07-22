@@ -28,7 +28,7 @@ else
             {
                 <tr>
                     <td>@job.JobId</td>
-                    <td>@job.Priority</td>
+                    <td>@job.Request.Priority</td>
                     <td>
                         @switch (job.Status)
                         {
@@ -68,6 +68,7 @@ else
         <tr>
             <th>Job ID</th>
             <th>Priority</th>
+            <th>Running on</th>
             <th>Rows read</th>
             <th>Rows written</th>
             <th>Status</th>
@@ -78,7 +79,8 @@ else
             {
                 <tr>
                     <td>@job.JobId</td>
-                    <td>@job.Priority</td>
+                    <td>@job.Request.Priority</td>
+                    <td>@job.RunningOn</td>
                     <td>@job.RowsRead</td>
                     <td>@job.RowsWritten</td>
                     <td>
@@ -130,7 +132,7 @@ else
             {
                 <tr>
                     <td>@job.JobId</td>
-                    <td>@job.Priority</td>
+                    <td>@job.Request.Priority</td>
                     <td>@job.RowsRead</td>
                     <td>@job.RowsWritten</td>
                     <td>

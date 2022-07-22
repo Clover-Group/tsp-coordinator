@@ -9,8 +9,20 @@ public static class Converters
     public static Actual.Request ConvertRequestFromV1(V1.Request request) => new Actual.Request
     {
         Uuid = request.Uuid,
-        Source = ConvertInputConfFromV1(request.Source),
-        Sinks = new List<Actual.IOutputConf> { ConvertOutputConfFromV1(request.Sink) },
+        Source = new Actual.SourceWithType
+        {
+            Type = GetTypeFromInputConfV1(request.Source),
+            Config = ConvertInputConfFromV1(request.Source)
+        },
+        Sinks = new List<Actual.SinkWithType>
+        {
+            new Actual.SinkWithType
+            {
+                Type = GetTypeFromOutputConfV1(request.Sink),
+                Config = ConvertOutputConfFromV1(request.Sink)
+            }
+
+        },
         Patterns = request.Patterns.Select(p => ConvertPatternFromV1(p)).ToList(),
         Priority = 0
     };
@@ -18,13 +30,67 @@ public static class Converters
     public static Actual.Request ConvertRequestFromV2(V2.Request request) => new Actual.Request
     {
         Uuid = request.Uuid,
-        Source = ConvertInputConfFromV2(request.Source),
-        Sinks = new List<Actual.IOutputConf> { ConvertOutputConfFromV2(request.Sink) },
+        Source = new Actual.SourceWithType
+        {
+            Type = GetTypeFromInputConfV2(request.Source), 
+            Config = ConvertInputConfFromV2(request.Source) 
+        },
+        Sinks = new List<Actual.SinkWithType>
+        { 
+            new Actual.SinkWithType
+            {
+                Type = GetTypeFromOutputConfV2(request.Sink),
+                Config = ConvertOutputConfFromV2(request.Sink)
+            }
+            
+        },
         Patterns = request.Patterns.Select(p => ConvertPatternFromV2(p)).ToList(),
         Priority = request.Priority
     };
 
     public static Actual.Request ConvertRequestFromV3(V3.Request request) => request;
+
+    public static string GetTypeFromInputConfV1(V1.IInputConf inputConf) => inputConf switch
+    {
+        V1.JdbcInputConf _ => "jdbc",
+        V1.KafkaInputConf _ => "kafka",
+        _ => ""
+    };
+
+    public static string GetTypeFromInputConfV2(V2.IInputConf inputConf) => inputConf switch
+    {
+        V2.JdbcInputConf _ => "jdbc",
+        V2.KafkaInputConf _ => "kafka",
+        _ => ""
+    };
+
+    public static string GetTypeFromInputConfV3(V3.IInputConf inputConf) => inputConf switch
+    {
+        V3.JdbcInputConf _ => "jdbc",
+        V3.KafkaInputConf _ => "kafka",
+        _ => ""
+    };
+
+    public static string GetTypeFromOutputConfV1(V1.IOutputConf outputConf) => outputConf switch
+    {
+        V1.JdbcOutputConf _ => "jdbc",
+        V1.KafkaOutputConf _ => "kafka",
+        _ => ""
+    };
+
+    public static string GetTypeFromOutputConfV2(V2.IOutputConf outputConf) => outputConf switch
+    {
+        V2.JdbcOutputConf _ => "jdbc",
+        V2.KafkaOutputConf _ => "kafka",
+        _ => ""
+    };
+
+    public static string GetTypeFromOutputConfV3(V3.IOutputConf outputConf) => outputConf switch
+    {
+        V3.JdbcOutputConf _ => "jdbc",
+        V3.KafkaOutputConf _ => "kafka",
+        _ => ""
+    };
 
     public static Actual.Pattern ConvertPatternFromV1(V1.Pattern pattern) => new Actual.Pattern
     {

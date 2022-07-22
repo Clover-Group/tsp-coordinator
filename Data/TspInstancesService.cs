@@ -26,6 +26,8 @@ public class TspInstancesService
         return true;
     }
 
+    public TspInstance? FindFirstFreeInstance() => instances.FirstOrDefault(x => x.Status == TspInstanceStatus.Active);
+
     public Task<TspInstance[]> GetInstancesAsync()
     {
         return Task.FromResult(instances.ToArray());
@@ -46,7 +48,8 @@ public class TspInstancesService
             try
             {
                 var response = await client.SendAsync(request);
-                if (response.IsSuccessStatusCode)
+                // TODO: Temp, no monitoring returns 404
+                if (response.IsSuccessStatusCode || ((int)response.StatusCode) == 404)
                 {
                     instance.Status = TspInstanceStatus.Active;
                 }

@@ -25,4 +25,9 @@ public class TspInstance
     public TspInstanceStatus Status { get; set; }
 
     public DateTime HealthCheckDate { get; set; }
+
+    public override string ToString()
+    {
+        return $"TSP instance v{Version} at {Location}";
+    }
 }
