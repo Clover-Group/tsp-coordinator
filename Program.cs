@@ -10,24 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews().AddJsonOptions(options =>
 {
-    var converters = new JsonConverter[] 
-    {
-        new TypeMappingConverter<TspCoordinator.Data.TspApi.V1.IInputConf, TspCoordinator.Data.TspApi.V1.JdbcInputConf>(),
-        new TypeMappingConverter<TspCoordinator.Data.TspApi.V1.IInputConf, TspCoordinator.Data.TspApi.V1.KafkaInputConf>(),
-        new TypeMappingConverter<TspCoordinator.Data.TspApi.V1.IOutputConf, TspCoordinator.Data.TspApi.V1.JdbcOutputConf>(),
-        new TypeMappingConverter<TspCoordinator.Data.TspApi.V1.IOutputConf, TspCoordinator.Data.TspApi.V1.KafkaOutputConf>(),
-
-        new TypeMappingConverter<TspCoordinator.Data.TspApi.V2.IInputConf, TspCoordinator.Data.TspApi.V2.JdbcInputConf>(),
-        new TypeMappingConverter<TspCoordinator.Data.TspApi.V2.IInputConf, TspCoordinator.Data.TspApi.V2.KafkaInputConf>(),
-        new TypeMappingConverter<TspCoordinator.Data.TspApi.V2.IOutputConf, TspCoordinator.Data.TspApi.V2.JdbcOutputConf>(),
-        new TypeMappingConverter<TspCoordinator.Data.TspApi.V2.IOutputConf, TspCoordinator.Data.TspApi.V2.KafkaOutputConf>(),
-
-        new TypeMappingConverter<TspCoordinator.Data.TspApi.V3.IInputConf, TspCoordinator.Data.TspApi.V3.JdbcInputConf>(),
-        new TypeMappingConverter<TspCoordinator.Data.TspApi.V3.IInputConf, TspCoordinator.Data.TspApi.V3.KafkaInputConf>(),
-        new TypeMappingConverter<TspCoordinator.Data.TspApi.V3.IOutputConf, TspCoordinator.Data.TspApi.V3.JdbcOutputConf>(),
-        new TypeMappingConverter<TspCoordinator.Data.TspApi.V3.IOutputConf, TspCoordinator.Data.TspApi.V3.KafkaOutputConf>(),
-        new EventSchemaValueConverter()
-    };
+    var converters = TspCoordinator.Data.TspApi.JsonConverters.Converters;
 
     foreach (var c in converters)
     {

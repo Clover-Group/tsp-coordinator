@@ -2,12 +2,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace TspCoordinator.Data.TspApi;
+namespace TspCoordinator.Data.TspApi.V3;
 
 public class EventSchemaValueConverter : JsonConverter<V3.IEventSchemaValue>
 {
-    [return: MaybeNull]
-    public override V3.IEventSchemaValue Read(
+    public override V3.IEventSchemaValue? Read(
       ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         try

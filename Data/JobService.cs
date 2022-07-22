@@ -1,5 +1,7 @@
 namespace TspCoordinator.Data;
 using System.Collections.Generic;
+using System.Text;
+using System.Text.Json;
 using TspCoordinator.Controllers;
 
 public class PriorityComparer : IComparer<int>
@@ -19,14 +21,26 @@ public class JobService
     private IHttpClientFactory _clientFactory;
     private Timer _queueTimer;
 
+    private ILogger<JobService> _logger;
+
     private TspInstancesService _instancesService;
 
+    private readonly JsonSerializerOptions jsonOptions = new JsonSerializerOptions
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+    };
 
-    public JobService(IHttpClientFactory clientFactory, TspInstancesService instancesService)
+
+    public JobService(IHttpClientFactory clientFactory, ILogger<JobService> logger, TspInstancesService instancesService)
     {
         _clientFactory = clientFactory;
+        _logger = logger;
         _instancesService = instancesService;
         _queueTimer = new Timer(InspectQueue, null, 10000, 5000);
+        foreach (var c in TspCoordinator.Data.TspApi.JsonConverters.Converters)
+        {
+            jsonOptions.Converters.Add(c);
+        }
     }
 
     public Task<List<Job>> GetJobQueueAsync()
@@ -74,7 +88,7 @@ public class JobService
             job.Status = info.Success ? JobStatus.Finished : JobStatus.Failed;
             runningJobs.Remove(job);
             completedJobs.Add(job);
-        }     
+        }
     }
 
     public async void InspectQueue(Object? state)
@@ -86,6 +100,7 @@ public class JobService
         if (firstFreeInstance == null) return;
 
         var job = jobQueue.Dequeue();
+        job.RunningOn = firstFreeInstance;
         runningJobs.Add(job);
 
         var jobSubmitUrl = $"http://{firstFreeInstance.Host.MapToIPv4()}:{firstFreeInstance.Port}/job/submit/";
@@ -93,11 +108,21 @@ public class JobService
         var client = _clientFactory.CreateClient("TspJobRunner");
         try
         {
-            var response = await client.PostAsJsonAsync(jobSubmitUrl, job.Request);
+            var requestAsJson = JsonSerializer.Serialize(job.Request, jsonOptions);
+            _logger.LogInformation(requestAsJson);
+            var response = await client.PostAsync(jobSubmitUrl,
+                new StringContent(
+                    requestAsJson,
+                    Encoding.UTF8,
+                    "application/json")
+            );
             if (!response.IsSuccessStatusCode)
             {
                 // TODO: Failed to send job
-                
+                _logger.LogCritical($"Failed to send job {job.JobId}, returned status {response.StatusCode} with {await response.Content.ReadAsStringAsync()}");
+                runningJobs.Remove(job);
+                job.Status = JobStatus.Canceled;
+                completedJobs.Add(job);
             }
         }
         catch (HttpRequestException ex)
