@@ -79,6 +79,8 @@ public class JobService
 
     public async void InspectQueue(Object? state)
     {
+        if (jobQueue.Count == 0) return;
+
         var firstFreeInstance = _instancesService.FindFirstFreeInstance();
 
         if (firstFreeInstance == null) return;
