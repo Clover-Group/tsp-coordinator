@@ -11,6 +11,7 @@ public class OutputConfConverter : JsonConverter<IOutputConf>
         try
         {
             var res = JsonSerializer.Deserialize<V1.JdbcOutputConf>(ref reader, options);
+            if (res?.JdbcUrl == null) throw new ArgumentNullException();
             return res;
         }
         catch
