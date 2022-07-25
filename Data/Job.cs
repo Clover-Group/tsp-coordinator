@@ -10,6 +10,11 @@ public enum JobStatus {
     Canceled
 }
 
+public class JobStatusInfo {
+    public long RowsRead { get; set; }
+    public long RowsWritten { get; set; }
+}
+
 public class Job {
     public string JobId { get; set; }
     public JobStatus Status { get; set; }

@@ -20,6 +20,7 @@ public class JobService
 
     private IHttpClientFactory _clientFactory;
     private Timer _queueTimer;
+    private Timer _jobStateTimer;
 
     private ILogger<JobService> _logger;
 
@@ -37,6 +38,7 @@ public class JobService
         _logger = logger;
         _instancesService = instancesService;
         _queueTimer = new Timer(InspectQueue, null, 10000, 5000);
+        _jobStateTimer = new Timer(UpdateJobStates, null, 10000, 5000);
         foreach (var c in TspCoordinator.Data.TspApi.JsonConverters.Converters)
         {
             jsonOptions.Converters.Add(c);
@@ -86,8 +88,43 @@ public class JobService
         else
         {
             job.Status = info.Success ? JobStatus.Finished : JobStatus.Failed;
+            job.RowsRead = info.RowsRead ?? 0;
+            job.RowsWritten = info.RowsWritten ?? 0;
             runningJobs.Remove(job);
             completedJobs.Add(job);
+        }
+    }
+
+    public async void UpdateJobStates(Object? state)
+    {
+        foreach (var job in runningJobs.ToList())
+        {
+            if (job.RunningOn != null)
+            {
+                var instance = job.RunningOn;
+                var jobStatusUrl = $"http://{instance.Host.MapToIPv4()}:{instance.Port}/job/{job.JobId}/status";
+                var jobStatusRequest = new HttpRequestMessage(HttpMethod.Get, jobStatusUrl);
+
+                var client = _clientFactory.CreateClient("TspJobStatusChecker");
+                try
+                {
+                    var response = await client.SendAsync(jobStatusRequest);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var statusInfo = await response.Content.ReadFromJsonAsync<JobStatusInfo>();
+                        job.RowsRead = statusInfo?.RowsRead ?? -1;
+                        job.RowsWritten = statusInfo?.RowsWritten ?? -1;
+                    }
+                    else
+                    {
+                        // TODO
+                    }
+                }
+                catch (HttpRequestException ex)
+                {
+                    // TODO:
+                }
+            }
         }
     }
 
@@ -109,7 +146,7 @@ public class JobService
         try
         {
             var requestAsJson = JsonSerializer.Serialize(job.Request, jsonOptions);
-            _logger.LogInformation(requestAsJson);
+            //_logger.LogInformation(requestAsJson);
             var response = await client.PostAsync(jobSubmitUrl,
                 new StringContent(
                     requestAsJson,

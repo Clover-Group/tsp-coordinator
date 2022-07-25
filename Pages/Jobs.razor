@@ -168,8 +168,17 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        jobQueue = await JobService.GetJobQueueAsync();
-        runningJobs = await JobService.GetRunningJobsAsync();
-        completedJobs = await JobService.GetCompletedQueueAsync();
+        base.OnInitialized();
+        
+        var timer = new System.Threading.Timer((_) =>
+        {
+            InvokeAsync( async () =>
+            {
+                jobQueue = await JobService.GetJobQueueAsync();
+                runningJobs = await JobService.GetRunningJobsAsync();
+                completedJobs = await JobService.GetCompletedQueueAsync();
+                StateHasChanged();
+            });
+        }, null, 0, 5000);
     }
 }

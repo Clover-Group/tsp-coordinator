@@ -6,7 +6,8 @@ namespace TspCoordinator.Data;
 public enum TspInstanceStatus {
     Active,
     NotWorking,
-    NotResponding
+    NotResponding,
+    CannotGetExtendedInfo
 }
 
 public class TspInstance
@@ -25,6 +26,8 @@ public class TspInstance
     public TspInstanceStatus Status { get; set; }
 
     public DateTime HealthCheckDate { get; set; }
+
+    public List<String> RunningJobsIds { get; set; }
 
     public override string ToString()
     {

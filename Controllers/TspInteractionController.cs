@@ -19,6 +19,9 @@ public class JobCompletedInfo
     public bool Success { get; set; }
 
     public string? Error { get; set; }
+
+    public long? RowsRead { get; set; }
+    public long? RowsWritten { get; set; }
 }
 
 [ApiController]

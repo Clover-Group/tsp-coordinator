@@ -44,12 +44,11 @@ public class TspInstancesService
         foreach(var instance in instances)
         {
             var tspGetVersionUrl = $"http://{instance.Host.MapToIPv4()}:{instance.Port}/metainfo/getVersion";
-            var request = new HttpRequestMessage(HttpMethod.Get, tspGetVersionUrl);
+            var getVersionRequest = new HttpRequestMessage(HttpMethod.Get, tspGetVersionUrl);
             try
             {
-                var response = await client.SendAsync(request);
-                // TODO: Temp, no monitoring returns 404
-                if (response.IsSuccessStatusCode || ((int)response.StatusCode) == 404)
+                var response = await client.SendAsync(getVersionRequest);
+                if (response.IsSuccessStatusCode)
                 {
                     instance.Status = TspInstanceStatus.Active;
                 }
@@ -63,6 +62,28 @@ public class TspInstancesService
                 instance.Status = TspInstanceStatus.NotResponding;
             }
             instance.HealthCheckDate = DateTime.Now;
+            if (instance.Status == TspInstanceStatus.Active)
+            {
+                var tspGetJobsUrl = $"http://{instance.Host.MapToIPv4()}:{instance.Port}/jobs/overview";
+                var getJobsRequest = new HttpRequestMessage(HttpMethod.Get, tspGetJobsUrl);
+                try
+                {
+                    var response = await client.SendAsync(getJobsRequest);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var jobsIds = await response.Content.ReadFromJsonAsync<List<String>>();
+                        instance.RunningJobsIds = jobsIds ?? new List<string>();
+                    }
+                    else
+                    {
+                        instance.Status = TspInstanceStatus.CannotGetExtendedInfo;
+                    }                   
+                }
+                catch (HttpRequestException ex)
+                {
+                    instance.Status = TspInstanceStatus.CannotGetExtendedInfo;
+                }
+            }
         }
     }
 }

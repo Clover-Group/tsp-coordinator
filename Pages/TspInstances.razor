@@ -2,6 +2,7 @@
 
 <PageTitle>TSP instance list</PageTitle>
 
+@using System.Globalization
 @using TspCoordinator.Data
 @inject TspInstancesService TSPInstancesService
 
@@ -23,6 +24,7 @@ else
                 <th>Version</th>
                 <th>Last health check</th>
                 <th>Status</th>
+                <th>Jobs running</th>
             </tr>
         </thead>
         <tbody>
@@ -32,7 +34,7 @@ else
                     <td scope="row">@index</td>
                     <td>@instance.Location</td>
                     <td>@instance.Version</td>
-                    <td>@instance.HealthCheckDate.ToShortDateString() @instance.HealthCheckDate.ToShortTimeString()</td>
+                    <td>@instance.HealthCheckDate.ToString("u", CultureInfo.InvariantCulture)</td>
                     <td>
                     @switch(instance.Status)
                     {
@@ -45,8 +47,12 @@ else
                         case TspInstanceStatus.NotResponding:
                             <span class="badge rounded-pill bg-warning">Not responding</span>
                             break;
+                        case TspInstanceStatus.CannotGetExtendedInfo:
+                            <span class="badge rounded-pill bg-warning">Cannot get extended info</span>
+                            break;
                     }
                     </td>
+                    <td>@(instance.RunningJobsIds?.Count ?? 0)</td>
                 </tr>
             }
         </tbody>
@@ -58,6 +64,15 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        instances = await TSPInstancesService.GetInstancesAsync();
+        base.OnInitialized();
+        
+        var timer = new System.Threading.Timer((_) =>
+        {
+            InvokeAsync( async () =>
+            {
+               instances = await TSPInstancesService.GetInstancesAsync();
+               StateHasChanged();
+            });
+        }, null, 0, 5000);
     }
 }
