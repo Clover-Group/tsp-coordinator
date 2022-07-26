@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Dahomey.Json;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +17,7 @@ builder.Services.AddControllersWithViews().AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.Converters.Add(c);
     }
+    options.JsonSerializerOptions.SetupExtensions();
 
 });
 builder.Services.AddRazorPages();
@@ -23,6 +25,7 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<TspInstancesService>();
 builder.Services.AddSingleton<JobService>();
+builder.Services.AddSingleton<JobStatusReportingService>();
 builder.Services.AddHostedService<ApplicationPartsLogger>();
 
 

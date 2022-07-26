@@ -1,3 +1,5 @@
+using Dahomey.Json.Attributes;
+
 namespace TspCoordinator.Data.TspApi.V2;
 
 public interface IOutputConf
@@ -8,6 +10,7 @@ public interface IOutputConf
 
 public class JdbcOutputConf : IOutputConf
 {
+    [JsonRequired(RequirementPolicy.Always)]
     public string TableName { get; set; }
     public EventSchema RowSchema { get; set; }
     public string JdbcUrl { get; set; }
@@ -20,6 +23,7 @@ public class JdbcOutputConf : IOutputConf
 
 public class KafkaOutputConf : IOutputConf
 {
+    [JsonRequired(RequirementPolicy.Always)]
     public string Broker { get; set; }
     public string Topic { get; set; }
     public string? Serializer { get; set; }

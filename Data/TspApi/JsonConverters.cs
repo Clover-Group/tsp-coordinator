@@ -4,7 +4,7 @@ namespace TspCoordinator.Data.TspApi;
 
 static class JsonConverters
 {
-    public static JsonConverter[] Converters = new JsonConverter[]
+    public static readonly JsonConverter[] Converters = new JsonConverter[]
     {
         new V1.InputConfConverter(),
         new V1.OutputConfConverter(),

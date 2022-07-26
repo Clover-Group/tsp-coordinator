@@ -2,6 +2,7 @@ namespace TspCoordinator.Data;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
+using Dahomey.Json;
 using TspCoordinator.Controllers;
 
 public class PriorityComparer : IComparer<int>
@@ -26,17 +27,20 @@ public class JobService
 
     private TspInstancesService _instancesService;
 
+    private JobStatusReportingService _statusReportingService;
+
     private readonly JsonSerializerOptions jsonOptions = new JsonSerializerOptions
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-    };
+    }.SetupExtensions();
 
 
-    public JobService(IHttpClientFactory clientFactory, ILogger<JobService> logger, TspInstancesService instancesService)
+    public JobService(IHttpClientFactory clientFactory, ILogger<JobService> logger, TspInstancesService instancesService, JobStatusReportingService statusReportingService)
     {
         _clientFactory = clientFactory;
         _logger = logger;
         _instancesService = instancesService;
+        _statusReportingService = statusReportingService;
         _queueTimer = new Timer(InspectQueue, null, 10000, 5000);
         _jobStateTimer = new Timer(UpdateJobStates, null, 10000, 5000);
         foreach (var c in TspCoordinator.Data.TspApi.JsonConverters.Converters)
@@ -63,6 +67,7 @@ public class JobService
     public void EnqueueJob(Job job)
     {
         jobQueue.Enqueue(job, job.Request?.Priority ?? 0);
+        _statusReportingService.SendJobStatus(job, $"Job {job.JobId} enqueued.");
     }
 
     public void OnJobStarted(JobStartedInfo info)
@@ -70,11 +75,12 @@ public class JobService
         var job = runningJobs.Find(x => x.JobId == info.JobId);
         if (job == null)
         {
-
+            // TODO: if no job was registered
         }
         else
         {
             job.Status = JobStatus.Running;
+            _statusReportingService.SendJobStatus(job, $"Job {job.JobId} successfully started.");
         }
     }
 
@@ -92,6 +98,7 @@ public class JobService
             job.RowsWritten = info.RowsWritten ?? 0;
             runningJobs.Remove(job);
             completedJobs.Add(job);
+            _statusReportingService.SendJobStatus(job, $"Job {job.JobId} completed.");
         }
     }
 

@@ -1,3 +1,5 @@
+using Dahomey.Json.Attributes;
+
 namespace TspCoordinator.Data.TspApi.V2;
 
 public interface IInputConf
@@ -19,6 +21,7 @@ public interface IInputConf
 public class JdbcInputConf : IInputConf
 {
     public int SourceId { get; set; }
+    [JsonRequired(RequirementPolicy.Always)]
     public String JdbcUrl { get; set; }
 
     public String Query { get; set; }
@@ -43,7 +46,7 @@ public class JdbcInputConf : IInputConf
 public class KafkaInputConf : IInputConf
 {
     public int SourceId { get; set; }
-
+    [JsonRequired(RequirementPolicy.Always)]
     public string Brokers { get; set; }
     public string Topic { get; set; }
     public string Group { get; set; }
