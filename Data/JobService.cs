@@ -10,9 +10,16 @@ public class PriorityComparer : IComparer<int>
     public int Compare(int x, int y) => -x.CompareTo(y);
 }
 
+public enum JobStopResult
+{
+    Dequeued,
+    StopRequested,
+    NotFound
+}
+
 public class JobService
 {
-    private PriorityQueue<Job, int> jobQueue = new PriorityQueue<Job, int>(new PriorityComparer());
+    private JobQueue jobQueue = new JobQueue();
 
     private List<Job> runningJobs = new List<Job>();
 
@@ -34,7 +41,6 @@ public class JobService
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
     }.SetupExtensions();
 
-
     public JobService(IHttpClientFactory clientFactory, ILogger<JobService> logger, TspInstancesService instancesService, JobStatusReportingService statusReportingService)
     {
         _clientFactory = clientFactory;
@@ -49,9 +55,11 @@ public class JobService
         }
     }
 
+    
+
     public Task<List<Job>> GetJobQueueAsync()
     {
-        return Task.FromResult(jobQueue.UnorderedItems.OrderByDescending(x => x.Priority).Select(x => x.Element).ToList());
+        return Task.FromResult(jobQueue.Jobs.ToList());
     }
 
     public Task<List<Job>> GetRunningJobsAsync()
@@ -64,9 +72,14 @@ public class JobService
         return Task.FromResult(completedJobs);
     }
 
+    public async Task<List<Job>> GetAllJobsAsync()
+    {
+        return (await GetJobQueueAsync()).Concat(await GetRunningJobsAsync()).Concat(await GetCompletedQueueAsync()).ToList();
+    }
+
     public void EnqueueJob(Job job)
     {
-        jobQueue.Enqueue(job, job.Request?.Priority ?? 0);
+        jobQueue.Enqueue(job);
         _statusReportingService.SendJobStatus(job, $"Job {job.JobId} enqueued.");
     }
 
@@ -137,7 +150,7 @@ public class JobService
 
     public async void InspectQueue(Object? state)
     {
-        if (jobQueue.Count == 0) return;
+        if (jobQueue.Jobs.Count == 0) return;
 
         var firstFreeInstance = _instancesService.FindFirstFreeInstance();
 
@@ -174,5 +187,28 @@ public class JobService
             // TODO:
         }
 
+    }
+
+    public async Task<JobStopResult> StopJob(string jobId)
+    {
+        if (jobQueue.RemoveById(jobId))
+        {
+            return JobStopResult.Dequeued;
+        }
+        var findInRunning = runningJobs.Find(j => j.JobId == jobId);    
+        if (findInRunning != null)
+        {
+            var client = _clientFactory.CreateClient("TspJobStopper");
+            var instance = findInRunning.RunningOn;
+            if (instance == null)
+            {
+                return JobStopResult.NotFound;
+            }
+            var jobStopUrl = $"http://{instance.Host.MapToIPv4()}:{instance.Port}/job/{jobId}/stop/";
+            var response = await client.PostAsync(jobStopUrl, null);
+            // TODO: Handle response
+            return JobStopResult.StopRequested;
+        }
+        return JobStopResult.NotFound;
     }
 }
