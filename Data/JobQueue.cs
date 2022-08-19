@@ -20,7 +20,16 @@ public class JobQueue
     } 
     
 
-    public Job? Dequeue() => jobs.Count > 0 ? jobs[0] : null;
+    public Job? Dequeue()
+    {
+        if(jobs.Count > 0)
+        {
+            var res = jobs[0];
+            jobs.RemoveAt(0);
+            return res;
+        }
+        return null;
+    }
 
     public Job? FindById(string jobId) => jobs.Find(j => j.JobId == jobId);
 

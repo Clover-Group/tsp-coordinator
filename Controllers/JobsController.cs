@@ -14,7 +14,22 @@ public class JobsController : Controller
     }
 
 
+    /// <summary>
+    ///  Requests list of all jobs and the information about them.
+    /// </summary>
+    /// <param name="show">
+    /// Filter for the job list. Possible values are:
+    /// "queued" - show only the job queue;
+    /// "running" - show only the jobs which are running at the moment;
+    /// "completed" - show only the completed jobs;
+    /// "all" - show all jobs (queued, running and completed).
+    /// </param>
+    /// <returns>Job list</returns>
+    /// <response code="200">Success</response>
+    /// <response code="400">Invalid value for "show" parameter</response>
     [HttpGet("overview")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Overview([FromQuery] string show = "all")
     {
         switch (show)
@@ -41,7 +56,16 @@ public class JobsController : Controller
         return Ok(jobs);
     }
 
+    /// <summary>
+    ///  Provides details about the given job.
+    /// </summary>
+    /// <param name="id">The ID of a job to retrieve</param>
+    /// <returns>Details about the job</returns>
+    /// <response code="200">Success</response>
+    /// <response code="404">The specified job ID was not found.</response>
     [HttpGet("{id}/status")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Status(string id)
     {
         var jobs = await _jobService.GetAllJobsAsync();
@@ -51,7 +75,15 @@ public class JobsController : Controller
         };
     }
 
+    /// <summary>
+    ///  Orders to stop the job (either dequeue (if queued) or request TSP to stop (if running)).
+    /// </summary>
+    /// <param name="id">The ID of a job to stop</param>
+    /// <response code="200">Success</response>
+    /// <response code="404">The specified job ID was not found (the job can be already completed).</response>
     [HttpPost("{id}/stop")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Stop(string id)
     {
         return await _jobService.StopJob(id) switch

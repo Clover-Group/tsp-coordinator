@@ -37,7 +37,16 @@ public class TspInteractionController : ControllerBase
         _jobService = jobService;
     }
 
+    /// <summary>
+    ///  Registers TSP instance.
+    /// </summary>
+    /// <param name="info">Information about TSP instance (currently: version only)</param>
+    /// <returns>A newly created TSP instance.</returns>
+    /// <response code="201">TSP registration is successful.</response>
+    /// <response code="208">TSP instance was already registered.</response>
     [HttpPost("register")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status208AlreadyReported)]
     public IActionResult Register([FromBody] TspRegisterInfo info)
     {
         if (Request.HttpContext.Connection.RemoteIpAddress == null)
@@ -61,6 +70,10 @@ public class TspInteractionController : ControllerBase
         }
     }
 
+    /// <summary>
+    ///  Notifies the coordinator about the successful start of a job.
+    /// </summary>
+    /// <response code="200">Coordinator is successfully notified</response>
     [HttpPost("jobstarted")]
     public IActionResult JobStarted([FromBody] JobStartedInfo info)
     {
@@ -68,6 +81,10 @@ public class TspInteractionController : ControllerBase
         return Ok();
     }
 
+    /// <summary>
+    ///  Notifies the coordinator about the completion of a job.
+    /// </summary>
+    /// <response code="200">Coordinator is successfully notified</response>
     [HttpPost("jobcompleted")]
     public IActionResult JobCompleted([FromBody] JobCompletedInfo info)
     {

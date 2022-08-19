@@ -1,5 +1,6 @@
 namespace TspCoordinator.Data;
 
+using System.Text.Json.Serialization;
 using Actual = TspApi.V3;
 
 public enum JobStatus {
@@ -16,6 +17,8 @@ public class JobStatusInfo {
 }
 
 public class Job {
+    public Job() => Lifecycle = new JobLifecycle(this);
+
     public string JobId { get; set; }
     public JobStatus Status { get; set; }
 
@@ -25,4 +28,9 @@ public class Job {
     public Actual.Request Request { get; set; }
 
     public TspInstance? RunningOn { get; set; }
+
+    [JsonIgnore]
+    public JobLifecycle Lifecycle { get; private set; }
+
+    public void NotifyStatusChanged() => Lifecycle.AddStatusChanged(Status);
 }

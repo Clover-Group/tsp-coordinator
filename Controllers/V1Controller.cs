@@ -5,6 +5,7 @@ using TspCoordinator.Data;
 
 namespace TspCoordinator.Controllers;
 
+
 [ApiController]
 [Route("api/v1")]
 public class V1Controller : Controller
@@ -16,7 +17,18 @@ public class V1Controller : Controller
         _jobService = jobService;
     }
 
+    /// <summary>
+    ///  Send version 1 job request (syntax supported by TSP version 0.15)
+    /// </summary>
+    /// <param name="source">Type of the source (supported values are "jdbc" and "kafka")</param>
+    /// <param name="sink">Type of the sink (supported values are "jdbc" and "kafka")</param>
+    /// <param name="request">The request being sent</param>
+    /// <returns>Newly created request</returns>
+    /// <response code="200">Success</response>
+    /// <response code="400">Request is malformed (e.g. configuration does not match the source/sink type)</response>
     [HttpPost("from-{source}/to-{sink}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public IActionResult AddJob(string source, string sink, [FromBody] Request request)
     {
         if (source != "jdbc" && source != "kafka")

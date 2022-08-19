@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text.Json.Serialization;
 using Dahomey.Json;
 using Microsoft.AspNetCore.Components;
@@ -22,6 +23,12 @@ builder.Services.AddControllersWithViews().AddJsonOptions(options =>
 });
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.CustomSchemaIds(type => type.ToString());
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, 
+        $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
+});
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<TspInstancesService>();
 builder.Services.AddSingleton<JobService>();
@@ -38,9 +45,12 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.MapControllers();
 app.MapBlazorHub();

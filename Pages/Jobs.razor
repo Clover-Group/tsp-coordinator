@@ -27,7 +27,7 @@ else
         @foreach (var job in jobQueue)
             {
                 <tr>
-                    <td>@job.JobId</td>
+                    <td><a href="jobs/@job.JobId">@job.JobId</a></td>
                     <td>@job.Request.Priority</td>
                     <td>
                         @switch (job.Status)
@@ -78,7 +78,7 @@ else
         @foreach (var job in runningJobs)
             {
                 <tr>
-                    <td>@job.JobId</td>
+                    <td><a href="jobs/@job.JobId">@job.JobId</a></td>
                     <td>@job.Request.Priority</td>
                     <td>@job.RunningOn</td>
                     <td>@job.RowsRead</td>
@@ -131,7 +131,7 @@ else
         @foreach (var job in completedJobs)
             {
                 <tr>
-                    <td>@job.JobId</td>
+                    <td><a href="jobs/@job.JobId">@job.JobId</a></td>
                     <td>@job.Request.Priority</td>
                     <td>@job.RowsRead</td>
                     <td>@job.RowsWritten</td>

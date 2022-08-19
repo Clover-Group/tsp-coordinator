@@ -1,0 +1,64 @@
+@page "/jobs/{id}"
+
+<PageTitle>Job details</PageTitle>
+
+@using TspCoordinator.Data
+@inject JobService JobService
+
+@if(Job == null)
+{
+    <p>Job with id @Id not found.</p>
+}
+else
+{
+    <h2>Job details: @Job.JobId</h2>
+
+    <p>Status: @Job.Status</p>
+    <h4>Lifecycle (@(Job.Lifecycle.Events.Count))</h4>
+    @foreach (var e in Job.Lifecycle.Events)
+    {
+        <p>
+            @e.Key : @e.Value
+        </p>
+    }
+    <h4>Request</h4>
+    <p>
+        Source: <span class="badge rounded-pill bg-secondary">@(Job.Request.Source.Type)</span> 
+    </p>
+    <p>
+        Sinks (@(Job.Request.Sinks.Count) total):
+        @foreach (var sink in Job.Request.Sinks)
+        {
+            <span class="badge rounded-pill bg-secondary">@sink.Type</span>
+        }
+    </p>
+    <h4>Patterns (@(Job.Request?.Patterns.Count ?? 0))</h4>
+    @foreach (var pattern in Job.Request.Patterns)
+    {
+        <p>ID @pattern.Id</p>
+        <pre>
+            <code>@pattern.SourceCode</code>
+        </pre>
+    }
+}
+
+@code {
+    [Parameter]
+    public string? Id { get; set; }
+
+    public Job? Job { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        base.OnInitialized();
+
+        var timer = new System.Threading.Timer((_) =>
+        {
+            InvokeAsync( async () =>
+            {
+                Job = JobService.FindJobById(Id);
+                StateHasChanged();
+            });
+        }, null, 0, 5000);
+    }
+}

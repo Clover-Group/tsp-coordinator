@@ -55,7 +55,7 @@ public class JobService
         }
     }
 
-    
+
 
     public Task<List<Job>> GetJobQueueAsync()
     {
@@ -79,6 +79,7 @@ public class JobService
 
     public void EnqueueJob(Job job)
     {
+        job.Lifecycle.AddQueued();
         jobQueue.Enqueue(job);
         _statusReportingService.SendJobStatus(job, $"Job {job.JobId} enqueued.");
     }
@@ -93,6 +94,7 @@ public class JobService
         else
         {
             job.Status = JobStatus.Running;
+            job.NotifyStatusChanged();
             _statusReportingService.SendJobStatus(job, $"Job {job.JobId} successfully started.");
         }
     }
@@ -107,6 +109,8 @@ public class JobService
         else
         {
             job.Status = info.Success ? JobStatus.Finished : JobStatus.Failed;
+            job.NotifyStatusChanged();
+            job.Lifecycle.AddFinished(info.Success);
             job.RowsRead = info.RowsRead ?? 0;
             job.RowsWritten = info.RowsWritten ?? 0;
             runningJobs.Remove(job);
@@ -195,7 +199,7 @@ public class JobService
         {
             return JobStopResult.Dequeued;
         }
-        var findInRunning = runningJobs.Find(j => j.JobId == jobId);    
+        var findInRunning = runningJobs.Find(j => j.JobId == jobId);
         if (findInRunning != null)
         {
             var client = _clientFactory.CreateClient("TspJobStopper");
@@ -211,4 +215,9 @@ public class JobService
         }
         return JobStopResult.NotFound;
     }
+
+    public Job? FindJobById(string id) =>
+        jobQueue.FindById(id)
+            ?? runningJobs.Find(j => j.JobId == id)
+            ?? completedJobs.Find(j => j.JobId == id);
 }
