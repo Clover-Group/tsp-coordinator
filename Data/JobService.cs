@@ -36,19 +36,28 @@ public class JobService
 
     private JobStatusReportingService _statusReportingService;
 
+    private ConfigurationService _configurationService;
+
     private readonly JsonSerializerOptions jsonOptions = new JsonSerializerOptions
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
     }.SetupExtensions();
 
-    public JobService(IHttpClientFactory clientFactory, ILogger<JobService> logger, TspInstancesService instancesService, JobStatusReportingService statusReportingService)
+    public JobService(IHttpClientFactory clientFactory, 
+                      ILogger<JobService> logger, 
+                      TspInstancesService instancesService, 
+                      JobStatusReportingService statusReportingService,
+                      ConfigurationService configurationService
+                      )
     {
         _clientFactory = clientFactory;
         _logger = logger;
         _instancesService = instancesService;
         _statusReportingService = statusReportingService;
-        _queueTimer = new Timer(InspectQueue, null, 10000, 5000);
-        _jobStateTimer = new Timer(UpdateJobStates, null, 10000, 5000);
+        _configurationService = configurationService;
+        var queueInspectionInterval = (int)configurationService.QueueInspectionInterval;
+        _queueTimer = new Timer(InspectQueue, null, queueInspectionInterval / 2, queueInspectionInterval);
+        _jobStateTimer = new Timer(UpdateJobStates, null, queueInspectionInterval / 2, queueInspectionInterval);
         foreach (var c in TspCoordinator.Data.TspApi.JsonConverters.Converters)
         {
             jsonOptions.Converters.Add(c);

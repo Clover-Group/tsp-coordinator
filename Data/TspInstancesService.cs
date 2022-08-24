@@ -8,10 +8,14 @@ public class TspInstancesService
 
     private readonly Timer _healthCheckTimer;
 
-    public TspInstancesService(IHttpClientFactory clientFactory)
+    private ConfigurationService _configurationService;
+
+    public TspInstancesService(IHttpClientFactory clientFactory, ConfigurationService configurationService)
     {
         _clientFactory = clientFactory;
-        _healthCheckTimer = new Timer(HealthCheck, null, 5000, 10000);
+        _configurationService = configurationService;
+        var healthCheckInterval = (int)_configurationService.HealthCheckInterval;
+        _healthCheckTimer = new Timer(HealthCheck, null, healthCheckInterval * 2, healthCheckInterval);
     }
 
     private List<TspInstance> instances = new List<TspInstance> { };

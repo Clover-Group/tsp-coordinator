@@ -1,0 +1,92 @@
+@page "/config"
+
+@using TspCoordinator.Data;
+@inject ConfigurationService ConfigurationService;
+
+<PageTitle>View config</PageTitle>
+
+<h2>Configuration</h2>
+
+<div class="row">
+    <div class="col">
+        <h4>Job reporting (to Kafka)</h4>
+        @if(ConfigurationService.StatusReportingSettings != null)
+        {
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Setting</th>
+                        <th>Environment variable</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Job reporting</td>
+                        <td>JOB_REPORTING_ENABLED</td>
+                        <td>enabled</td>
+                    </tr>
+                    <tr>
+                        <td>Broker</td>
+                        <td>JOB_REPORTING_BROKER</td>
+                        <td>@ConfigurationService.StatusReportingSettings.Broker</td>
+                    </tr>
+                    <tr>
+                        <td>Topic</td>
+                        <td>JOB_REPORTING_TOPIC</td>
+                        <td>@ConfigurationService.StatusReportingSettings.Topic</td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Setting</th>
+                        <th>Environment variable</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Job reporting</td>
+                        <td>JOB_REPORTING_ENABLED</td>
+                        <td>disabled</td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+    </div>
+    <div class="col">
+        <h4>Time intervals</h4>
+        <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Setting</th>
+                        <th>Environment variable</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Queue inspection interval (in milliseconds)</td>
+                        <td>QUEUE_INSPECTION_INTERVAL</td>
+                        <td>
+                            @ConfigurationService.QueueInspectionInterval
+                            (@TimeSpan.FromMilliseconds(ConfigurationService.QueueInspectionInterval))
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Health check interval (in milliseconds)</td>
+                        <td>HEALTH_CHECK_INTERVAL</td>
+                        <td>
+                            @ConfigurationService.HealthCheckInterval
+                            (@TimeSpan.FromMilliseconds(ConfigurationService.HealthCheckInterval))
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+    </div>
+</div>

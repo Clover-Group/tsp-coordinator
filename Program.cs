@@ -30,6 +30,7 @@ builder.Services.AddSwaggerGen(options =>
         $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
 });
 builder.Services.AddHttpClient();
+builder.Services.AddSingleton<ConfigurationService>();
 builder.Services.AddSingleton<TspInstancesService>();
 builder.Services.AddSingleton<JobService>();
 builder.Services.AddSingleton<JobStatusReportingService>();
