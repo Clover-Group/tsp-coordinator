@@ -32,17 +32,17 @@ public static class Converters
         Uuid = request.Uuid,
         Source = new Actual.SourceWithType
         {
-            Type = GetTypeFromInputConfV2(request.Source), 
-            Config = ConvertInputConfFromV2(request.Source) 
+            Type = GetTypeFromInputConfV2(request.Source),
+            Config = ConvertInputConfFromV2(request.Source)
         },
         Sinks = new List<Actual.SinkWithType>
-        { 
+        {
             new Actual.SinkWithType
             {
                 Type = GetTypeFromOutputConfV2(request.Sink),
                 Config = ConvertOutputConfFromV2(request.Sink)
             }
-            
+
         },
         Patterns = request.Patterns.Select(p => ConvertPatternFromV2(p)).ToList(),
         Priority = request.Priority
@@ -207,43 +207,52 @@ public static class Converters
     public static Actual.IOutputConf ConvertOutputConfFromV3(V3.IOutputConf outputConf) => outputConf;
 
 
-    public static Actual.EventSchema ConvertEventSchemaFromV1(V1.EventSchema eventSchema) => new Actual.EventSchema
-    {
-        Data = new Dictionary<string, Actual.IEventSchemaValue>
+    public static Actual.EventSchema ConvertEventSchemaFromV1(V1.EventSchema eventSchema) => CreateEventSchema(
+        new List<(string?, Actual.IEventSchemaValue)>()
         {
-            [eventSchema.AppIdFieldVal.Item1] = new Actual.IntegerEventSchemaValue { Type = "int32", Value = eventSchema.AppIdFieldVal.Item2 },
-            [eventSchema.ContextField] = new Actual.StringEventSchemaValue { Type = "string", Value = "Context not supported yet" },
-            [eventSchema.FromTsField] = new Actual.StringEventSchemaValue { Type = "timestamp", Value = "$IncidentStart" },
-            [eventSchema.PatternIdField] = new Actual.StringEventSchemaValue { Type = "int32", Value = "$PatternID" },
-            [eventSchema.ProcessingTsField] = new Actual.StringEventSchemaValue { Type = "timestamp", Value = "$ProcessingDate" },
-            [eventSchema.SourceIdField] = new Actual.IntegerEventSchemaValue { Type = "int32", Value = -1 },
-            [eventSchema.ToTsField] = new Actual.StringEventSchemaValue { Type = "timestamp", Value = "$IncidentEnd" },
-
+            (eventSchema.AppIdFieldVal.Item1, new Actual.IntegerEventSchemaValue { Type = "int32", Value = eventSchema.AppIdFieldVal.Item2 }),
+            (eventSchema.ContextField, new Actual.StringEventSchemaValue { Type = "string", Value = "Context not supported yet" }),
+            (eventSchema.FromTsField, new Actual.StringEventSchemaValue { Type = "timestamp", Value = "$IncidentStart" }),
+            (eventSchema.PatternIdField, new Actual.StringEventSchemaValue { Type = "int32", Value = "$PatternID" }),
+            (eventSchema.ProcessingTsField, new Actual.StringEventSchemaValue { Type = "timestamp", Value = "$ProcessingDate" }),
+            (eventSchema.SourceIdField, new Actual.IntegerEventSchemaValue { Type = "int32", Value = -1 }),
+            (eventSchema.ToTsField, new Actual.StringEventSchemaValue { Type = "timestamp", Value = "$IncidentEnd" }),
         }
-    };
+    );
 
-    public static Actual.EventSchema ConvertEventSchemaFromV2(V2.EventSchema eventSchema) => new Actual.EventSchema
-    {
-        Data = new Dictionary<string, Actual.IEventSchemaValue>
+    public static Actual.EventSchema ConvertEventSchemaFromV2(V2.EventSchema eventSchema) => CreateEventSchema(
+        new List<(string?, Actual.IEventSchemaValue)>()
         {
-            [eventSchema.AppIdFieldVal.Item1] = new Actual.IntegerEventSchemaValue { Type = "int32", Value = eventSchema.AppIdFieldVal.Item2 },
-            [eventSchema.Context.Field] = new Actual.ObjectEventSchemaValue
+            (eventSchema.AppIdFieldVal.Item1, new Actual.IntegerEventSchemaValue { Type = "int32", Value = eventSchema.AppIdFieldVal.Item2 }),
+            (eventSchema.Context?.Field, new Actual.ObjectEventSchemaValue
             {
                 Type = "object",
-                Value = eventSchema.Context.Data.Select(
+                Value = eventSchema.Context?.Data.Select(
                     kv => (kv.Key, new Actual.StringEventSchemaValue { Type = "string", Value = kv.Value })
-                    ).ToDictionary(kv => kv.Item1, kv => kv.Item2 as Actual.IEventSchemaValue, null)
-            },
-            [eventSchema.FromTsField] = new Actual.StringEventSchemaValue { Type = "timestamp", Value = "$IncidentStart" },
-            [eventSchema.IncidentIdField] = new Actual.StringEventSchemaValue { Type = "timestamp", Value = "$UUID" },
-            [eventSchema.PatternIdField] = new Actual.StringEventSchemaValue { Type = "int32", Value = "$PatternID" },
-            [eventSchema.SubunitIdField] = new Actual.StringEventSchemaValue { Type = "int32", Value = "$Subunit" },
-            [eventSchema.ToTsField] = new Actual.StringEventSchemaValue { Type = "timestamp", Value = "$IncidentEnd" },
-            [eventSchema.UnitIdField] = new Actual.StringEventSchemaValue { Type = "int32", Value = "$Unit" },
+                    ).ToDictionary(kv => kv.Item1, kv => kv.Item2 as Actual.IEventSchemaValue, null) ?? new Dictionary<string, Actual.IEventSchemaValue>()
+            }),
+            (eventSchema.FromTsField, new Actual.StringEventSchemaValue { Type = "timestamp", Value = "$IncidentStart" }),
+            (eventSchema.IncidentIdField, new Actual.StringEventSchemaValue { Type = "timestamp", Value = "$UUID" }),
+            (eventSchema.PatternIdField, new Actual.StringEventSchemaValue { Type = "int32", Value = "$PatternID" }),
+            (eventSchema.SubunitIdField, new Actual.StringEventSchemaValue { Type = "int32", Value = "$Subunit" }),
+            (eventSchema.ToTsField, new Actual.StringEventSchemaValue { Type = "timestamp", Value = "$IncidentEnd" }),
+            (eventSchema.UnitIdField, new Actual.StringEventSchemaValue { Type = "int32", Value = "$Unit" }),
 
         }
-    };
+    );
 
     public static Actual.EventSchema ConvertEventSchemaFromV3(V3.EventSchema eventSchema) => eventSchema;
+
+
+    public static Actual.EventSchema CreateEventSchema(List<(string?, Actual.IEventSchemaValue)> data)
+    {
+        var schema = new Actual.EventSchema();
+        schema.Data = new Dictionary<string, Actual.IEventSchemaValue>();
+        foreach (var (k, v) in data)
+        {
+            if (k != null) schema.Data[k] = v;
+        }
+        return schema;
+    }
 
 }
