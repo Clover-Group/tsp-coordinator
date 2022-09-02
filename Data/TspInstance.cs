@@ -27,6 +27,8 @@ public class TspInstance
 
     public DateTime HealthCheckDate { get; set; }
 
+    public uint HealthCheckAttemptsRemaining { get; set; }
+
     public List<String> RunningJobsIds { get; set; }
 
     public override string ToString()

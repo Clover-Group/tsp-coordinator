@@ -10,32 +10,61 @@ public class JobQueue
 {
     private List<Job> jobs = new List<Job>();
 
-    private readonly FasterKVSettings<string, string> _settings = 
-        new FasterKVSettings<string, string>("/tmp/tsp-coordinator/job-queue") { TryRecoverLatest = true }; 
-    private readonly FasterKV<string, string> _store;
+    private class JobListSerializer : BinaryObjectSerializer<List<Job>>
+    {
+        private readonly JsonSerializerOptions jsonOptions = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        }.SetupExtensions();
+
+        public JobListSerializer()
+        {
+            foreach (var c in TspCoordinator.Data.TspApi.JsonConverters.Converters)
+            {
+                jsonOptions.Converters.Add(c);
+            }
+        }
+
+        public override void Deserialize(out List<Job> obj)
+        {
+            var serialized = reader.ReadString();
+            obj = (List<Job>)JsonSerializer.Deserialize(serialized, typeof(List<Job>));
+        }
+
+        public override void Serialize(ref List<Job> obj)
+        {
+            var serialized = JsonSerializer.Serialize(obj);
+            writer.Write(serialized);
+        }
+    }
+
+    private readonly FasterKVSettings<string, List<Job>> _settings = 
+        new FasterKVSettings<string, List<Job>>("/tmp/tsp-coordinator/job-queue")
+        { 
+            //TryRecoverLatest = true,
+            ValueSerializer = (() => new JobListSerializer())
+        }; 
+    private readonly FasterKV<string, List<Job>> _store;
 
     private string _storeName;
 
-    private readonly JsonSerializerOptions jsonOptions = new JsonSerializerOptions
-    {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-    }.SetupExtensions();
+    
 
     public JobQueue()
     {
-        foreach (var c in TspCoordinator.Data.TspApi.JsonConverters.Converters)
-        {
-            jsonOptions.Converters.Add(c);
-        }
-        _store = new FasterKV<string, string>(_settings);
-        using var s = _store.NewSession(new SimpleFunctions<string, string>((a, b) => b));
+        _store = new FasterKV<string, List<Job>>(_settings);
+        using var s = _store.NewSession(new SimpleFunctions<string, List<Job>>((a, b) => a.Concat(b).Distinct().ToList()));
         _storeName = "job_queue";
-        string serialized = "";
-        var st = s.Read(ref _storeName, ref serialized);
-        Console.WriteLine($"Store name: {_storeName}, status: {st}");
-        if (st.Found)
+        if (_store.RecoveredVersion != 1)
         {
-            jobs = (List<Job>)JsonSerializer.Deserialize(serialized, typeof(List<Job>));
+            Console.WriteLine($"Reading store version {_store.RecoveredVersion}...");
+            Console.Out.Flush();
+            var st = s.Read(ref _storeName, ref jobs);
+            Console.WriteLine($"Store name: {_storeName}, status: {st}");
+        }
+        else
+        {
+            Console.WriteLine($"Store is version {_store.RecoveredVersion}, starting from scratch");
         }
     }
 
@@ -84,10 +113,10 @@ public class JobQueue
     private void Persist()
     {
         Console.WriteLine("Persisting...");
-        using var s = _store.NewSession(new SimpleFunctions<string, string>((a, b) => b));
-        var serializedJobs = JsonSerializer.Serialize(jobs);
-        var st = s.Upsert(ref _storeName, ref serializedJobs);
-        _store.Log.Flush(true);
+        using var s = _store.NewSession(new SimpleFunctions<string, List<Job>>((a, b) => a.Concat(b).Distinct().ToList()));
+        var st = s.Upsert(ref _storeName, ref jobs);
+        _store.TryInitiateFullCheckpoint(out _, CheckpointType.Snapshot);
+        _store.CompleteCheckpointAsync().AsTask().GetAwaiter().GetResult();
         Console.WriteLine($"Store name: {_storeName}, status: {st}");
     }
 }

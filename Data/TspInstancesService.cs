@@ -20,17 +20,23 @@ public class TspInstancesService
 
     private List<TspInstance> instances = new List<TspInstance> { };
 
+    public delegate void TspInstanceFailedHandler(TspInstance instance);
+
+    public event TspInstanceFailedHandler? TspInstanceFailed;
+
     public bool AddInstance(TspInstance instance)
     {
         if (instances.Exists(i => i.Location == instance.Location)) 
         {
             return false;
         }
+        instance.HealthCheckAttemptsRemaining = _configurationService.HealthCheckAttempts;
         instances.Add(instance);
         return true;
     }
 
-    public TspInstance? FindFirstFreeInstance() => instances.FirstOrDefault(x => x.Status == TspInstanceStatus.Active);
+    public TspInstance? FindFirstFreeInstance() => 
+        instances.FirstOrDefault(x => x.Status == TspInstanceStatus.Active && x.RunningJobsIds.Count < _configurationService.MaxJobsPerTsp);
 
     public Task<TspInstance[]> GetInstancesAsync()
     {
@@ -45,6 +51,7 @@ public class TspInstancesService
     public async void HealthCheck(Object? state)
     {
         var client = _clientFactory.CreateClient("TspHealthChecker");
+        var instancesToRemove = new List<TspInstance>();
         foreach(var instance in instances)
         {
             var tspGetVersionUrl = $"http://{instance.Host.MapToIPv4()}:{instance.Port}/metainfo/getVersion";
@@ -55,17 +62,26 @@ public class TspInstancesService
                 if (response.IsSuccessStatusCode)
                 {
                     instance.Status = TspInstanceStatus.Active;
+                    instance.HealthCheckAttemptsRemaining = _configurationService.HealthCheckAttempts;
                 }
                 else
                 {
                     instance.Status = TspInstanceStatus.NotWorking;
+                    instance.HealthCheckAttemptsRemaining--;
                 }
             }
             catch (HttpRequestException ex)
             {
                 instance.Status = TspInstanceStatus.NotResponding;
+                instance.HealthCheckAttemptsRemaining--;
             }
             instance.HealthCheckDate = DateTime.Now;
+            if (instance.HealthCheckAttemptsRemaining == 0)
+            {
+                TspInstanceFailed?.Invoke(instance);
+                instancesToRemove.Add(instance);
+                continue;
+            }
             if (instance.Status == TspInstanceStatus.Active)
             {
                 var tspGetJobsUrl = $"http://{instance.Host.MapToIPv4()}:{instance.Port}/jobs/overview";
@@ -88,6 +104,10 @@ public class TspInstancesService
                     instance.Status = TspInstanceStatus.CannotGetExtendedInfo;
                 }
             }
+        }
+        foreach(var instance in instancesToRemove)
+        {
+            instances.Remove(instance);
         }
     }
 }

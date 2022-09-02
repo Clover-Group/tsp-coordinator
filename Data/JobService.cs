@@ -53,6 +53,7 @@ public class JobService
         _clientFactory = clientFactory;
         _logger = logger;
         _instancesService = instancesService;
+        _instancesService.TspInstanceFailed += OnInstanceFailed;
         _statusReportingService = statusReportingService;
         _configurationService = configurationService;
         var queueInspectionInterval = (int)configurationService.QueueInspectionInterval;
@@ -125,6 +126,17 @@ public class JobService
             runningJobs.Remove(job);
             completedJobs.Add(job);
             _statusReportingService.SendJobStatus(job, $"Job {job.JobId} completed.");
+        }
+    }
+
+    public void OnInstanceFailed(TspInstance instance)
+    {
+        var jobsRunningOnFailedInstance = runningJobs.Where(j => j.RunningOn == instance).ToList();
+        foreach (var job in jobsRunningOnFailedInstance)
+        {
+            runningJobs.Remove(job);
+            job.RunningOn = null;
+            jobQueue.Enqueue(job);
         }
     }
 

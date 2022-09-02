@@ -43,9 +43,11 @@ else
                             break;
                         case TspInstanceStatus.NotWorking:
                             <span class="badge rounded-pill bg-danger">Not working</span>
+                            <span class="badge rounded-pill bg-danger">Remaining health check attempts: @instance.HealthCheckAttemptsRemaining</span>
                             break;
                         case TspInstanceStatus.NotResponding:
                             <span class="badge rounded-pill bg-warning">Not responding</span>
+                            <span class="badge rounded-pill bg-warning">Remaining health check attempts: @instance.HealthCheckAttemptsRemaining</span>
                             break;
                         case TspInstanceStatus.CannotGetExtendedInfo:
                             <span class="badge rounded-pill bg-warning">Cannot get extended info</span>

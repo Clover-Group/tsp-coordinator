@@ -46,9 +46,7 @@ private ILogger<ConfigurationService> _logger;
         }
 
         var queueInspectionIntervalVar = Environment.GetEnvironmentVariable("QUEUE_INSPECTION_INTERVAL") ?? "";
-        var healthCheckIntervalVar = Environment.GetEnvironmentVariable("HEALTH_CHECK_INTERVAL") ?? "";
-        ulong queueInspectionInterval, healthCheckInterval;
-        if (UInt64.TryParse(queueInspectionIntervalVar, out queueInspectionInterval))
+        if (UInt64.TryParse(queueInspectionIntervalVar, out var queueInspectionInterval))
         {
             QueueInspectionInterval = queueInspectionInterval;
         }
@@ -56,13 +54,32 @@ private ILogger<ConfigurationService> _logger;
         {
             _logger.LogWarning($"Queue inspection interval not set, defaulting to {QueueInspectionInterval}");
         }
-        if (UInt64.TryParse(healthCheckIntervalVar, out healthCheckInterval))
+        var healthCheckIntervalVar = Environment.GetEnvironmentVariable("HEALTH_CHECK_INTERVAL") ?? "";
+        if (UInt64.TryParse(healthCheckIntervalVar, out var healthCheckInterval))
         {
             HealthCheckInterval = healthCheckInterval;
         }
         else
         {
             _logger.LogWarning($"Queue inspection interval not set, defaulting to {HealthCheckInterval}");
+        }
+        var maxJobsPerTspVar = Environment.GetEnvironmentVariable("MAX_JOBS_PER_TSP") ?? "";
+        if (UInt32.TryParse(maxJobsPerTspVar, out var maxJobsPerTsp))
+        {
+            MaxJobsPerTsp = maxJobsPerTsp;
+        }
+        else
+        {
+            _logger.LogWarning($"Max jobs per TSP instance not set, defaulting to {MaxJobsPerTsp}");
+        }
+        var healthCheckAttemptsVar = Environment.GetEnvironmentVariable("HEALTH_CHECK_ATTEMPTS") ?? "";
+        if (UInt32.TryParse(healthCheckAttemptsVar, out var healthCheckAttempts))
+        {
+            HealthCheckAttempts = healthCheckAttempts;
+        }
+        else
+        {
+            _logger.LogWarning($"Health check attempts not set, defaulting to {HealthCheckAttempts}");
         }
     }
 
@@ -71,5 +88,9 @@ private ILogger<ConfigurationService> _logger;
     public ulong QueueInspectionInterval { get; private set; } = 5000;
 
     public ulong HealthCheckInterval { get; private set; } = 10000;
+
+    public uint MaxJobsPerTsp { get; set; } = 1;
+
+    public uint HealthCheckAttempts { get; set; } = 10;
     
 }

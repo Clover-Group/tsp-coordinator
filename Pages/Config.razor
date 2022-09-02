@@ -62,31 +62,55 @@
     <div class="col">
         <h4>Time intervals</h4>
         <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Setting</th>
-                        <th>Environment variable</th>
-                        <th>Value</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Queue inspection interval (in milliseconds)</td>
-                        <td>QUEUE_INSPECTION_INTERVAL</td>
-                        <td>
-                            @ConfigurationService.QueueInspectionInterval
-                            (@TimeSpan.FromMilliseconds(ConfigurationService.QueueInspectionInterval))
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Health check interval (in milliseconds)</td>
-                        <td>HEALTH_CHECK_INTERVAL</td>
-                        <td>
-                            @ConfigurationService.HealthCheckInterval
-                            (@TimeSpan.FromMilliseconds(ConfigurationService.HealthCheckInterval))
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <thead>
+                <tr>
+                    <th>Setting</th>
+                    <th>Environment variable</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Queue inspection interval (in milliseconds)</td>
+                    <td>QUEUE_INSPECTION_INTERVAL</td>
+                    <td>
+                        @ConfigurationService.QueueInspectionInterval
+                        (@TimeSpan.FromMilliseconds(ConfigurationService.QueueInspectionInterval))
+                    </td>
+                </tr>
+                <tr>
+                    <td>Health check interval (in milliseconds)</td>
+                    <td>HEALTH_CHECK_INTERVAL</td>
+                    <td>
+                        @ConfigurationService.HealthCheckInterval
+                        (@TimeSpan.FromMilliseconds(ConfigurationService.HealthCheckInterval))
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col">
+        <h4>Job management</h4>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Setting</th>
+                    <th>Environment variable</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Maximum running jobs number per TSP instance</td>
+                    <td>MAX_JOBS_PER_TSP</td>
+                    <td>@ConfigurationService.MaxJobsPerTsp</td>
+                </tr>
+                <tr>
+                    <td>Health check attempts</td>
+                    <td>HEALTH_CHECK_ATTEMPTS</td>
+                    <td>@ConfigurationService.HealthCheckAttempts</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>
