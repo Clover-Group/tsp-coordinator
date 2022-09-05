@@ -3,6 +3,7 @@
 <PageTitle>Job details</PageTitle>
 
 @using TspCoordinator.Data
+@using Humanizer
 @inject JobService JobService
 
 @if(Job == null)
@@ -13,7 +14,12 @@ else
 {
     <h2>Job details: @Job.JobId</h2>
 
-    <p>Status: @Job.Status</p>
+    <div class="card card-body">
+        <p>Status: @Job.Status</p>
+        <p>Last event occurred: @((DateTime.Now - Job.Lifecycle.Events.LastOrDefault().Key).Humanize(precision: 2)) ago</p>
+        <p>Rows read: @Job.RowsRead</p>
+        <p>Rows written: @Job.RowsWritten</p>
+    </div>
     <h4>Lifecycle (@(Job.Lifecycle.Events.Count))</h4>
     @foreach (var e in Job.Lifecycle.Events)
     {
@@ -35,10 +41,14 @@ else
     <h4>Patterns (@(Job.Request?.Patterns.Count ?? 0))</h4>
     @foreach (var pattern in Job.Request.Patterns)
     {
-        <p>ID @pattern.Id</p>
-        <pre>
-            <code>@pattern.SourceCode</code>
-        </pre>
+        <div class="card card-body">
+            <p>ID @pattern.Id</p>
+            <pre>
+                <code style="display: inline-block;white-space: normal;max-width:100%; word-break:break-all; word-wrap:break-word;">
+                    @pattern.SourceCode
+                </code>
+            </pre>
+        </div>
     }
 }
 

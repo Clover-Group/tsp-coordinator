@@ -2,12 +2,13 @@
 
 @using TspCoordinator.Data
 @inject TspInstancesService TspInstancesService
+@inject IStringLocalizer<Index> Loc
 
 <PageTitle>Index</PageTitle>
 
 <h1>TSP Coordinator</h1>
 
-<p>Welcome to TSP Coordinator!</p>
+<p>@Loc["Welcome"]</p>
 
 @if(tspInstanceCount == null)
 {
@@ -16,9 +17,8 @@
 else
 {
     <p>
-        There are <span class="text-primary font-weight-bold">@tspInstanceCount.Value.Item1</span> TSP instances connected
-        (<span class="text-success font-weight-bold">@tspInstanceCount.Value.Item2</span> active
-        and <span class="text-danger font-weight-bold">@(tspInstanceCount.Value.Item1 - tspInstanceCount.Value.Item2)</span> not working).
+        @String.Format(Loc["TSPInstancesTotal"], tspInstanceCount.Value.Item1)
+        (@String.Format(Loc["TSPInstancesActiveNotWorking"], tspInstanceCount.Value.Item2, tspInstanceCount.Value.Item1 - tspInstanceCount.Value.Item2)).
     </p>
 }
 

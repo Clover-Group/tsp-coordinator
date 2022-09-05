@@ -1,4 +1,6 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@inject IStringLocalizer<NavMenu> Loc
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">TSP Coordinator</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -11,27 +13,27 @@
     <nav class="flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
+                <span class="oi oi-home" aria-hidden="true"></span>@Loc["Home"]
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="tsp-instances">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> TSP instances
+                <span class="oi oi-list-rich" aria-hidden="true"></span>@Loc["TSPInstances"]
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="jobs">
-                <span class="oi oi-wrench" aria-hidden="true"></span> Jobs
+                <span class="oi oi-wrench" aria-hidden="true"></span>@Loc["Jobs"]
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="config">
-                <span class="oi oi-cog" aria-hidden="true"></span> View config
+                <span class="oi oi-cog" aria-hidden="true"></span>@Loc["ViewConfig"]
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="swagger">
-                <span class="oi oi-document" aria-hidden="true"></span> Swagger docs
+                <span class="oi oi-document" aria-hidden="true"></span>@Loc["SwaggerDocs"]
             </NavLink>
         </div>
     </nav>

@@ -29,6 +29,7 @@ builder.Services.AddSwaggerGen(options =>
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, 
         $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
 });
+builder.Services.AddLocalization(options => { options.ResourcesPath = "Resources"; });
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<ConfigurationService>();
 builder.Services.AddSingleton<TspInstancesService>();
@@ -49,6 +50,13 @@ if (!app.Environment.IsDevelopment())
 //app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+
+var supportedCultures = new[] { "en-US", "ru-RU", "et-EE", "pl-PL" };
+
+app.UseRequestLocalization(new RequestLocalizationOptions()
+    .SetDefaultCulture(supportedCultures[0])
+    .AddSupportedCultures(supportedCultures)
+    .AddSupportedUICultures(supportedCultures));
 
 app.UseSwagger();
 app.UseSwaggerUI();

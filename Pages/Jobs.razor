@@ -3,24 +3,25 @@
 <PageTitle>Jobs</PageTitle>
 
 @using TspCoordinator.Data
+@inject IStringLocalizer<Jobs> Loc
 @inject JobService JobService
 
-<h1>Jobs</h1>
+<h1>@Loc["Jobs"]</h1>
 
 @if (jobQueue == null)
 {
-    <h4>Job queue</h4>
+    <h4>@Loc["JobQueue"] </h4>
     <p>Loading...</p>
 }
 else
 {
-    <h4>Job queue (@jobQueue.Count())</h4>
+    <h4>@Loc["JobQueue"] (@jobQueue.Count())</h4>
     <table class="table table-striped">
     <thead>
         <tr>
-            <th>Job ID</th>
-            <th>Priority</th>
-            <th>Status</th>
+            <th>@Loc["JobID"]</th>
+            <th>@Loc["Priority"]</th>
+            <th>@Loc["Status"]</th>
         </tr>
     </thead>
     <tbody>
@@ -33,19 +34,19 @@ else
                         @switch (job.Status)
                         {
                             case JobStatus.Enqueued:
-                                <span class="badge rounded-pill bg-secondary">Enqueued</span>
+                                <span class="badge rounded-pill bg-secondary">@Loc["Enqueued"]</span>
                                 break;
                             case JobStatus.Running:
-                                <span class="badge rounded-pill bg-primary">Running</span>
+                                <span class="badge rounded-pill bg-primary">@Loc["Running"]</span>
                                 break;
                             case JobStatus.Finished:
-                                <span class="badge rounded-pill bg-success">Finished</span>
+                                <span class="badge rounded-pill bg-success">@Loc["Finished"]</span>
                                 break;
                             case JobStatus.Failed:
-                                <span class="badge rounded-pill bg-danger">Failed</span>
+                                <span class="badge rounded-pill bg-danger">@Loc["Failed"]</span>
                                 break;
                             case JobStatus.Canceled:
-                                <span class="badge rounded-pill bg-dark">Canceled</span>
+                                <span class="badge rounded-pill bg-dark">@Loc["Canceled"]</span>
                                 break;
                         }
                     </td>
@@ -57,21 +58,21 @@ else
 
 @if (runningJobs == null)
 {
-    <h4>Running jobs</h4>
+    <h4>@Loc["RunningJobs"]</h4>
     <p>Loading...</p>
 }
 else
 {
-    <h4>Running jobs (@runningJobs.Count())</h4>
+    <h4>@Loc["RunningJobs"] (@runningJobs.Count())</h4>
     <table class="table table-striped">
     <thead>
         <tr>
-            <th>Job ID</th>
-            <th>Priority</th>
-            <th>Running on</th>
-            <th>Rows read</th>
-            <th>Rows written</th>
-            <th>Status</th>
+            <th>@Loc["JobID"]</th>
+            <th>@Loc["Priority"]</th>
+            <th>@Loc["RunningOn"]</th>
+            <th>@Loc["RowsRead"]</th>
+            <th>@Loc["RowsWritten"]</th>
+            <th>@Loc["Status"]</th>
         </tr>
     </thead>
     <tbody>
@@ -87,19 +88,19 @@ else
                         @switch (job.Status)
                         {
                             case JobStatus.Enqueued:
-                                <span class="badge rounded-pill bg-secondary">Enqueued</span>
+                                <span class="badge rounded-pill bg-secondary">@Loc["Enqueued"]</span>
                                 break;
                             case JobStatus.Running:
-                                <span class="badge rounded-pill bg-primary">Running</span>
+                                <span class="badge rounded-pill bg-primary">@Loc["Running"]</span>
                                 break;
                             case JobStatus.Finished:
-                                <span class="badge rounded-pill bg-success">Finished</span>
+                                <span class="badge rounded-pill bg-success">@Loc["Finished"]</span>
                                 break;
                             case JobStatus.Failed:
-                                <span class="badge rounded-pill bg-danger">Failed</span>
+                                <span class="badge rounded-pill bg-danger">@Loc["Failed"]</span>
                                 break;
                             case JobStatus.Canceled:
-                                <span class="badge rounded-pill bg-dark">Canceled</span>
+                                <span class="badge rounded-pill bg-dark">@Loc["Canceled"]</span>
                                 break;
                         }
                     </td>
@@ -111,20 +112,20 @@ else
 
 @if (completedJobs == null)
 {
-    <h4>Completed jobs</h4>
+    <h4>@Loc["CompletedJobs"]</h4>
     <p>Loading...</p>
 }
 else
 {
-    <h4>Completed jobs (@completedJobs.Count())</h4>
+    <h4>@Loc["CompletedJobs"] (@completedJobs.Count())</h4>
     <table class="table table-striped">
     <thead>
         <tr>
-            <th>Job ID</th>
-            <th>Priority</th>
-            <th>Rows read</th>
-            <th>Rows written</th>
-            <th>Status</th>
+            <th>@Loc["JobID"]</th>
+            <th>@Loc["Priority"]</th>
+            <th>@Loc["RowsRead"]</th>
+            <th>@Loc["RowsWritten"]</th>
+            <th>@Loc["Status"]</th>
         </tr>
     </thead>
     <tbody>
@@ -139,19 +140,19 @@ else
                         @switch (job.Status)
                         {
                             case JobStatus.Enqueued:
-                                <span class="badge rounded-pill bg-secondary">Enqueued</span>
+                                <span class="badge rounded-pill bg-secondary">@Loc["Enqueued"]</span>
                                 break;
                             case JobStatus.Running:
-                                <span class="badge rounded-pill bg-primary">Running</span>
+                                <span class="badge rounded-pill bg-primary">@Loc["Running"]</span>
                                 break;
                             case JobStatus.Finished:
-                                <span class="badge rounded-pill bg-success">Finished</span>
+                                <span class="badge rounded-pill bg-success">@Loc["Finished"]</span>
                                 break;
                             case JobStatus.Failed:
-                                <span class="badge rounded-pill bg-danger">Failed</span>
+                                <span class="badge rounded-pill bg-danger">@Loc["Failed"]</span>
                                 break;
                             case JobStatus.Canceled:
-                                <span class="badge rounded-pill bg-dark">Canceled</span>
+                                <span class="badge rounded-pill bg-dark">@Loc["Canceled"]</span>
                                 break;
                         }
                     </td>
