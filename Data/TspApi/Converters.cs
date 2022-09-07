@@ -1,10 +1,24 @@
 namespace TspCoordinator.Data.TspApi;
 
 using System.Text.Json;
+using Dahomey.Json;
 using Actual = V3;
 
 public static class Converters
 {
+
+    private static readonly JsonSerializerOptions jsonOptions = new JsonSerializerOptions
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+    }.SetupExtensions();
+
+    static Converters()
+    {
+        foreach (var c in TspCoordinator.Data.TspApi.JsonConverters.Converters)
+        {
+            jsonOptions.Converters.Add(c);
+        }
+    }
 
     public static Actual.Request ConvertRequestFromV1(V1.Request request) => new Actual.Request
     {
@@ -113,11 +127,11 @@ public static class Converters
         {
             V1.NarrowDataUnfolding ndu => new Actual.NarrowDataUnfolding
             {
-                Config = JsonSerializer.Deserialize<Actual.NarrowDataUnfoldingConf>(JsonSerializer.Serialize(ndu.Config))
+                Config = JsonSerializer.Deserialize<Actual.NarrowDataUnfoldingConf>(JsonSerializer.Serialize(ndu.Config), jsonOptions)
             },
             V1.WideDataFilling wdf => new Actual.WideDataFilling
             {
-                Config = JsonSerializer.Deserialize<Actual.WideDataFillingConf>(JsonSerializer.Serialize(wdf.Config))
+                Config = JsonSerializer.Deserialize<Actual.WideDataFillingConf>(JsonSerializer.Serialize(wdf.Config), jsonOptions)
             }
         };
 
@@ -126,11 +140,11 @@ public static class Converters
         {
             V2.NarrowDataUnfolding ndu => new Actual.NarrowDataUnfolding
             {
-                Config = JsonSerializer.Deserialize<Actual.NarrowDataUnfoldingConf>(JsonSerializer.Serialize(ndu.Config))
+                Config = JsonSerializer.Deserialize<Actual.NarrowDataUnfoldingConf>(JsonSerializer.Serialize(ndu.Config), jsonOptions)
             },
             V2.WideDataFilling wdf => new Actual.WideDataFilling
             {
-                Config = JsonSerializer.Deserialize<Actual.WideDataFillingConf>(JsonSerializer.Serialize(wdf.Config))
+                Config = JsonSerializer.Deserialize<Actual.WideDataFillingConf>(JsonSerializer.Serialize(wdf.Config), jsonOptions)
             }
         };
 
@@ -140,18 +154,18 @@ public static class Converters
         => inputConf switch
         {
             V1.JdbcInputConf jdbcInputConf =>
-                JsonSerializer.Deserialize<Actual.JdbcInputConf>(JsonSerializer.Serialize(jdbcInputConf)),
+                JsonSerializer.Deserialize<Actual.JdbcInputConf>(JsonSerializer.Serialize(jdbcInputConf), jsonOptions),
             V1.KafkaInputConf kafkaInputConf =>
-                JsonSerializer.Deserialize<Actual.KafkaInputConf>(JsonSerializer.Serialize(kafkaInputConf))
+                JsonSerializer.Deserialize<Actual.KafkaInputConf>(JsonSerializer.Serialize(kafkaInputConf), jsonOptions)
         };
 
     public static Actual.IInputConf ConvertInputConfFromV2(V2.IInputConf inputConf)
         => inputConf switch
         {
             V2.JdbcInputConf jdbcInputConf =>
-                JsonSerializer.Deserialize<Actual.JdbcInputConf>(JsonSerializer.Serialize(jdbcInputConf)),
+                JsonSerializer.Deserialize<Actual.JdbcInputConf>(JsonSerializer.Serialize(jdbcInputConf), jsonOptions),
             V2.KafkaInputConf kafkaInputConf =>
-                JsonSerializer.Deserialize<Actual.KafkaInputConf>(JsonSerializer.Serialize(kafkaInputConf))
+                JsonSerializer.Deserialize<Actual.KafkaInputConf>(JsonSerializer.Serialize(kafkaInputConf), jsonOptions)
         };
 
     public static Actual.IInputConf ConvertInputConfFromV3(V3.IInputConf inputConf) => inputConf;
