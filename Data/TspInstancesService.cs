@@ -52,7 +52,8 @@ public class TspInstancesService
     {
         var client = _clientFactory.CreateClient("TspHealthChecker");
         var instancesToRemove = new List<TspInstance>();
-        foreach(var instance in instances)
+        var currentInstances = new List<TspInstance>(instances);
+        foreach(var instance in currentInstances)
         {
             var tspGetVersionUrl = $"http://{instance.Host.MapToIPv4()}:{instance.Port}/metainfo/getVersion";
             var getVersionRequest = new HttpRequestMessage(HttpMethod.Get, tspGetVersionUrl);
