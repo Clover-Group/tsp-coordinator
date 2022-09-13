@@ -35,8 +35,11 @@ public class TspInstancesService
         return true;
     }
 
-    public TspInstance? FindFirstFreeInstance() => 
-        instances.FirstOrDefault(x => x.Status == TspInstanceStatus.Active && x.RunningJobsIds.Count < _configurationService.MaxJobsPerTsp);
+    public TspInstance? FindFirstFreeInstance() {
+        var copiedInstances = new List<TspInstance>(instances);
+        return copiedInstances.FirstOrDefault(x => x.Status == TspInstanceStatus.Active && (x.RunningJobsIds?.Count ?? 0) < _configurationService.MaxJobsPerTsp);
+    } 
+        
 
     public Task<TspInstance[]> GetInstancesAsync()
     {
