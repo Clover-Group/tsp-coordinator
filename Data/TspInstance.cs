@@ -16,6 +16,7 @@ public class TspInstance
     [JsonIgnore]
     public IPAddress Host { get; set; }
 
+    [JsonIgnore]
     public int Port { get; set; }
 
     [JsonInclude]
@@ -29,7 +30,15 @@ public class TspInstance
 
     public uint HealthCheckAttemptsRemaining { get; set; }
 
-    public List<String> RunningJobsIds { get; set; }
+    public List<String> RunningJobsIds { get; set; } = new List<string>();
+
+    public List<String> SentJobsIds { get; set; } = new List<string>();
+
+    public int RunningJobsCount => RunningJobsIds?.Count ?? 0;
+
+    public int SentJobsCount => SentJobsIds?.Count ?? 0;
+
+    public int TotalJobCount => RunningJobsCount + SentJobsCount;
 
     public override string ToString()
     {

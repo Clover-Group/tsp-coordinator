@@ -52,7 +52,13 @@ else
                             break;
                     }
                     </td>
-                    <td>@(instance.RunningJobsIds?.Count ?? 0)</td>
+                    <td>
+                        <span>@(instance.RunningJobsCount)</span>
+                        @if(instance.SentJobsCount > 0)
+                        {
+                            <span> + @(instance.SentJobsCount)</span>
+                        }
+                    </td>
                 </tr>
             }
         </tbody>

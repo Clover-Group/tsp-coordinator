@@ -126,6 +126,8 @@ public class JobService
             runningJobs.Remove(job);
             completedJobs.Add(job);
             _statusReportingService.SendJobStatus(job, $"Job {job.JobId} completed.");
+            // if job completed quickly (between health checks), we remove it from sent ones manually
+            job.RunningOn?.SentJobsIds?.RemoveAll(x => x == job.JobId);
         }
     }
 
@@ -181,8 +183,9 @@ public class JobService
 
         if (firstFreeInstance == null) return;
 
-        var job = jobQueue.Dequeue();
+        var job = jobQueue.Dequeue()!;
         job.RunningOn = firstFreeInstance;
+        firstFreeInstance.SentJobsIds.Add(job.JobId);
         runningJobs.Add(job);
 
         var jobSubmitUrl = $"http://{firstFreeInstance.Host.MapToIPv4()}:{firstFreeInstance.Port}/job/submit/";

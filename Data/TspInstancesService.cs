@@ -37,7 +37,12 @@ public class TspInstancesService
 
     public TspInstance? FindFirstFreeInstance() {
         var copiedInstances = new List<TspInstance>(instances);
-        return copiedInstances.FirstOrDefault(x => x.Status == TspInstanceStatus.Active && (x.RunningJobsIds?.Count ?? 0) < _configurationService.MaxJobsPerTsp);
+        return copiedInstances
+            .OrderBy(x => x.TotalJobCount)
+            .FirstOrDefault(
+                x => x.Status == TspInstanceStatus.Active 
+                    && (x.TotalJobCount) < _configurationService.MaxJobsPerTsp
+                );
     } 
         
 
@@ -72,6 +77,7 @@ public class TspInstancesService
                 {
                     instance.Status = TspInstanceStatus.NotWorking;
                     instance.HealthCheckAttemptsRemaining--;
+                    instance.SentJobsIds.Clear();
                 }
             }
             catch (HttpRequestException ex)
@@ -97,15 +103,18 @@ public class TspInstancesService
                     {
                         var jobsIds = await response.Content.ReadFromJsonAsync<List<String>>();
                         instance.RunningJobsIds = jobsIds ?? new List<string>();
+                        instance.SentJobsIds.RemoveAll(x => instance.RunningJobsIds?.Contains(x) ?? false);
                     }
                     else
                     {
                         instance.Status = TspInstanceStatus.CannotGetExtendedInfo;
+                        instance.SentJobsIds.Clear();
                     }                   
                 }
                 catch (HttpRequestException ex)
                 {
                     instance.Status = TspInstanceStatus.CannotGetExtendedInfo;
+                    instance.SentJobsIds.Clear();
                 }
             }
         }
