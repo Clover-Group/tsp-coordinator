@@ -117,64 +117,44 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Jobs" xml:space="preserve">
-    <value>Ülesanded</value>
-    <comment/>
-  </data>
-  <data name="JobQueue" xml:space="preserve">
-    <value>Ülesandejärjekord</value>
-    <comment/>
-  </data>
-  <data name="RunningJobs" xml:space="preserve">
-    <value>Töötavad ülesanded</value>
-    <comment/>
-  </data>
-  <data name="CompletedJobs" xml:space="preserve">
-    <value>Tehtud ülesanded</value>
-    <comment/>
-  </data>
-  <data name="JobID" xml:space="preserve">
-    <value>Ülesande ID</value>
-    <comment/>
-  </data>
-  <data name="Priority" xml:space="preserve">
-    <value>Prioriteet</value>
-    <comment/>
-  </data>
-  <data name="RunningOn" xml:space="preserve">
-    <value>Töötab kohta</value>
-    <comment/>
-  </data>
-  <data name="RowsRead" xml:space="preserve">
-    <value>Rida loetud</value>
-    <comment/>
-  </data>
-  <data name="RowsWritten" xml:space="preserve">
-    <value>Rida kirjutatud</value>
+  <data name="JobDetails" xml:space="preserve">
+    <value>Szczegóły o zadaniu</value>
     <comment/>
   </data>
   <data name="Status" xml:space="preserve">
-    <value>Staatus</value>
+    <value>Status</value>
     <comment/>
   </data>
-  <data name="Enqueued" xml:space="preserve">
-    <value> Järjekorras</value>
+  <data name="TimeSinceLastActivity" xml:space="preserve">
+    <value>Czas od chwili ostatniej aktywności</value>
     <comment/>
   </data>
-  <data name="Running" xml:space="preserve">
-    <value>Töötab</value>
+  <data name="RowsRead" xml:space="preserve">
+    <value>Wiersze przeczytane</value>
     <comment/>
   </data>
-  <data name="Finished" xml:space="preserve">
-    <value>Lõpetatud</value>
+  <data name="RowsWritten" xml:space="preserve">
+    <value>Wiersze zapisane</value>
     <comment/>
   </data>
-  <data name="Failed" xml:space="preserve">
-    <value>Läbi kukutud</value>
+  <data name="Lifecycle" xml:space="preserve">
+    <value>Cykl życiowy</value>
     <comment/>
   </data>
-  <data name="Canceled" xml:space="preserve">
-    <value>Tühistatud</value>
+  <data name="Request" xml:space="preserve">
+    <value>Zapytanie</value>
+    <comment/>
+  </data>
+  <data name="Source" xml:space="preserve">
+    <value>Źródło</value>
+    <comment/>
+  </data>
+  <data name="Sinks" xml:space="preserve">
+    <value>Odbiorniki</value>
+    <comment/>
+  </data>
+  <data name="Patterns" xml:space="preserve">
+    <value>Wzorce</value>
     <comment/>
   </data>
 </root>

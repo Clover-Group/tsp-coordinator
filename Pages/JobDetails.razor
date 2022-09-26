@@ -4,6 +4,7 @@
 
 @using TspCoordinator.Data
 @using Humanizer
+@inject IStringLocalizer<JobDetails> Loc
 @inject JobService JobService
 
 @if(Job == null)
@@ -12,13 +13,13 @@
 }
 else
 {
-    <h2>Job details: @Job.JobId</h2>
+    <h2>@Loc["JobDetails"]: @Job.JobId</h2>
 
     <div class="card card-body">
-        <p>Status: @Job.Status</p>
-        <p>Last event occurred: @((DateTime.Now - Job.Lifecycle.Events.LastOrDefault().Key).Humanize(precision: 2)) ago</p>
-        <p>Rows read: @Job.RowsRead</p>
-        <p>Rows written: @Job.RowsWritten</p>
+        <p>@Loc["Status"]: @Job.Status</p>
+        <p>@Loc["TimeSinceLastActivity"]: @((DateTime.Now - Job.Lifecycle.Events.LastOrDefault().Key).Humanize(precision: 2))</p>
+        <p>@Loc["RowsRead"]: @Job.RowsRead</p>
+        <p>@Loc["RowsWritten"]: @Job.RowsWritten</p>
     </div>
     <h4>Lifecycle (@(Job.Lifecycle.Events.Count))</h4>
     @foreach (var e in Job.Lifecycle.Events)
@@ -27,18 +28,18 @@ else
             @e.Key : @e.Value
         </p>
     }
-    <h4>Request</h4>
+    <h4>@Loc["Request"]</h4>
     <p>
-        Source: <span class="badge rounded-pill bg-secondary">@(Job.Request.Source.Type)</span> 
+        @Loc["Source"]: <span class="badge rounded-pill bg-secondary">@(Job.Request.Source.Type)</span> 
     </p>
     <p>
-        Sinks (@(Job.Request.Sinks.Count) total):
+        @Loc["Sinks"] (@(Job.Request.Sinks.Count) total):
         @foreach (var sink in Job.Request.Sinks)
         {
             <span class="badge rounded-pill bg-secondary">@sink.Type</span>
         }
     </p>
-    <h4>Patterns (@(Job.Request?.Patterns.Count ?? 0))</h4>
+    <h4>@Loc["Patterns"] (@(Job.Request?.Patterns.Count ?? 0))</h4>
     @foreach (var pattern in Job.Request.Patterns)
     {
         <div class="card card-body">

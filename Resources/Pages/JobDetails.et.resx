@@ -117,32 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Jobs" xml:space="preserve">
-    <value>Ülesanded</value>
+  <data name="JobDetails" xml:space="preserve">
+    <value>Ülesande üksikasjad </value>
     <comment/>
   </data>
-  <data name="JobQueue" xml:space="preserve">
-    <value>Ülesandejärjekord</value>
+  <data name="Status" xml:space="preserve">
+    <value>Staatus</value>
     <comment/>
   </data>
-  <data name="RunningJobs" xml:space="preserve">
-    <value>Töötavad ülesanded</value>
-    <comment/>
-  </data>
-  <data name="CompletedJobs" xml:space="preserve">
-    <value>Tehtud ülesanded</value>
-    <comment/>
-  </data>
-  <data name="JobID" xml:space="preserve">
-    <value>Ülesande ID</value>
-    <comment/>
-  </data>
-  <data name="Priority" xml:space="preserve">
-    <value>Prioriteet</value>
-    <comment/>
-  </data>
-  <data name="RunningOn" xml:space="preserve">
-    <value>Töötab kohta</value>
+  <data name="TimeSinceLastActivity" xml:space="preserve">
+    <value>Viimase aktiivsuse hetkest aeg</value>
     <comment/>
   </data>
   <data name="RowsRead" xml:space="preserve">
@@ -153,28 +137,24 @@
     <value>Rida kirjutatud</value>
     <comment/>
   </data>
-  <data name="Status" xml:space="preserve">
-    <value>Staatus</value>
+  <data name="Lifecycle" xml:space="preserve">
+    <value>Elutsükkel </value>
     <comment/>
   </data>
-  <data name="Enqueued" xml:space="preserve">
-    <value> Järjekorras</value>
+  <data name="Request" xml:space="preserve">
+    <value>Päring</value>
     <comment/>
   </data>
-  <data name="Running" xml:space="preserve">
-    <value>Töötab</value>
+  <data name="Source" xml:space="preserve">
+    <value>Allikas</value>
     <comment/>
   </data>
-  <data name="Finished" xml:space="preserve">
-    <value>Lõpetatud</value>
+  <data name="Sinks" xml:space="preserve">
+    <value>Vastuvõtjad</value>
     <comment/>
   </data>
-  <data name="Failed" xml:space="preserve">
-    <value>Läbi kukutud</value>
-    <comment/>
-  </data>
-  <data name="Canceled" xml:space="preserve">
-    <value>Tühistatud</value>
+  <data name="Patterns" xml:space="preserve">
+    <value>Reeglid</value>
     <comment/>
   </data>
 </root>

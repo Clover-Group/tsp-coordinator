@@ -117,64 +117,48 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Jobs" xml:space="preserve">
-    <value>Ülesanded</value>
+  <data name="Number" xml:space="preserve">
+    <value>Nr</value>
     <comment/>
   </data>
-  <data name="JobQueue" xml:space="preserve">
-    <value>Ülesandejärjekord</value>
+  <data name="Location" xml:space="preserve">
+    <value>Asukoht</value>
     <comment/>
   </data>
-  <data name="RunningJobs" xml:space="preserve">
-    <value>Töötavad ülesanded</value>
+  <data name="Version" xml:space="preserve">
+    <value>Version</value>
     <comment/>
   </data>
-  <data name="CompletedJobs" xml:space="preserve">
-    <value>Tehtud ülesanded</value>
-    <comment/>
-  </data>
-  <data name="JobID" xml:space="preserve">
-    <value>Ülesande ID</value>
-    <comment/>
-  </data>
-  <data name="Priority" xml:space="preserve">
-    <value>Prioriteet</value>
-    <comment/>
-  </data>
-  <data name="RunningOn" xml:space="preserve">
-    <value>Töötab kohta</value>
-    <comment/>
-  </data>
-  <data name="RowsRead" xml:space="preserve">
-    <value>Rida loetud</value>
-    <comment/>
-  </data>
-  <data name="RowsWritten" xml:space="preserve">
-    <value>Rida kirjutatud</value>
+  <data name="LastHealthCheck" xml:space="preserve">
+    <value>Viimane tervisekontroll</value>
     <comment/>
   </data>
   <data name="Status" xml:space="preserve">
     <value>Staatus</value>
     <comment/>
   </data>
-  <data name="Enqueued" xml:space="preserve">
-    <value> Järjekorras</value>
+  <data name="JobsRunning" xml:space="preserve">
+    <value>Töötavad ülesanded</value>
     <comment/>
   </data>
-  <data name="Running" xml:space="preserve">
-    <value>Töötab</value>
+  <data name="Active" xml:space="preserve">
+    <value>Aktiivne</value>
     <comment/>
   </data>
-  <data name="Finished" xml:space="preserve">
-    <value>Lõpetatud</value>
+  <data name="NotWorking" xml:space="preserve">
+    <value>Ei tööta</value>
     <comment/>
   </data>
-  <data name="Failed" xml:space="preserve">
-    <value>Läbi kukutud</value>
+  <data name="NotResponding" xml:space="preserve">
+    <value>Ei vasta</value>
     <comment/>
   </data>
-  <data name="Canceled" xml:space="preserve">
-    <value>Tühistatud</value>
+  <data name="CannotGetExtendedInfo" xml:space="preserve">
+    <value>On võimatu üksikasjade saada</value>
+    <comment/>
+  </data>
+  <data name="HealthCheckAttemptsRemaining" xml:space="preserve">
+    <value>Tervisekontrolli katsed jäänud</value>
     <comment/>
   </data>
 </root>
