@@ -1,24 +1,9 @@
 namespace TspCoordinator.Data.TspApi;
 
-using System.Text.Json;
-using Dahomey.Json;
 using Actual = V3;
 
 public static class Converters
 {
-
-    private static readonly JsonSerializerOptions jsonOptions = new JsonSerializerOptions
-    {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-    }.SetupExtensions();
-
-    static Converters()
-    {
-        foreach (var c in TspCoordinator.Data.TspApi.JsonConverters.Converters)
-        {
-            jsonOptions.Converters.Add(c);
-        }
-    }
 
     public static Actual.Request ConvertRequestFromV1(V1.Request request) => new Actual.Request
     {
@@ -122,30 +107,50 @@ public static class Converters
 
     public static Actual.Pattern ConvertPatternFromV3(V3.Pattern pattern) => pattern;
 
-    public static Actual.ISourceDataTransformation ConvertSDTFromV1(V1.ISourceDataTransformation sdt)
+    public static Actual.ISourceDataTransformation? ConvertSDTFromV1(V1.ISourceDataTransformation? sdt)
         => sdt switch
         {
             V1.NarrowDataUnfolding ndu => new Actual.NarrowDataUnfolding
             {
-                Config = JsonSerializer.Deserialize<Actual.NarrowDataUnfoldingConf>(JsonSerializer.Serialize(ndu.Config), jsonOptions)
+                Config = new Actual.NarrowDataUnfoldingConf {
+                    KeyColumn = (ndu.Config as V1.NarrowDataUnfoldingConf).KeyColumn,
+                    DefaultValueColumn = (ndu.Config as V1.NarrowDataUnfoldingConf).DefaultValueColumn,
+                    FieldsTimeoutsMs = (ndu.Config as V1.NarrowDataUnfoldingConf).FieldsTimeoutsMs,
+                    ValueColumnMapping = (ndu.Config as V1.NarrowDataUnfoldingConf).ValueColumnMapping,
+                }
             },
             V1.WideDataFilling wdf => new Actual.WideDataFilling
             {
-                Config = JsonSerializer.Deserialize<Actual.WideDataFillingConf>(JsonSerializer.Serialize(wdf.Config), jsonOptions)
-            }
+                Config = new Actual.WideDataFillingConf {
+                    FieldsTimeoutsMs = (wdf.Config as V1.WideDataFillingConf).FieldsTimeoutsMs,
+                    DefaultTimeout = (wdf.Config as V1.WideDataFillingConf).DefaultTimeout,
+                }
+            },
+            _ => null
         };
 
-    public static Actual.ISourceDataTransformation ConvertSDTFromV2(V2.ISourceDataTransformation sdt)
+    public static Actual.ISourceDataTransformation? ConvertSDTFromV2(V2.ISourceDataTransformation? sdt)
         => sdt switch
         {
             V2.NarrowDataUnfolding ndu => new Actual.NarrowDataUnfolding
             {
-                Config = JsonSerializer.Deserialize<Actual.NarrowDataUnfoldingConf>(JsonSerializer.Serialize(ndu.Config), jsonOptions)
+                Config = new Actual.NarrowDataUnfoldingConf
+                {
+                    KeyColumn = (ndu.Config as V2.NarrowDataUnfoldingConf).KeyColumn,
+                    DefaultValueColumn = (ndu.Config as V2.NarrowDataUnfoldingConf).DefaultValueColumn,
+                    FieldsTimeoutsMs = (ndu.Config as V2.NarrowDataUnfoldingConf).FieldsTimeoutsMs,
+                    ValueColumnMapping = (ndu.Config as V2.NarrowDataUnfoldingConf).ValueColumnMapping,
+                }
             },
             V2.WideDataFilling wdf => new Actual.WideDataFilling
             {
-                Config = JsonSerializer.Deserialize<Actual.WideDataFillingConf>(JsonSerializer.Serialize(wdf.Config), jsonOptions)
-            }
+                Config = new Actual.WideDataFillingConf
+                {
+                    FieldsTimeoutsMs = (wdf.Config as V2.WideDataFillingConf).FieldsTimeoutsMs,
+                    DefaultTimeout = (wdf.Config as V2.WideDataFillingConf).DefaultTimeout,
+                }
+            },
+            _ => null
         };
 
     public static Actual.ISourceDataTransformation ConvertSDTFromV3(V3.ISourceDataTransformation sdt) => sdt;
@@ -154,18 +159,100 @@ public static class Converters
         => inputConf switch
         {
             V1.JdbcInputConf jdbcInputConf =>
-                JsonSerializer.Deserialize<Actual.JdbcInputConf>(JsonSerializer.Serialize(jdbcInputConf), jsonOptions),
+                new Actual.JdbcInputConf
+                {
+                    ChunkSizeMs = jdbcInputConf.ChunkSizeMs,
+                    DataTransformation = ConvertSDTFromV1(jdbcInputConf.DataTransformation),
+                    DatetimeField = jdbcInputConf.DatetimeField,
+                    DefaultEventsGapMs = jdbcInputConf.DefaultEventsGapMs,
+                    DefaultToleranceFraction = jdbcInputConf.DefaultToleranceFraction,
+                    DriverName = jdbcInputConf.DriverName,
+                    EventsMaxGapMs = jdbcInputConf.EventsMaxGapMs,
+                    JdbcUrl = jdbcInputConf.JdbcUrl,
+                    NumParallelSources = jdbcInputConf.NumParallelSources,
+                    Parallelism = jdbcInputConf.Parallelism,
+                    PartitionFields = jdbcInputConf.PartitionFields,
+                    Password = jdbcInputConf.Password,
+                    PatternsParallelism = jdbcInputConf.PatternsParallelism,
+                    ProcessingBatchSize = null,
+                    Query = jdbcInputConf.Query,
+                    SourceId = jdbcInputConf.SourceId,
+                    TimestampMultiplier = jdbcInputConf.TimestampMultiplier,
+                    UnitIdField = jdbcInputConf.UnitIdField,
+                    UserName = jdbcInputConf.UserName
+                },
             V1.KafkaInputConf kafkaInputConf =>
-                JsonSerializer.Deserialize<Actual.KafkaInputConf>(JsonSerializer.Serialize(kafkaInputConf), jsonOptions)
+                new Actual.KafkaInputConf
+                {
+                    Brokers = kafkaInputConf.Brokers,
+                    ChunkSizeMs = kafkaInputConf.ChunkSizeMs,
+                    DataTransformation = ConvertSDTFromV1(kafkaInputConf.DataTransformation),
+                    DatetimeField = kafkaInputConf.DatetimeField,
+                    DefaultEventsGapMs = kafkaInputConf.DefaultEventsGapMs,
+                    DefaultToleranceFraction = kafkaInputConf.DefaultToleranceFraction,
+                    EventsMaxGapMs = kafkaInputConf.EventsMaxGapMs,
+                    FieldsTypes = kafkaInputConf.FieldsTypes,
+                    Group = kafkaInputConf.Group,
+                    NumParallelSources = kafkaInputConf.NumParallelSources,
+                    Parallelism = kafkaInputConf.Parallelism,
+                    PartitionFields = kafkaInputConf.PartitionFields,
+                    PatternsParallelism = kafkaInputConf.PatternsParallelism,
+                    ProcessingBatchSize = null,
+                    Serializer = kafkaInputConf.Serializer,
+                    SourceId = kafkaInputConf.SourceId,
+                    TimestampMultiplier = kafkaInputConf.TimestampMultiplier,
+                    Topic = kafkaInputConf.Topic,
+                    UnitIdField = kafkaInputConf.UnitIdField
+                }
         };
 
     public static Actual.IInputConf ConvertInputConfFromV2(V2.IInputConf inputConf)
         => inputConf switch
         {
             V2.JdbcInputConf jdbcInputConf =>
-                JsonSerializer.Deserialize<Actual.JdbcInputConf>(JsonSerializer.Serialize(jdbcInputConf), jsonOptions),
+                new Actual.JdbcInputConf {
+                    ChunkSizeMs = jdbcInputConf.ChunkSizeMs,
+                    DataTransformation = ConvertSDTFromV2(jdbcInputConf.DataTransformation),
+                    DatetimeField = jdbcInputConf.DatetimeField,
+                    DefaultEventsGapMs = jdbcInputConf.DefaultEventsGapMs,
+                    DefaultToleranceFraction = jdbcInputConf.DefaultToleranceFraction,
+                    DriverName = jdbcInputConf.DriverName,
+                    EventsMaxGapMs = jdbcInputConf.EventsMaxGapMs,
+                    JdbcUrl = jdbcInputConf.JdbcUrl,
+                    NumParallelSources = jdbcInputConf.NumParallelSources,
+                    Parallelism = jdbcInputConf.Parallelism,
+                    PartitionFields = jdbcInputConf.PartitionFields,
+                    Password = jdbcInputConf.Password,
+                    PatternsParallelism = jdbcInputConf.PatternsParallelism,
+                    ProcessingBatchSize = null,
+                    Query = jdbcInputConf.Query,
+                    SourceId = jdbcInputConf.SourceId,
+                    TimestampMultiplier = jdbcInputConf.TimestampMultiplier,
+                    UnitIdField = jdbcInputConf.UnitIdField,
+                    UserName = jdbcInputConf.UserName
+                },
             V2.KafkaInputConf kafkaInputConf =>
-                JsonSerializer.Deserialize<Actual.KafkaInputConf>(JsonSerializer.Serialize(kafkaInputConf), jsonOptions)
+                new Actual.KafkaInputConf {
+                    Brokers = kafkaInputConf.Brokers,
+                    ChunkSizeMs = kafkaInputConf.ChunkSizeMs,
+                    DataTransformation = ConvertSDTFromV2(kafkaInputConf.DataTransformation),
+                    DatetimeField = kafkaInputConf.DatetimeField,
+                    DefaultEventsGapMs = kafkaInputConf.DefaultEventsGapMs,
+                    DefaultToleranceFraction = kafkaInputConf.DefaultToleranceFraction,
+                    EventsMaxGapMs = kafkaInputConf.EventsMaxGapMs,
+                    FieldsTypes = kafkaInputConf.FieldsTypes,
+                    Group = kafkaInputConf.Group,
+                    NumParallelSources = kafkaInputConf.NumParallelSources,
+                    Parallelism = kafkaInputConf.Parallelism,
+                    PartitionFields = kafkaInputConf.PartitionFields,
+                    PatternsParallelism = kafkaInputConf.PatternsParallelism,
+                    ProcessingBatchSize = null,
+                    Serializer = kafkaInputConf.Serializer,
+                    SourceId = kafkaInputConf.SourceId,
+                    TimestampMultiplier = kafkaInputConf.TimestampMultiplier,
+                    Topic = kafkaInputConf.Topic,
+                    UnitIdField = kafkaInputConf.UnitIdField
+                }
         };
 
     public static Actual.IInputConf ConvertInputConfFromV3(V3.IInputConf inputConf) => inputConf;

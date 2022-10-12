@@ -14,7 +14,7 @@ public class SinkWithType
 
 public class Request
 {
-    public string Uuid { get; set; }
+    public string Uuid { get; set; } = System.Guid.NewGuid().ToString();
     public SourceWithType Source { get; set; }
     public List<SinkWithType> Sinks { get; set; }
 
