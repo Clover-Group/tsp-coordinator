@@ -47,7 +47,14 @@ public static class Converters
         Priority = request.Priority
     };
 
-    public static Actual.Request ConvertRequestFromV3(V3.Request request) => request;
+    public static Actual.Request ConvertRequestFromV3(V3.Request request) {
+        request.Source.Config = ConvertInputConfFromV3(request.Source.Config);
+        foreach (var sink in request.Sinks)
+        {
+            sink.Config = ConvertOutputConfFromV3(sink.Config);
+        }
+        return request;
+    }
 
     public static string GetTypeFromInputConfV1(V1.IInputConf inputConf) => inputConf switch
     {
@@ -166,7 +173,7 @@ public static class Converters
                     DatetimeField = jdbcInputConf.DatetimeField,
                     DefaultEventsGapMs = jdbcInputConf.DefaultEventsGapMs,
                     DefaultToleranceFraction = jdbcInputConf.DefaultToleranceFraction,
-                    DriverName = jdbcInputConf.DriverName,
+                    DriverName = FixObsoleteJDBCDrivers(jdbcInputConf.DriverName),
                     EventsMaxGapMs = jdbcInputConf.EventsMaxGapMs,
                     JdbcUrl = jdbcInputConf.JdbcUrl,
                     NumParallelSources = jdbcInputConf.NumParallelSources,
@@ -216,7 +223,7 @@ public static class Converters
                     DatetimeField = jdbcInputConf.DatetimeField,
                     DefaultEventsGapMs = jdbcInputConf.DefaultEventsGapMs,
                     DefaultToleranceFraction = jdbcInputConf.DefaultToleranceFraction,
-                    DriverName = jdbcInputConf.DriverName,
+                    DriverName = FixObsoleteJDBCDrivers(jdbcInputConf.DriverName),
                     EventsMaxGapMs = jdbcInputConf.EventsMaxGapMs,
                     JdbcUrl = jdbcInputConf.JdbcUrl,
                     NumParallelSources = jdbcInputConf.NumParallelSources,
@@ -255,7 +262,13 @@ public static class Converters
                 }
         };
 
-    public static Actual.IInputConf ConvertInputConfFromV3(V3.IInputConf inputConf) => inputConf;
+    public static Actual.IInputConf ConvertInputConfFromV3(V3.IInputConf inputConf) {
+        if (inputConf is V3.JdbcInputConf jdbcInputConf) {
+            jdbcInputConf.DriverName = FixObsoleteJDBCDrivers(jdbcInputConf.DriverName);
+            return jdbcInputConf;
+        }
+        return inputConf;
+    }
 
     public static Actual.IOutputConf ConvertOutputConfFromV1(V1.IOutputConf outputConf)
         => outputConf switch
@@ -263,7 +276,7 @@ public static class Converters
             V1.JdbcOutputConf jdbcOutputConf => new Actual.JdbcOutputConf
             {
                 BatchInterval = jdbcOutputConf.BatchInterval,
-                DriverName = jdbcOutputConf.DriverName,
+                DriverName = FixObsoleteJDBCDrivers(jdbcOutputConf.DriverName),
                 JdbcUrl = jdbcOutputConf.JdbcUrl,
                 Parallelism = jdbcOutputConf.Parallelism,
                 Password = jdbcOutputConf.Password,
@@ -287,7 +300,7 @@ public static class Converters
             V2.JdbcOutputConf jdbcOutputConf => new Actual.JdbcOutputConf
             {
                 BatchInterval = jdbcOutputConf.BatchInterval,
-                DriverName = jdbcOutputConf.DriverName,
+                DriverName = FixObsoleteJDBCDrivers(jdbcOutputConf.DriverName),
                 JdbcUrl = jdbcOutputConf.JdbcUrl,
                 Parallelism = jdbcOutputConf.Parallelism,
                 Password = jdbcOutputConf.Password,
@@ -305,7 +318,14 @@ public static class Converters
             }
         };
 
-    public static Actual.IOutputConf ConvertOutputConfFromV3(V3.IOutputConf outputConf) => outputConf;
+    public static Actual.IOutputConf ConvertOutputConfFromV3(V3.IOutputConf outputConf) {
+        if (outputConf is V3.JdbcOutputConf jdbcOutputConf)
+        {
+            jdbcOutputConf.DriverName = FixObsoleteJDBCDrivers(jdbcOutputConf.DriverName);
+            return jdbcOutputConf;
+        }
+        return outputConf;
+    }
 
 
     public static Actual.EventSchema ConvertEventSchemaFromV1(V1.EventSchema eventSchema) => CreateEventSchema(
@@ -356,4 +376,8 @@ public static class Converters
         return schema;
     }
 
+    public static string FixObsoleteJDBCDrivers(string driverName) => driverName switch {
+        "ru.yandex.clickhouse.ClickHouseDriver" => "com.clickhouse.jdbc.ClickHouseDriver",
+        _ => driverName
+    };
 }
