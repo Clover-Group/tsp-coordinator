@@ -40,6 +40,9 @@ builder.Services.AddHostedService<ApplicationPartsLogger>();
 
 var app = builder.Build();
 
+// "Warm up" the job service to restore the job queue on startup (rather than on first request)
+app.Services.GetService<JobService>();
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

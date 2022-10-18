@@ -6,6 +6,11 @@ public class StatusReportingSettings
     public string Topic { get; set; }
 }
 
+public class QueueStorageRedisSettings
+{
+    public string Host { get; set; }
+}
+
 public class ConfigurationService
 {
 private ILogger<ConfigurationService> _logger;
@@ -14,18 +19,18 @@ private ILogger<ConfigurationService> _logger;
     {
         _logger = logger;
 
-        var logInvalidEnabledValue = (string? x) =>
+        var jobReportingLogInvalidEnabledValue = (string? x) =>
         {
             var setTo = x != null ? $"set to {x}" : "not set";
-            _logger.LogWarning($"JOB REPORTING_ENABLED {setTo}, which is not a valid value. Defaulting to false");
+            _logger.LogWarning($"JOB_REPORTING_ENABLED {setTo}, which is not a valid value. Defaulting to false");
             return false;
         };
         var jobReportingEnabled = Environment.GetEnvironmentVariable("JOB_REPORTING_ENABLED") switch
         {
             "true" or "on" or "yes" or "1" => true,
             "false" or "off" or "no" or "0" => false,
-            string x => logInvalidEnabledValue(x),
-            _ => logInvalidEnabledValue(null)
+            string x => jobReportingLogInvalidEnabledValue(x),
+            _ => jobReportingLogInvalidEnabledValue(null)
         };
         if (jobReportingEnabled)
         {
@@ -44,6 +49,35 @@ private ILogger<ConfigurationService> _logger;
                 };
             }
         }
+        var queueStorageLogInvalidEnabledValue = (string? x) =>
+        {
+            var setTo = x != null ? $"set to {x}" : "not set";
+            _logger.LogWarning($"QUEUE_STORAGE_ENABLED {setTo}, which is not a valid value. Defaulting to false");
+            return false;
+        };
+        var queueStorageEnabled = Environment.GetEnvironmentVariable("QUEUE_STORAGE_ENABLED") switch
+        {
+            "true" or "on" or "yes" or "1" => true,
+            "false" or "off" or "no" or "0" => false,
+            string x => queueStorageLogInvalidEnabledValue(x),
+            _ => queueStorageLogInvalidEnabledValue(null)
+        };
+        if (queueStorageEnabled)
+        {
+            var host = Environment.GetEnvironmentVariable("QUEUE_STORAGE_HOST");
+            if (host == null)
+            {
+                _logger.LogWarning("Queue storage enabled, but host not set, disabling queue storage");
+            }
+            else
+            {
+                QueueStorageRedisSettings = new QueueStorageRedisSettings
+                {
+                    Host = host
+                };
+            }
+        }
+
 
         var queueInspectionIntervalVar = Environment.GetEnvironmentVariable("QUEUE_INSPECTION_INTERVAL") ?? "";
         if (UInt64.TryParse(queueInspectionIntervalVar, out var queueInspectionInterval))
@@ -84,6 +118,8 @@ private ILogger<ConfigurationService> _logger;
     }
 
     public StatusReportingSettings? StatusReportingSettings { get; private set; }
+
+    public QueueStorageRedisSettings? QueueStorageRedisSettings { get; private set; }
 
     public ulong QueueInspectionInterval { get; private set; } = 5000;
 

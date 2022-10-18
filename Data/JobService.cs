@@ -19,7 +19,7 @@ public enum JobStopResult
 
 public class JobService
 {
-    private JobQueue jobQueue = new JobQueue();
+    private JobQueue jobQueue;
 
     private List<Job> runningJobs = new List<Job>();
 
@@ -63,6 +63,7 @@ public class JobService
         {
             jsonOptions.Converters.Add(c);
         }
+        jobQueue = new JobQueue(_configurationService.QueueStorageRedisSettings?.Host, "tsp-coordinator-queue");
     }
 
 
