@@ -26,11 +26,17 @@ public class V1Controller : Controller
     /// <returns>Newly created request</returns>
     /// <response code="200">Success</response>
     /// <response code="400">Request is malformed (e.g. configuration does not match the source/sink type)</response>
+    /// <response code="409">Job with given UUID already exists in the coordinator</response>
     [HttpPost("from-{source}/to-{sink}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public IActionResult AddJob(string source, string sink, [FromBody] Request request)
     {
+        if (_jobService.FindJobById(request.Uuid) != null)
+        {
+            return Conflict($"Job with UUID `{request.Uuid}` already exists, cannot assign it right now");
+        }
         if (source != "jdbc" && source != "kafka")
         {
             return BadRequest($"Source `{source}` not supported.");

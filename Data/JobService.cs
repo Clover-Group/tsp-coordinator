@@ -30,6 +30,8 @@ public class JobService
     private Timer _queueTimer;
     private Timer _jobStateTimer;
 
+    private Timer _cleanupTimer;
+
     private ILogger<JobService> _logger;
 
     private TspInstancesService _instancesService;
@@ -59,6 +61,7 @@ public class JobService
         var queueInspectionInterval = (int)configurationService.QueueInspectionInterval;
         _queueTimer = new Timer(InspectQueue, null, queueInspectionInterval / 2, queueInspectionInterval);
         _jobStateTimer = new Timer(UpdateJobStates, null, queueInspectionInterval / 2, queueInspectionInterval);
+        _cleanupTimer = new Timer(CleanupCompletedJobs, null, queueInspectionInterval / 2, queueInspectionInterval);
         foreach (var c in TspCoordinator.Data.TspApi.JsonConverters.Converters)
         {
             jsonOptions.Converters.Add(c);
@@ -239,6 +242,13 @@ public class JobService
             return JobStopResult.StopRequested;
         }
         return JobStopResult.NotFound;
+    }
+
+    public void CleanupCompletedJobs(Object? state)
+    {
+        var cleanupCompletedInterval = _configurationService.CleanupCompletedInterval;
+        var now = DateTime.Now;
+        completedJobs.RemoveAll(job => (now - job.Lifecycle.Events.LastOrDefault().Key).TotalMilliseconds > cleanupCompletedInterval);
     }
 
     public Job? FindJobById(string id) =>

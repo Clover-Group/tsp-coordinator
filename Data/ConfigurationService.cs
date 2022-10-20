@@ -97,6 +97,15 @@ private ILogger<ConfigurationService> _logger;
         {
             _logger.LogWarning($"Queue inspection interval not set, defaulting to {HealthCheckInterval}");
         }
+        var cleanupCompletedIntervalVar = Environment.GetEnvironmentVariable("CLEANUP_COMPLETED_INTERVAL") ?? "";
+        if (UInt64.TryParse(cleanupCompletedIntervalVar, out var cleanupCompletedInterval))
+        {
+            CleanupCompletedInterval = cleanupCompletedInterval;
+        }
+        else
+        {
+            _logger.LogWarning($"Completed jobs cleanup interval not set, defaulting to {CleanupCompletedInterval}");
+        }
         var maxJobsPerTspVar = Environment.GetEnvironmentVariable("MAX_JOBS_PER_TSP") ?? "";
         if (UInt32.TryParse(maxJobsPerTspVar, out var maxJobsPerTsp))
         {
@@ -124,6 +133,8 @@ private ILogger<ConfigurationService> _logger;
     public ulong QueueInspectionInterval { get; private set; } = 5000;
 
     public ulong HealthCheckInterval { get; private set; } = 10000;
+
+    public ulong CleanupCompletedInterval { get; private set; } = 1_800_000;
 
     public uint MaxJobsPerTsp { get; set; } = 1;
 

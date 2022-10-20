@@ -23,11 +23,17 @@ public class V3Controller : Controller
     /// <returns>Newly created request</returns>
     /// <response code="200">Success</response>
     /// <response code="400">Request is malformed (e.g. configuration does not match the source/sink type)</response>
+    /// <response code="409">Job with given UUID already exists in the coordinator</response>
     [HttpPost("job/submit")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public IActionResult AddJob([FromBody] Request request)
     {
+        if (_jobService.FindJobById(request.Uuid) != null)
+        {
+            return Conflict($"Job with UUID `{request.Uuid}` already exists, cannot assign it right now");
+        }
         var actualRequest = Converters.ConvertRequestFromV3(request);
         var job = new Job
         {
