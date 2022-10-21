@@ -28,7 +28,13 @@ else
         @foreach (var job in jobQueue)
             {
                 <tr>
-                    <td><a href="jobs/@job.JobId">@job.JobId</a></td>
+                    <td>
+                        <a href="jobs/@job.JobId">@job.JobId</a>
+                        @if(job.IsExternal)
+                        {
+                            <span class="badge rounded-pill bg-primary">EXTERNAL</span>
+                        }
+                    </td>
                     <td>@job.Request.Priority</td>
                     <td>
                         @switch (job.Status)

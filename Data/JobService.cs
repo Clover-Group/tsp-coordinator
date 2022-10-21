@@ -56,6 +56,7 @@ public class JobService
         _logger = logger;
         _instancesService = instancesService;
         _instancesService.TspInstanceFailed += OnInstanceFailed;
+        _instancesService.TspInstanceHealthCheckSucceeded += OnInstanceHealthCheckSucceeded;
         _statusReportingService = statusReportingService;
         _configurationService = configurationService;
         var queueInspectionInterval = (int)configurationService.QueueInspectionInterval;
@@ -68,8 +69,6 @@ public class JobService
         }
         jobQueue = new JobQueue(_configurationService.QueueStorageRedisSettings?.Host, "tsp-coordinator-queue");
     }
-
-
 
     public Task<List<Job>> GetJobQueueAsync()
     {
@@ -143,6 +142,42 @@ public class JobService
             runningJobs.Remove(job);
             job.RunningOn = null;
             jobQueue.Enqueue(job);
+        }
+    }
+
+    private async void OnInstanceHealthCheckSucceeded(TspInstance instance)
+    {
+        var registeredJobsForInstance = runningJobs.Where(j => j.RunningOn == instance).Select(j => j.JobId);
+        var externalJobsIds = instance.RunningJobsIds.Where(id => !registeredJobsForInstance.Contains(id));
+        foreach (var jobId in externalJobsIds)
+        {
+            var jobGetRequestUrl = $"http://{instance.Host.MapToIPv4()}:{instance.Port}/job/{jobId}/request";
+            var jobGetRequestRequest = new HttpRequestMessage(HttpMethod.Get, jobGetRequestUrl);
+            var client = _clientFactory.CreateClient("TspExternalJobRetriever");
+            try
+            {
+                var response = await client.SendAsync(jobGetRequestRequest);
+                if (response.IsSuccessStatusCode)
+                {
+                    var job = new Job {
+                        IsExternal = true,
+                        JobId = jobId,
+                        RunningOn = instance,
+                        Status = JobStatus.Running
+                    };
+                    job.Lifecycle.AddExternalDiscovered();
+                    runningJobs.Add(job);
+                    
+                }
+                else
+                {
+                    // TODO
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                // TODO:
+            }
         }
     }
 

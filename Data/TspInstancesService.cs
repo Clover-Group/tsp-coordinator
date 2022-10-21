@@ -24,6 +24,10 @@ public class TspInstancesService
 
     public event TspInstanceFailedHandler? TspInstanceFailed;
 
+    public delegate void TspInstanceHealthCheckSucceededHandler(TspInstance instance);
+
+    public event TspInstanceHealthCheckSucceededHandler? TspInstanceHealthCheckSucceeded;
+
     public bool AddInstance(TspInstance instance)
     {
         if (instances.Exists(i => i.Location == instance.Location)) 
@@ -104,6 +108,7 @@ public class TspInstancesService
                         var jobsIds = await response.Content.ReadFromJsonAsync<List<String>>();
                         instance.RunningJobsIds = jobsIds ?? new List<string>();
                         instance.SentJobsIds.RemoveAll(x => instance.RunningJobsIds?.Contains(x) ?? false);
+                        TspInstanceHealthCheckSucceeded?.Invoke(instance);
                     }
                     else
                     {

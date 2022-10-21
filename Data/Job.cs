@@ -22,8 +22,10 @@ public class Job {
     public string JobId { get; set; }
     public JobStatus Status { get; set; }
 
-    public long RowsRead { get; set; }
-    public long RowsWritten { get; set; }
+    public long RowsRead { get; set; } = 0;
+    public long RowsWritten { get; set; } = 0;
+
+    public bool IsExternal { get; set;} = false;
 
     public Actual.Request Request { get; set; }
 

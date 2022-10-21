@@ -29,4 +29,12 @@ public class JobLifecycle
     {
         events.Add(DateTime.Now, $"Job {jobId} {(success ? "finished successfully" : "failed")}.");
     }
+
+    public void AddExternalDiscovered()
+    {
+        events.Add(
+            DateTime.Now,
+            $"Job {jobId} was discovered as external on a TSP instance. Not all events may be recorded"
+            );
+    }
 }
