@@ -25,9 +25,10 @@ public class JobLifecycle
         events.Add(DateTime.Now, $"Status of {jobId} was changed to {newStatus}");
     }
 
-    public void AddFinished(bool success)
+    public void AddFinished(bool success, string? error)
     {
-        events.Add(DateTime.Now, $"Job {jobId} {(success ? "finished successfully" : "failed")}.");
+        var status = success ? "finished successfully" : $"failed with error: {error ?? "no error text reported"}";
+        events.Add(DateTime.Now, $"Job {jobId} {status}.");
     }
 
     public void AddExternalDiscovered()

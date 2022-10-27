@@ -123,7 +123,7 @@ public class JobService
         {
             job.Status = info.Success ? JobStatus.Finished : JobStatus.Failed;
             job.NotifyStatusChanged();
-            job.Lifecycle.AddFinished(info.Success);
+            job.Lifecycle.AddFinished(info.Success, info.Error);
             job.RowsRead = info.RowsRead ?? 0;
             job.RowsWritten = info.RowsWritten ?? 0;
             runningJobs.Remove(job);

@@ -55,9 +55,9 @@ public class JobStatusReportingService
             var now = DateTime.Now.ToString("u", CultureInfo.InvariantCulture);
             var message = new StatusMessage
             {
-                Uuid = Guid.NewGuid().ToString(),
+                Uuid = job.JobId,
                 Timestamp = now,
-                Status = job.Status.ToString(),
+                Status = job.Status.ToString().ToUpperInvariant(),
                 Text = text
             };
             var messageAsJson = JsonSerializer.Serialize(message, jsonOptions);
