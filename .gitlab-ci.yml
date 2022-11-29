@@ -1,0 +1,31 @@
+stages:
+  - test
+  - deploy
+  
+image: "mcr.microsoft.com/dotnet/sdk:6.0-focal"
+
+before_script:
+  - dotnet tool install -g nbgv
+
+test:
+  stage: test
+  script:
+    - dotnet test
+  artifacts:
+    when: always
+    reports:
+      cobertura: TSPCoordinator.Tests/TestResults/*/coverage.cobertura.xml
+  only:
+    - master
+    - tags
+    - merge_requests
+    
+deploy:
+  stage: deploy
+  script:
+    - cd TSPCoordinator
+    
+  when: manual
+  only:
+    - master
+    - tags
