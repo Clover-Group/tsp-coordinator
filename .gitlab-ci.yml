@@ -5,12 +5,17 @@ stages:
 image: "mcr.microsoft.com/dotnet/sdk:6.0-focal"
 
 before_script:
+  - apt-get update
+  - apt-get install -y bc
   - dotnet tool install -g nbgv
 
 test:
   stage: test
   script:
     - dotnet test --collect:"XPlat Code Coverage"
+    - chmod +x ./print-dotnet-coverage.sh
+    - ./print-dotnet-coverage.sh TSPCoordinator.Tests/TestResults/
+  coverage: /TOTAL_COVERAGE=(\d+.\d+)/
   artifacts:
     when: always
     reports:
