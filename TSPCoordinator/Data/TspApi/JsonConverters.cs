@@ -3,7 +3,7 @@ using TupleAsJsonArray;
 
 namespace TspCoordinator.Data.TspApi;
 
-static class JsonConverters
+public static class JsonConverters
 {
     public static readonly JsonConverter[] Converters = new JsonConverter[]
     {
