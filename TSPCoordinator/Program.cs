@@ -69,3 +69,9 @@ app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
 app.Run();
+
+// we need this declaration for running integration tests
+public partial class Program
+{
+
+}

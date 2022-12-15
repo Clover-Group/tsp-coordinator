@@ -20,9 +20,9 @@ public class OutputConfConverter : JsonConverter<IOutputConf>
             {
                 return JsonSerializer.Deserialize<V2.KafkaOutputConf>(ref reader, options);
             }
-            catch
+            catch (Exception e)
             {
-                return null;
+                throw new JsonException(e.Message);
             }
         }
     }

@@ -20,9 +20,9 @@ public class InputConfConverter : JsonConverter<IInputConf>
             {
                 return JsonSerializer.Deserialize<V1.KafkaInputConf>(ref reader, options);
             }
-            catch
+            catch (Exception e)
             {
-                return null;
+                throw new JsonException(e.Message);
             }
         }
     }
