@@ -173,7 +173,7 @@ public static class Converters
                     DatetimeField = jdbcInputConf.DatetimeField,
                     DefaultEventsGapMs = jdbcInputConf.DefaultEventsGapMs,
                     DefaultToleranceFraction = jdbcInputConf.DefaultToleranceFraction,
-                    DriverName = FixObsoleteJDBCDrivers(jdbcInputConf.DriverName),
+                    DriverName = jdbcInputConf.DriverName,
                     EventsMaxGapMs = jdbcInputConf.EventsMaxGapMs,
                     JdbcUrl = jdbcInputConf.JdbcUrl,
                     NumParallelSources = jdbcInputConf.NumParallelSources,
@@ -223,7 +223,7 @@ public static class Converters
                     DatetimeField = jdbcInputConf.DatetimeField,
                     DefaultEventsGapMs = jdbcInputConf.DefaultEventsGapMs,
                     DefaultToleranceFraction = jdbcInputConf.DefaultToleranceFraction,
-                    DriverName = FixObsoleteJDBCDrivers(jdbcInputConf.DriverName),
+                    DriverName = jdbcInputConf.DriverName,
                     EventsMaxGapMs = jdbcInputConf.EventsMaxGapMs,
                     JdbcUrl = jdbcInputConf.JdbcUrl,
                     NumParallelSources = jdbcInputConf.NumParallelSources,
@@ -263,10 +263,6 @@ public static class Converters
         };
 
     public static Actual.IInputConf ConvertInputConfFromV3(V3.IInputConf inputConf) {
-        if (inputConf is V3.JdbcInputConf jdbcInputConf) {
-            jdbcInputConf.DriverName = FixObsoleteJDBCDrivers(jdbcInputConf.DriverName);
-            return jdbcInputConf;
-        }
         return inputConf;
     }
 
@@ -276,7 +272,7 @@ public static class Converters
             V1.JdbcOutputConf jdbcOutputConf => new Actual.JdbcOutputConf
             {
                 BatchInterval = jdbcOutputConf.BatchInterval,
-                DriverName = FixObsoleteJDBCDrivers(jdbcOutputConf.DriverName),
+                DriverName = jdbcOutputConf.DriverName,
                 JdbcUrl = jdbcOutputConf.JdbcUrl,
                 Parallelism = jdbcOutputConf.Parallelism,
                 Password = jdbcOutputConf.Password,
@@ -300,7 +296,7 @@ public static class Converters
             V2.JdbcOutputConf jdbcOutputConf => new Actual.JdbcOutputConf
             {
                 BatchInterval = jdbcOutputConf.BatchInterval,
-                DriverName = FixObsoleteJDBCDrivers(jdbcOutputConf.DriverName),
+                DriverName = jdbcOutputConf.DriverName,
                 JdbcUrl = jdbcOutputConf.JdbcUrl,
                 Parallelism = jdbcOutputConf.Parallelism,
                 Password = jdbcOutputConf.Password,
@@ -319,11 +315,6 @@ public static class Converters
         };
 
     public static Actual.IOutputConf ConvertOutputConfFromV3(V3.IOutputConf outputConf) {
-        if (outputConf is V3.JdbcOutputConf jdbcOutputConf)
-        {
-            jdbcOutputConf.DriverName = FixObsoleteJDBCDrivers(jdbcOutputConf.DriverName);
-            return jdbcOutputConf;
-        }
         return outputConf;
     }
 
@@ -375,9 +366,4 @@ public static class Converters
         }
         return schema;
     }
-
-    public static string FixObsoleteJDBCDrivers(string driverName) => driverName switch {
-        "ru.yandex.clickhouse.ClickHouseDriver" => "com.clickhouse.jdbc.ClickHouseDriver",
-        _ => driverName
-    };
 }
