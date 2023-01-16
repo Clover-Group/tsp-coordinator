@@ -86,10 +86,20 @@
                         (@TimeSpan.FromMilliseconds(ConfigurationService.HealthCheckInterval))
                     </td>
                 </tr>
+                <tr>
+                    <td>Completed jobs cleanup interval (in milliseconds)</td>
+                    <td>CLEANUP_COMPLETED_INTERVAL</td>
+                    <td>
+                        @ConfigurationService.CleanupCompletedInterval
+                        (@TimeSpan.FromMilliseconds(ConfigurationService.CleanupCompletedInterval))
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>
-    <div class="col">
+</div>
+<div class="row">
+     <div class="col">
         <h4>Job management</h4>
         <table class="table table-striped">
             <thead>
@@ -113,4 +123,51 @@
             </tbody>
         </table>
     </div>
+    <div class="col">
+        <h4>Queue storage</h4>
+        @if(ConfigurationService.QueueStorageRedisSettings != null)
+        {
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Setting</th>
+                        <th>Environment variable</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Queue storage</td>
+                        <td>QUEUE_STORAGE_ENABLED</td>
+                        <td>enabled</td>
+                    </tr>
+                    <tr>
+                        <td>Host (Redis)</td>
+                        <td>QUEUE_STORAGE_HOST</td>
+                        <td>@ConfigurationService.StatusReportingSettings.Broker</td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Setting</th>
+                        <th>Environment variable</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Queue storage</td>
+                        <td>QUEUE_STORAGE_ENABLED</td>
+                        <td>disabled</td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+    </div>
+
 </div>
