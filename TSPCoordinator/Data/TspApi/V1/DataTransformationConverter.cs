@@ -42,6 +42,9 @@ public class DataTransformationConverter : JsonConverter<ISourceDataTransformati
             case V1.WideDataFilling v:
                 JsonSerializer.Serialize(writer, v, options);
                 break;
+            case null:
+                JsonSerializer.Serialize(writer, value, options);
+                break;
         };
     }
 }
