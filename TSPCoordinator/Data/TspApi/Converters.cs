@@ -344,7 +344,7 @@ public static class Converters
                     ).ToDictionary(kv => kv.Item1, kv => kv.Item2 as Actual.IEventSchemaValue, null) ?? new Dictionary<string, Actual.IEventSchemaValue>()
             }),
             (eventSchema.FromTsField, new Actual.StringEventSchemaValue { Type = "timestamp", Value = "$IncidentStart" }),
-            (eventSchema.IncidentIdField, new Actual.StringEventSchemaValue { Type = "timestamp", Value = "$UUID" }),
+            (eventSchema.IncidentIdField, new Actual.StringEventSchemaValue { Type = "string", Value = "$UUID" }),
             (eventSchema.PatternIdField, new Actual.StringEventSchemaValue { Type = "int32", Value = "$PatternID" }),
             (eventSchema.SubunitIdField, new Actual.StringEventSchemaValue { Type = "int32", Value = "$Subunit" }),
             (eventSchema.ToTsField, new Actual.StringEventSchemaValue { Type = "timestamp", Value = "$IncidentEnd" }),
