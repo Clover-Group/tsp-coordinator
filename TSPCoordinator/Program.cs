@@ -26,7 +26,7 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddSwaggerGen(options =>
 {
     options.CustomSchemaIds(type => type.ToString());
-    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, 
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory,
         $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
 });
 builder.Services.AddLocalization(options => { options.ResourcesPath = "Resources"; });

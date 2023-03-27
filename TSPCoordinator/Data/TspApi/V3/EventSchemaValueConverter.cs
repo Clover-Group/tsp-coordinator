@@ -13,7 +13,7 @@ public class EventSchemaValueConverter : JsonConverter<V3.IEventSchemaValue>
         {
             return JsonSerializer.Deserialize<V3.IntegerEventSchemaValue>(ref reader, options);
         }
-        catch 
+        catch
         {
             try
             {
@@ -37,7 +37,7 @@ public class EventSchemaValueConverter : JsonConverter<V3.IEventSchemaValue>
                     }
                 }
             }
-        }  
+        }
     }
 
     public override void Write(

@@ -47,7 +47,8 @@ public static class Converters
         Priority = request.Priority
     };
 
-    public static Actual.Request ConvertRequestFromV3(V3.Request request) {
+    public static Actual.Request ConvertRequestFromV3(V3.Request request)
+    {
         request.Source.Config = ConvertInputConfFromV3(request.Source.Config);
         foreach (var sink in request.Sinks)
         {
@@ -103,6 +104,7 @@ public static class Converters
         Id = Int32.TryParse(pattern.Id, out int patid) ? patid : -1,
         SourceCode = pattern.SourceCode,
         Metadata = pattern.Payload,
+        Subunit = Convert.ToInt32(pattern.Payload?.GetValueOrDefault("subunit", "0"))
     };
 
     public static Actual.Pattern ConvertPatternFromV2(V2.Pattern pattern) => new Actual.Pattern
@@ -110,6 +112,7 @@ public static class Converters
         Id = pattern.Id,
         SourceCode = pattern.SourceCode,
         Metadata = pattern.Payload,
+        Subunit = pattern.Subunit
     };
 
     public static Actual.Pattern ConvertPatternFromV3(V3.Pattern pattern) => pattern;
@@ -119,7 +122,8 @@ public static class Converters
         {
             V1.NarrowDataUnfolding ndu => new Actual.NarrowDataUnfolding
             {
-                Config = new Actual.NarrowDataUnfoldingConf {
+                Config = new Actual.NarrowDataUnfoldingConf
+                {
                     KeyColumn = (ndu.Config as V1.NarrowDataUnfoldingConf).KeyColumn,
                     DefaultValueColumn = (ndu.Config as V1.NarrowDataUnfoldingConf).DefaultValueColumn,
                     FieldsTimeoutsMs = (ndu.Config as V1.NarrowDataUnfoldingConf).FieldsTimeoutsMs,
@@ -128,7 +132,8 @@ public static class Converters
             },
             V1.WideDataFilling wdf => new Actual.WideDataFilling
             {
-                Config = new Actual.WideDataFillingConf {
+                Config = new Actual.WideDataFillingConf
+                {
                     FieldsTimeoutsMs = (wdf.Config as V1.WideDataFillingConf).FieldsTimeoutsMs,
                     DefaultTimeout = (wdf.Config as V1.WideDataFillingConf).DefaultTimeout,
                 }
@@ -217,7 +222,8 @@ public static class Converters
         => inputConf switch
         {
             V2.JdbcInputConf jdbcInputConf =>
-                new Actual.JdbcInputConf {
+                new Actual.JdbcInputConf
+                {
                     ChunkSizeMs = jdbcInputConf.ChunkSizeMs,
                     DataTransformation = ConvertSDTFromV2(jdbcInputConf.DataTransformation),
                     DatetimeField = jdbcInputConf.DatetimeField,
@@ -239,7 +245,8 @@ public static class Converters
                     UserName = jdbcInputConf.UserName
                 },
             V2.KafkaInputConf kafkaInputConf =>
-                new Actual.KafkaInputConf {
+                new Actual.KafkaInputConf
+                {
                     Brokers = kafkaInputConf.Brokers,
                     ChunkSizeMs = kafkaInputConf.ChunkSizeMs,
                     DataTransformation = ConvertSDTFromV2(kafkaInputConf.DataTransformation),
@@ -262,7 +269,8 @@ public static class Converters
                 }
         };
 
-    public static Actual.IInputConf ConvertInputConfFromV3(V3.IInputConf inputConf) {
+    public static Actual.IInputConf ConvertInputConfFromV3(V3.IInputConf inputConf)
+    {
         return inputConf;
     }
 
@@ -314,7 +322,8 @@ public static class Converters
             }
         };
 
-    public static Actual.IOutputConf ConvertOutputConfFromV3(V3.IOutputConf outputConf) {
+    public static Actual.IOutputConf ConvertOutputConfFromV3(V3.IOutputConf outputConf)
+    {
         return outputConf;
     }
 
@@ -323,11 +332,10 @@ public static class Converters
         new List<(string?, Actual.IEventSchemaValue)>()
         {
             (eventSchema.AppIdFieldVal.Item1, new Actual.IntegerEventSchemaValue { Type = "int32", Value = eventSchema.AppIdFieldVal.Item2 }),
-            (eventSchema.ContextField, new Actual.StringEventSchemaValue { Type = "string", Value = "Context not supported yet" }),
             (eventSchema.FromTsField, new Actual.StringEventSchemaValue { Type = "timestamp", Value = "$IncidentStart" }),
             (eventSchema.PatternIdField, new Actual.StringEventSchemaValue { Type = "int32", Value = "$PatternID" }),
-            (eventSchema.ProcessingTsField, new Actual.StringEventSchemaValue { Type = "timestamp", Value = "$ProcessingDate" }),
-            (eventSchema.SourceIdField, new Actual.IntegerEventSchemaValue { Type = "int32", Value = -1 }),
+            (eventSchema.SubunitIdField, new Actual.StringEventSchemaValue { Type = "int32", Value = "$Subunit" }),
+            (eventSchema.UnitIdField, new Actual.StringEventSchemaValue { Type = "int32", Value = "$Unit" }),
             (eventSchema.ToTsField, new Actual.StringEventSchemaValue { Type = "timestamp", Value = "$IncidentEnd" }),
         }
     );

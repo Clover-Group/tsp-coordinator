@@ -11,7 +11,7 @@ public class TestConverters
 {
     private JsonSerializerOptions jsonOptions = new JsonSerializerOptions();
 
-    public TestConverters() 
+    public TestConverters()
     {
         foreach (var c in TspCoordinator.Data.TspApi.JsonConverters.Converters)
         {
@@ -31,6 +31,7 @@ public class TestConverters
     public void TestConversionFromV2()
     {
         var result = Converters.ConvertRequestFromV2(StaticData.V2Request);
+        result.Patterns[0].Metadata = new Dictionary<string, string> { ["subunit"] = "42" };
         Assert.AreEqual(JsonSerializer.Serialize(StaticData.V3Request, jsonOptions), JsonSerializer.Serialize(result, jsonOptions));
     }
 
@@ -52,6 +53,7 @@ public class TestConverters
     public void TestConversionFromV2Kafka()
     {
         var result = Converters.ConvertRequestFromV2(StaticData.V2RequestKafka);
+        result.Patterns[0].Metadata = new Dictionary<string, string> { ["subunit"] = "42" };
         Assert.AreEqual(JsonSerializer.Serialize(StaticData.V3RequestKafka, jsonOptions), JsonSerializer.Serialize(result, jsonOptions));
     }
 

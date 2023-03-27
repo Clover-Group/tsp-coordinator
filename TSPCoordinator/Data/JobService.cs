@@ -45,9 +45,9 @@ public class JobService
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
     }.SetupExtensions();
 
-    public JobService(IHttpClientFactory clientFactory, 
-                      ILogger<JobService> logger, 
-                      TspInstancesService instancesService, 
+    public JobService(IHttpClientFactory clientFactory,
+                      ILogger<JobService> logger,
+                      TspInstancesService instancesService,
                       JobStatusReportingService statusReportingService,
                       ConfigurationService configurationService
                       )
@@ -159,7 +159,8 @@ public class JobService
                 var response = await client.SendAsync(jobGetRequestRequest);
                 if (response.IsSuccessStatusCode)
                 {
-                    var job = new Job {
+                    var job = new Job
+                    {
                         IsExternal = true,
                         JobId = jobId,
                         RunningOn = instance,
@@ -167,7 +168,7 @@ public class JobService
                     };
                     job.Lifecycle.AddExternalDiscovered();
                     runningJobs.Add(job);
-                    
+
                 }
                 else
                 {

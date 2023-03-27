@@ -13,7 +13,7 @@ public class QueueStorageRedisSettings
 
 public class ConfigurationService
 {
-private ILogger<ConfigurationService> _logger;
+    private ILogger<ConfigurationService> _logger;
 
     public ConfigurationService(ILogger<ConfigurationService> logger)
     {
@@ -42,7 +42,7 @@ private ILogger<ConfigurationService> _logger;
             }
             else
             {
-                StatusReportingSettings = new StatusReportingSettings 
+                StatusReportingSettings = new StatusReportingSettings
                 {
                     Broker = broker,
                     Topic = topic
@@ -139,5 +139,5 @@ private ILogger<ConfigurationService> _logger;
     public uint MaxJobsPerTsp { get; set; } = 1;
 
     public uint HealthCheckAttempts { get; set; } = 10;
-    
+
 }

@@ -16,7 +16,8 @@ namespace TSPCoordinator.Tests;
 public class TestSendJobs
 {
     private static WebApplicationFactory<Program> _factory;
-    private static JsonSerializerOptions _jsonOptions = new JsonSerializerOptions { 
+    private static JsonSerializerOptions _jsonOptions = new JsonSerializerOptions
+    {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 

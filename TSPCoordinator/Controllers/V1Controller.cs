@@ -66,6 +66,6 @@ public class V1Controller : Controller
             JobId = actualRequest.Uuid
         };
         _jobService.EnqueueJob(job);
-        return Ok (job);
+        return Ok(job);
     }
 }

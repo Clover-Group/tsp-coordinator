@@ -34,7 +34,7 @@ public interface ISourceDataTransformation
 public class NarrowDataUnfolding : ISourceDataTransformation
 {
     [JsonInclude]
-    public string Type { get => "NarrowDataUnfolding";  set {} }
+    public string Type { get => "NarrowDataUnfolding"; set { } }
 
     [JsonInclude]
     public ISourceDataTransformationConf Config { get; set; }

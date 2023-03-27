@@ -53,14 +53,14 @@ public class TspInteractionController : ControllerBase
         {
             return BadRequest();
         }
-        TspInstance instance = new TspInstance 
+        TspInstance instance = new TspInstance
         {
             Host = Request.HttpContext.Connection.RemoteIpAddress,
             Port = 8080,//Request.HttpContext.Connection.RemotePort,
             Version = info.Version,
             HealthCheckDate = DateTime.Now
         };
-        if(_instancesService.AddInstance(instance))
+        if (_instancesService.AddInstance(instance))
         {
             return CreatedAtAction(nameof(Register), instance);
         }

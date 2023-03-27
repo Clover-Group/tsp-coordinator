@@ -30,7 +30,7 @@ public class TspInstancesService
 
     public bool AddInstance(TspInstance instance)
     {
-        if (instances.Exists(i => i.Location == instance.Location)) 
+        if (instances.Exists(i => i.Location == instance.Location))
         {
             return false;
         }
@@ -39,16 +39,17 @@ public class TspInstancesService
         return true;
     }
 
-    public TspInstance? FindFirstFreeInstance() {
+    public TspInstance? FindFirstFreeInstance()
+    {
         var copiedInstances = new List<TspInstance>(instances);
         return copiedInstances
             .OrderBy(x => x.TotalJobCount)
             .FirstOrDefault(
-                x => x.Status == TspInstanceStatus.Active 
+                x => x.Status == TspInstanceStatus.Active
                     && (x.TotalJobCount) < _configurationService.MaxJobsPerTsp
                 );
-    } 
-        
+    }
+
 
     public Task<TspInstance[]> GetInstancesAsync()
     {
@@ -65,7 +66,7 @@ public class TspInstancesService
         var client = _clientFactory.CreateClient("TspHealthChecker");
         var instancesToRemove = new List<TspInstance>();
         var currentInstances = new List<TspInstance>(instances);
-        foreach(var instance in currentInstances)
+        foreach (var instance in currentInstances)
         {
             var tspGetVersionUrl = $"http://{instance.Host.MapToIPv4()}:{instance.Port}/metainfo/getVersion";
             var getVersionRequest = new HttpRequestMessage(HttpMethod.Get, tspGetVersionUrl);
@@ -114,7 +115,7 @@ public class TspInstancesService
                     {
                         instance.Status = TspInstanceStatus.CannotGetExtendedInfo;
                         instance.SentJobsIds.Clear();
-                    }                   
+                    }
                 }
                 catch (HttpRequestException ex)
                 {
@@ -123,7 +124,7 @@ public class TspInstancesService
                 }
             }
         }
-        foreach(var instance in instancesToRemove)
+        foreach (var instance in instancesToRemove)
         {
             instances.Remove(instance);
         }
