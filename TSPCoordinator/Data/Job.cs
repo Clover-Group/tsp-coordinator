@@ -3,7 +3,8 @@ namespace TspCoordinator.Data;
 using System.Text.Json.Serialization;
 using Actual = TspApi.V3;
 
-public enum JobStatus {
+public enum JobStatus
+{
     Enqueued,
     Running,
     Failed,
@@ -11,12 +12,14 @@ public enum JobStatus {
     Canceled
 }
 
-public class JobStatusInfo {
+public class JobStatusInfo
+{
     public long RowsRead { get; set; }
     public long RowsWritten { get; set; }
 }
 
-public class Job {
+public class Job
+{
     public Job() => Lifecycle = new JobLifecycle(this);
 
     public string JobId { get; set; }
@@ -25,7 +28,7 @@ public class Job {
     public long RowsRead { get; set; } = 0;
     public long RowsWritten { get; set; } = 0;
 
-    public bool IsExternal { get; set;} = false;
+    public bool IsExternal { get; set; } = false;
 
     public Actual.Request Request { get; set; }
 

@@ -69,7 +69,8 @@ public class JobsController : Controller
     public async Task<IActionResult> Status(string id)
     {
         var jobs = await _jobService.GetAllJobsAsync();
-        return jobs.Find(x => x.JobId == id) switch {
+        return jobs.Find(x => x.JobId == id) switch
+        {
             null => NotFound($"Job with id {id} not found."),
             Job j => Ok(j),
         };

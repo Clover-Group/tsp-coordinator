@@ -41,7 +41,7 @@ public class JobQueue
             var serializedQueue = (string?)db.StringGet(_storageKey);
             try
             {
-                jobs = (JsonSerializer.Deserialize(serializedQueue ?? "[]", typeof(List<Job>), jsonOptions) as List<Job>) 
+                jobs = (JsonSerializer.Deserialize(serializedQueue ?? "[]", typeof(List<Job>), jsonOptions) as List<Job>)
                     ?? new List<Job>();
                 Console.WriteLine($"Queue restored: {jobs.Count} jobs recovered");
             }
@@ -102,6 +102,6 @@ public class JobQueue
         {
             var db = _redis.GetDatabase();
             db.StringSet(_storageKey, serialized);
-        }    
+        }
     }
 }

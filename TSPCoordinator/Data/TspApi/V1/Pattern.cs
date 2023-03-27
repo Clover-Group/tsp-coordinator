@@ -1,6 +1,6 @@
 namespace TspCoordinator.Data.TspApi.V1;
 
-public class Pattern 
+public class Pattern
 {
     public string Id { get; set; }
     public string SourceCode { get; set; }

@@ -18,7 +18,7 @@ public static class StaticData
             SourceId = 42,
             DatetimeField = "dt",
             PartitionFields = new List<string> { "engine_id" },
-            DataTransformation = new V1.NarrowDataUnfolding 
+            DataTransformation = new V1.NarrowDataUnfolding
             {
                 Config = new V1.NarrowDataUnfoldingConf
                 {
@@ -31,7 +31,7 @@ public static class StaticData
                     }
                 }
             }
-            
+
         },
         Sink = new V1.JdbcOutputConf
         {
@@ -44,12 +44,18 @@ public static class StaticData
                 ToTsField = "to_ts",
                 AppIdFieldVal = ("app_id", 13),
                 PatternIdField = "pattern_id",
-                
+                SubunitIdField = "subunit_id"
+
             }
         },
         Patterns = new List<V1.Pattern>
         {
-            new V1.Pattern { Id = "123", SourceCode = "test_sensor1 > 0" }
+            new V1.Pattern
+            {
+                Id = "123",
+                SourceCode = "test_sensor1 > 0",
+                Payload = new Dictionary<string, string>{["subunit"] = "42"}
+            }
         }
     };
     public static V2.Request V2Request = new V2.Request
@@ -87,12 +93,13 @@ public static class StaticData
                 FromTsField = "from_ts",
                 ToTsField = "to_ts",
                 AppIdFieldVal = ("app_id", 13),
-                PatternIdField = "pattern_id"
+                PatternIdField = "pattern_id",
+                SubunitIdField = "subunit_id"
             }
         },
         Patterns = new List<V2.Pattern>
         {
-            new V2.Pattern { Id = 123, SourceCode = "test_sensor1 > 0" }
+            new V2.Pattern { Id = 123, SourceCode = "test_sensor1 > 0", Subunit = 42 }
         }
     };
     public static V3.Request V3Request = new V3.Request
@@ -141,6 +148,7 @@ public static class StaticData
                             ["app_id"] = new V3.IntegerEventSchemaValue { Type = "int32", Value = 13 },
                             ["from_ts"] = new V3.StringEventSchemaValue { Type = "timestamp", Value = "$IncidentStart" },
                             ["pattern_id"] = new V3.StringEventSchemaValue { Type = "int32", Value = "$PatternID" },
+                            ["subunit_id"] = new V3.StringEventSchemaValue { Type = "int32", Value = "$Subunit" },
                             ["to_ts"] = new V3.StringEventSchemaValue { Type = "timestamp", Value = "$IncidentEnd" }
                         }
                     }
@@ -149,7 +157,13 @@ public static class StaticData
         },
         Patterns = new List<V3.Pattern>
         {
-            new V3.Pattern { Id = 123, SourceCode = "test_sensor1 > 0" }
+            new V3.Pattern
+            {
+                Id = 123,
+                SourceCode = "test_sensor1 > 0",
+                Subunit = 42,
+                Metadata = new Dictionary<string, string> { ["subunit"] = "42" }
+            }
         }
     };
 
@@ -193,7 +207,12 @@ public static class StaticData
         },
         Patterns = new List<V1.Pattern>
         {
-            new V1.Pattern { Id = "123", SourceCode = "test_sensor1 > 0" }
+            new V1.Pattern
+            {
+                Id = "123",
+                SourceCode = "test_sensor1 > 0",
+                Payload = new Dictionary<string, string>{["subunit"] = "42"}
+            }
         }
     };
     public static V2.Request V2RequestKafka = new V2.Request
@@ -234,7 +253,7 @@ public static class StaticData
         },
         Patterns = new List<V2.Pattern>
         {
-            new V2.Pattern { Id = 123, SourceCode = "test_sensor1 > 0" }
+            new V2.Pattern { Id = 123, SourceCode = "test_sensor1 > 0", Subunit = 42 }
         }
     };
     public static V3.Request V3RequestKafka = new V3.Request
@@ -289,7 +308,13 @@ public static class StaticData
         },
         Patterns = new List<V3.Pattern>
         {
-            new V3.Pattern { Id = 123, SourceCode = "test_sensor1 > 0" }
+            new V3.Pattern
+            {
+                Id = 123,
+                SourceCode = "test_sensor1 > 0",
+                Subunit = 42,
+                Metadata = new Dictionary<string, string> { ["subunit"] = "42" }
+            }
         }
     };
 }

@@ -12,7 +12,7 @@ public class TestJobsController
     [ClassInitialize]
     public static void ClassInit(TestContext testContext)
     {
-       _factory = new WebApplicationFactory<Program>();
+        _factory = new WebApplicationFactory<Program>();
     }
 
     [TestMethod]

@@ -3,7 +3,8 @@ using System.Text.Json.Serialization;
 
 namespace TspCoordinator.Data;
 
-public enum TspInstanceStatus {
+public enum TspInstanceStatus
+{
     Active,
     NotWorking,
     NotResponding,
