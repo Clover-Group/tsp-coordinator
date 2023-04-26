@@ -129,6 +129,10 @@
     <value>Viimase aktiivsuse hetkest aeg</value>
     <comment/>
   </data>
+  <data name="RunningTime" xml:space="preserve">
+    <value>Sõiduaeg</value>
+    <comment/>
+  </data>
   <data name="RowsRead" xml:space="preserve">
     <value>Rida loetud</value>
     <comment/>
@@ -151,6 +155,10 @@
   </data>
   <data name="Sinks" xml:space="preserve">
     <value>Vastuvõtjad</value>
+    <comment/>
+  </data>
+  <data name="SinkNo" xml:space="preserve">
+    <value>Vastuvõtja nr</value>
     <comment/>
   </data>
   <data name="Patterns" xml:space="preserve">

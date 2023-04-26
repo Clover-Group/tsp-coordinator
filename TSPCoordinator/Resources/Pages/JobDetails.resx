@@ -129,6 +129,10 @@
     <value>Time since last activity</value>
     <comment/>
   </data>
+  <data name="RunningTime" xml:space="preserve">
+    <value>Running time</value>
+    <comment/>
+  </data>
   <data name="RowsRead" xml:space="preserve">
     <value>Rows read</value>
     <comment/>
@@ -151,6 +155,10 @@
   </data>
   <data name="Sinks" xml:space="preserve">
     <value>Sinks</value>
+    <comment/>
+  </data>
+  <data name="SinkNo" xml:space="preserve">
+    <value>Sink No.</value>
     <comment/>
   </data>
   <data name="Patterns" xml:space="preserve">

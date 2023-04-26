@@ -17,7 +17,8 @@ else
 
     <div class="card card-body">
         <p>@Loc["Status"]: @Job.Status</p>
-        <p>@Loc["TimeSinceLastActivity"]: @((DateTime.Now - Job.Lifecycle.Events.LastOrDefault().Key).Humanize(precision: 2))</p>
+        <p>@Loc["TimeSinceLastActivity"]: @((DateTime.Now - Job.Lifecycle.Events.LastOrDefault().Key).ToString(@"d\:hh\:mm\:ss\.fff"))</p>
+        <p>@Loc["RunningTime"]: @(Job.Lifecycle.RunningTime.ToString(@"d\:hh\:mm\:ss\.fff"))</p>
         <p>@Loc["RowsRead"]: @Job.RowsRead</p>
         <p>@Loc["RowsWritten"]: @Job.RowsWritten</p>
     </div>
@@ -29,28 +30,86 @@ else
         </p>
     }
     <h4>@Loc["Request"]</h4>
-    <p>
-        @Loc["Source"]: <span class="badge rounded-pill bg-secondary">@(Job.Request.Source.Type)</span> 
-    </p>
-    <p>
-        @Loc["Sinks"] (@(Job.Request.Sinks.Count) total):
-        @foreach (var sink in Job.Request.Sinks)
+    <h5>@Loc["Source"]</h5>
+    <BSAccordion>
+        <BSAccordionItem>
+            <Header>
+                @Loc["Source"] 
+                <BSBadge Color="@BlazorStrap.BSColor.Secondary" IsPill="true">@(Job.Request.Source.Type)</BSBadge>
+            </Header>
+            <Content>
+                <BSListGroup>
+                @if(Job.Request.Source.Config is Data.TspApi.V3.JdbcInputConf jdbcConf)
+                {
+                    <BSListGroupItem>JDBC URL: @jdbcConf.JdbcUrl</BSListGroupItem>
+                    <BSListGroupItem>Query: @jdbcConf.Query</BSListGroupItem>
+                    <BSListGroupItem>Max time-series gap, ms: @(jdbcConf.EventsMaxGapMs ?? 60000)</BSListGroupItem>
+                    <BSListGroupItem>Max incident gap, ms: @(jdbcConf.DefaultEventsGapMs ?? 2000)</BSListGroupItem>
+                }
+                @if(Job.Request.Source.Config is Data.TspApi.V3.KafkaInputConf kafkaConf)
+                {
+                    <BSListGroupItem>Broker(s): @kafkaConf.Brokers</BSListGroupItem>
+                    <BSListGroupItem>Topic: @kafkaConf.Topic</BSListGroupItem>
+                    <BSListGroupItem>Max time-series gap, ms: @(kafkaConf.EventsMaxGapMs ?? 60000)</BSListGroupItem>
+                    <BSListGroupItem>Max incident gap, ms: @(kafkaConf.DefaultEventsGapMs ?? 2000)</BSListGroupItem>
+                }
+                </BSListGroup>
+            </Content>
+        </BSAccordionItem>
+    </BSAccordion>
+    <h5>@Loc["Sinks"] (@(Job.Request.Sinks.Count))</h5>
+    <BSAccordion>        
+        @foreach (var (sink, index) in Job.Request.Sinks.Select((x, i) => (x, i + 1)))
         {
-            <span class="badge rounded-pill bg-secondary">@sink.Type</span>
+            <BSAccordionItem>
+            <Header>
+                @Loc["SinkNo"] @index 
+                <BSBadge Color="@BlazorStrap.BSColor.Secondary" IsPill="true">@(Job.Request.Source.Type)</BSBadge>
+            </Header>
+            <Content>
+                <BSListGroup>
+                @if(sink.Config is Data.TspApi.V3.JdbcOutputConf jdbcConf)
+                {
+                    <BSListGroupItem>JDBC URL: @jdbcConf.JdbcUrl</BSListGroupItem>
+                }
+                @if(sink.Config is Data.TspApi.V3.KafkaOutputConf kafkaConf)
+                {
+                    <BSListGroupItem>Broker: @kafkaConf.Broker</BSListGroupItem>
+                    <BSListGroupItem>Topic: @kafkaConf.Topic</BSListGroupItem>
+                }
+                </BSListGroup>
+            </Content>
+        </BSAccordionItem>
         }
-    </p>
+    </BSAccordion>
     <h4>@Loc["Patterns"] (@(Job.Request?.Patterns.Count ?? 0))</h4>
-    @foreach (var pattern in Job.Request.Patterns)
-    {
-        <div class="card card-body">
-            <p>ID @pattern.Id</p>
-            <pre>
-                <code style="display: inline-block;white-space: normal;max-width:100%; word-break:break-all; word-wrap:break-word;">
-                    @pattern.SourceCode
-                </code>
-            </pre>
-        </div>
-    }
+    <BSCollapse>
+        <Toggler>
+            <BSToggle IsButton="false" Color="@BlazorStrap.BSColor.Primary">@Loc["Patterns"] (@(Job.Request?.Patterns.Count ?? 0))</BSToggle>
+        </Toggler>
+        <Content>
+            <BSAccordion>
+            @foreach (var pattern in Job.Request.Patterns)
+            {
+                <BSAccordionItem>
+                    <Header>ID @pattern.Id</Header>
+                    <Content>
+                        <p>Subunit: <b>@pattern.Subunit</b></p>
+                        @if (pattern.Metadata?.Count > 0)
+                        {
+                            <p>Metadata: @String.Join("; ", pattern.Metadata) </p>
+                        }                        
+                        <pre>
+                            <code style="display: inline-block;white-space: normal;max-width:100%; word-break:break-all; word-wrap:break-word;">
+                                @pattern.SourceCode
+                            </code>
+                        </pre>
+                    </Content>
+                </BSAccordionItem>
+            }
+            </BSAccordion>
+        </Content>
+    </BSCollapse>
 }
 
 @code {
