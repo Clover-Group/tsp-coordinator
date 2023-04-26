@@ -217,44 +217,44 @@ public class JobService
 
     public async void InspectQueue(Object? state)
     {
-        if (jobQueue.Jobs.Count == 0) return;
-
-        var firstFreeInstance = _instancesService.FindFirstFreeInstance();
-
-        if (firstFreeInstance == null) return;
-
-        var job = jobQueue.Dequeue()!;
-        job.RunningOn = firstFreeInstance;
-        firstFreeInstance.SentJobsIds.Add(job.JobId);
-        runningJobs.Add(job);
-
-        var jobSubmitUrl = $"http://{firstFreeInstance.Host.MapToIPv4()}:{firstFreeInstance.Port}/job/submit/";
-
-        var client = _clientFactory.CreateClient("TspJobRunner");
-        try
+        while (jobQueue.Jobs.Count > 0)
         {
-            var requestAsJson = JsonSerializer.Serialize(job.Request, jsonOptions);
-            //_logger.LogInformation(requestAsJson);
-            var response = await client.PostAsync(jobSubmitUrl,
-                new StringContent(
-                    requestAsJson,
-                    Encoding.UTF8,
-                    "application/json")
-            );
-            if (!response.IsSuccessStatusCode)
+            var firstFreeInstance = _instancesService.FindFirstFreeInstance();
+
+            if (firstFreeInstance == null) return;
+
+            var job = jobQueue.Dequeue()!;
+            job.RunningOn = firstFreeInstance;
+            firstFreeInstance.SentJobsIds.Add(job.JobId);
+            runningJobs.Add(job);
+
+            var jobSubmitUrl = $"http://{firstFreeInstance.Host.MapToIPv4()}:{firstFreeInstance.Port}/job/submit/";
+
+            var client = _clientFactory.CreateClient("TspJobRunner");
+            try
             {
-                // TODO: Failed to send job
-                _logger.LogCritical($"Failed to send job {job.JobId}, returned status {response.StatusCode} with {await response.Content.ReadAsStringAsync()}");
-                runningJobs.Remove(job);
-                job.Status = JobStatus.Canceled;
-                completedJobs.Add(job);
+                var requestAsJson = JsonSerializer.Serialize(job.Request, jsonOptions);
+                //_logger.LogInformation(requestAsJson);
+                var response = await client.PostAsync(jobSubmitUrl,
+                    new StringContent(
+                        requestAsJson,
+                        Encoding.UTF8,
+                        "application/json")
+                );
+                if (!response.IsSuccessStatusCode)
+                {
+                    // TODO: Failed to send job
+                    _logger.LogCritical($"Failed to send job {job.JobId}, returned status {response.StatusCode} with {await response.Content.ReadAsStringAsync()}");
+                    runningJobs.Remove(job);
+                    job.Status = JobStatus.Canceled;
+                    completedJobs.Add(job);
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                // TODO:
             }
         }
-        catch (HttpRequestException ex)
-        {
-            // TODO:
-        }
-
     }
 
     public async Task<JobStopResult> StopJob(string jobId)

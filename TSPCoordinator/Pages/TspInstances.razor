@@ -33,7 +33,7 @@ else
                     <td scope="row">@index</td>
                     <td>@instance.Location</td>
                     <td>@instance.Version</td>
-                    <td>@instance.HealthCheckDate.ToString("u", CultureInfo.InvariantCulture)</td>
+                    <td>@instance.HealthCheckDate.ToString("G")</td>
                     <td>
                     @switch(instance.Status)
                     {

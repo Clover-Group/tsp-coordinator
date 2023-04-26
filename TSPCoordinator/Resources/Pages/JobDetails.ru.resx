@@ -129,6 +129,10 @@
     <value>Время с момента последней активности</value>
     <comment/>
   </data>
+  <data name="RunningTime" xml:space="preserve">
+    <value>Время выполнения</value>
+    <comment/>
+  </data>
   <data name="RowsRead" xml:space="preserve">
     <value>Считано строк</value>
     <comment/>
@@ -151,6 +155,10 @@
   </data>
   <data name="Sinks" xml:space="preserve">
     <value>Приемники</value>
+    <comment/>
+  </data>
+  <data name="SinkNo" xml:space="preserve">
+    <value>Приемник №</value>
     <comment/>
   </data>
   <data name="Patterns" xml:space="preserve">
