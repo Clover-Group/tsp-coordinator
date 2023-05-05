@@ -30,8 +30,9 @@ public class TspInstancesService
 
     public bool AddInstance(TspInstance instance)
     {
-        if (instances.Exists(i => i.Location == instance.Location))
+        if (instances.FirstOrDefault(i => i.Location == instance.Location) is TspInstance foundInstance)
         {
+            foundInstance.Version = instance.Version;
             return false;
         }
         instance.HealthCheckAttemptsRemaining = _configurationService.HealthCheckAttempts;

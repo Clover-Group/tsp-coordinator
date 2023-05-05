@@ -76,6 +76,7 @@ else
             <th>@Loc["JobID"]</th>
             <th>@Loc["Priority"]</th>
             <th>@Loc["RunningOn"]</th>
+            <th>@Loc["RunningTime"]</th>
             <th>@Loc["RowsRead"]</th>
             <th>@Loc["RowsWritten"]</th>
             <th>@Loc["Status"]</th>
@@ -88,6 +89,7 @@ else
                     <td><a href="jobs/@job.JobId">@job.JobId</a></td>
                     <td>@job.Request.Priority</td>
                     <td>@job.RunningOn</td>
+                    <td>@job.Lifecycle.RunningTime</td>
                     <td>@job.RowsRead</td>
                     <td>@job.RowsWritten</td>
                     <td>
@@ -129,6 +131,7 @@ else
         <tr>
             <th>@Loc["JobID"]</th>
             <th>@Loc["Priority"]</th>
+            <th>@Loc["RunningTime"]</th>
             <th>@Loc["RowsRead"]</th>
             <th>@Loc["RowsWritten"]</th>
             <th>@Loc["Status"]</th>
@@ -140,6 +143,7 @@ else
                 <tr>
                     <td><a href="jobs/@job.JobId">@job.JobId</a></td>
                     <td>@job.Request.Priority</td>
+                    <td>@job.Lifecycle.RunningTime</td>
                     <td>@job.RowsRead</td>
                     <td>@job.RowsWritten</td>
                     <td>
