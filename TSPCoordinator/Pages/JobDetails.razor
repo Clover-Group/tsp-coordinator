@@ -41,7 +41,7 @@ else
                 <BSListGroup>
                 @if(Job.Request.Source.Config is Data.TspApi.V3.JdbcInputConf jdbcConf)
                 {
-                    <BSListGroupItem>JDBC URL: @jdbcConf.JdbcUrl</BSListGroupItem>
+                    <BSListGroupItem>JDBC URL: @(new Uri(jdbcConf.JdbcUrl).AbsolutePath)</BSListGroupItem>
                     <BSListGroupItem>Query: @jdbcConf.Query</BSListGroupItem>
                     <BSListGroupItem>Max time-series gap, ms: @(jdbcConf.EventsMaxGapMs ?? 60000)</BSListGroupItem>
                     <BSListGroupItem>Max incident gap, ms: @(jdbcConf.DefaultEventsGapMs ?? 2000)</BSListGroupItem>
@@ -64,13 +64,13 @@ else
             <BSAccordionItem>
             <Header>
                 @Loc["SinkNo"] @index 
-                <BSBadge Color="@BlazorStrap.BSColor.Secondary" IsPill="true">@(Job.Request.Source.Type)</BSBadge>
+                <BSBadge Color="@BlazorStrap.BSColor.Secondary" IsPill="true">@(sink.Type)</BSBadge>
             </Header>
             <Content>
                 <BSListGroup>
                 @if(sink.Config is Data.TspApi.V3.JdbcOutputConf jdbcConf)
                 {
-                    <BSListGroupItem>JDBC URL: @jdbcConf.JdbcUrl</BSListGroupItem>
+                    <BSListGroupItem>JDBC URL: @(new Uri(jdbcConf.JdbcUrl).AbsolutePath)</BSListGroupItem>
                 }
                 @if(sink.Config is Data.TspApi.V3.KafkaOutputConf kafkaConf)
                 {
