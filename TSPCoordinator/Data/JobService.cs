@@ -217,6 +217,7 @@ public class JobService
 
     public async void InspectQueue(Object? state)
     {
+        //Console.WriteLine($"Inspecting queue: {jobQueue.Jobs.Count} jobs found");
         while (jobQueue.Jobs.Count > 0)
         {
             var firstFreeInstance = _instancesService.FindFirstFreeInstance();
@@ -241,10 +242,11 @@ public class JobService
                         Encoding.UTF8,
                         "application/json")
                 );
+                _logger.LogInformation($"Job {job.JobId} sent, response code is {(int)response.StatusCode} with {await response.Content.ReadAsStringAsync()}");
                 if (!response.IsSuccessStatusCode)
                 {
                     // TODO: Failed to send job
-                    _logger.LogCritical($"Failed to send job {job.JobId}, returned status {response.StatusCode} with {await response.Content.ReadAsStringAsync()}");
+                    _logger.LogCritical($"Failed to send job {job.JobId}, returned status {(int)response.StatusCode} with {await response.Content.ReadAsStringAsync()}");
                     runningJobs.Remove(job);
                     job.Status = JobStatus.Canceled;
                     completedJobs.Add(job);
@@ -253,6 +255,7 @@ public class JobService
             catch (HttpRequestException ex)
             {
                 // TODO:
+                _logger.LogCritical($"Failed to send job {job.JobId}, an exception occurred: {ex.Message}");
             }
         }
     }

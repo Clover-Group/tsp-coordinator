@@ -96,10 +96,11 @@ public class JobQueue
 
     private void Persist()
     {
-        Console.WriteLine("Persisting...");
-        var serialized = JsonSerializer.Serialize(jobs, typeof(List<Job>), jsonOptions);
+        //Console.WriteLine("Persisting...");
         if (_redis != null)
         {
+            var jobsCopy = jobs;
+            var serialized = JsonSerializer.Serialize(jobsCopy, typeof(List<Job>), jsonOptions);
             var db = _redis.GetDatabase();
             db.StringSet(_storageKey, serialized);
         }
