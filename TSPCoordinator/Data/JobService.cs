@@ -126,8 +126,8 @@ public class JobService
             job.Lifecycle.AddFinished(info.Success, info.Error);
             job.RowsRead = info.RowsRead ?? 0;
             job.RowsWritten = info.RowsWritten ?? 0;
-            runningJobs.Remove(job);
-            completedJobs.Add(job);
+            lock (runningJobs) runningJobs.Remove(job);
+            lock (completedJobs) completedJobs.Add(job);
             _statusReportingService.SendJobStatus(job, $"Job {job.JobId} completed.");
             // if job completed quickly (between health checks), we remove it from sent ones manually
             job.RunningOn?.SentJobsIds?.RemoveAll(x => x == job.JobId);
@@ -139,7 +139,7 @@ public class JobService
         var jobsRunningOnFailedInstance = runningJobs.Where(j => j.RunningOn == instance).ToList();
         foreach (var job in jobsRunningOnFailedInstance)
         {
-            runningJobs.Remove(job);
+            lock (runningJobs) runningJobs.Remove(job);
             job.RunningOn = null;
             jobQueue.Enqueue(job);
         }
@@ -167,7 +167,7 @@ public class JobService
                         Status = JobStatus.Running
                     };
                     job.Lifecycle.AddExternalDiscovered();
-                    runningJobs.Add(job);
+                    lock (runningJobs) runningJobs.Add(job);
 
                 }
                 else
@@ -184,7 +184,12 @@ public class JobService
 
     public async void UpdateJobStates(Object? state)
     {
-        foreach (var job in runningJobs.ToList())
+        List<Job> jobsCopy;
+        lock(runningJobs)
+        {
+            jobsCopy = runningJobs.ToList();
+        }
+        foreach (var job in jobsCopy)
         {
             if (job.RunningOn != null)
             {
@@ -227,7 +232,7 @@ public class JobService
             var job = jobQueue.Dequeue()!;
             job.RunningOn = firstFreeInstance;
             firstFreeInstance.SentJobsIds.Add(job.JobId);
-            runningJobs.Add(job);
+            lock (runningJobs) runningJobs.Add(job);
 
             var jobSubmitUrl = $"http://{firstFreeInstance.Host.MapToIPv4()}:{firstFreeInstance.Port}/job/submit/";
 
@@ -247,9 +252,9 @@ public class JobService
                 {
                     // TODO: Failed to send job
                     _logger.LogCritical($"Failed to send job {job.JobId}, returned status {(int)response.StatusCode} with {await response.Content.ReadAsStringAsync()}");
-                    runningJobs.Remove(job);
+                    lock (runningJobs) runningJobs.Remove(job);
                     job.Status = JobStatus.Canceled;
-                    completedJobs.Add(job);
+                    lock (completedJobs) completedJobs.Add(job);
                 }
             }
             catch (HttpRequestException ex)
