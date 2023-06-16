@@ -22,7 +22,7 @@ public class Job
 {
     public Job() => Lifecycle = new JobLifecycle(this);
 
-    public string JobId { get; set; }
+    public string JobId { get; set; } = default! ;
     public JobStatus Status { get; set; }
 
     public long RowsRead { get; set; } = 0;
@@ -30,7 +30,7 @@ public class Job
 
     public bool IsExternal { get; set; } = false;
 
-    public Actual.Request Request { get; set; }
+    public Actual.Request Request { get; set; } = default! ;
 
     public TspInstance? RunningOn { get; set; }
 

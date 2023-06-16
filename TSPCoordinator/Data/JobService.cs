@@ -175,7 +175,7 @@ public class JobService
                     // TODO
                 }
             }
-            catch (HttpRequestException ex)
+            catch (HttpRequestException)
             {
                 // TODO:
             }
@@ -212,7 +212,7 @@ public class JobService
                         // TODO
                     }
                 }
-                catch (HttpRequestException ex)
+                catch (HttpRequestException)
                 {
                     // TODO:
                 }
@@ -222,46 +222,53 @@ public class JobService
 
     public async void InspectQueue(Object? state)
     {
-        //Console.WriteLine($"Inspecting queue: {jobQueue.Jobs.Count} jobs found");
-        while (jobQueue.Jobs.Count > 0)
+        try
         {
-            var firstFreeInstance = _instancesService.FindFirstFreeInstance();
-
-            if (firstFreeInstance == null) return;
-
-            var job = jobQueue.Dequeue()!;
-            job.RunningOn = firstFreeInstance;
-            firstFreeInstance.SentJobsIds.Add(job.JobId);
-            lock (runningJobs) runningJobs.Add(job);
-
-            var jobSubmitUrl = $"http://{firstFreeInstance.Host.MapToIPv4()}:{firstFreeInstance.Port}/job/submit/";
-
-            var client = _clientFactory.CreateClient("TspJobRunner");
-            try
+            //Console.WriteLine($"Inspecting queue: {jobQueue.Jobs.Count} jobs found");
+            while (jobQueue.Jobs.Count > 0)
             {
-                var requestAsJson = JsonSerializer.Serialize(job.Request, jsonOptions);
-                //_logger.LogInformation(requestAsJson);
-                var response = await client.PostAsync(jobSubmitUrl,
-                    new StringContent(
-                        requestAsJson,
-                        Encoding.UTF8,
-                        "application/json")
-                );
-                _logger.LogInformation($"Job {job.JobId} sent, response code is {(int)response.StatusCode} with {await response.Content.ReadAsStringAsync()}");
-                if (!response.IsSuccessStatusCode)
+                var firstFreeInstance = _instancesService.FindFirstFreeInstance();
+
+                if (firstFreeInstance == null) return;
+
+                var job = jobQueue.Dequeue()!;
+                job.RunningOn = firstFreeInstance;
+                firstFreeInstance.SentJobsIds.Add(job.JobId);
+                lock (runningJobs) runningJobs.Add(job);
+
+                var jobSubmitUrl = $"http://{firstFreeInstance.Host.MapToIPv4()}:{firstFreeInstance.Port}/job/submit/";
+
+                var client = _clientFactory.CreateClient("TspJobRunner");
+                try
                 {
-                    // TODO: Failed to send job
-                    _logger.LogCritical($"Failed to send job {job.JobId}, returned status {(int)response.StatusCode} with {await response.Content.ReadAsStringAsync()}");
-                    lock (runningJobs) runningJobs.Remove(job);
-                    job.Status = JobStatus.Canceled;
-                    lock (completedJobs) completedJobs.Add(job);
+                    var requestAsJson = JsonSerializer.Serialize(job.Request, jsonOptions);
+                    //_logger.LogInformation(requestAsJson);
+                    var response = await client.PostAsync(jobSubmitUrl,
+                        new StringContent(
+                            requestAsJson,
+                            Encoding.UTF8,
+                            "application/json")
+                    );
+                    _logger.LogInformation($"Job {job.JobId} sent, response code is {(int)response.StatusCode} with {await response.Content.ReadAsStringAsync()}");
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        // TODO: Failed to send job
+                        _logger.LogCritical($"Failed to send job {job.JobId}, returned status {(int)response.StatusCode} with {await response.Content.ReadAsStringAsync()}");
+                        lock (runningJobs) runningJobs.Remove(job);
+                        job.Status = JobStatus.Canceled;
+                        lock (completedJobs) completedJobs.Add(job);
+                    }
+                }
+                catch (HttpRequestException ex)
+                {
+                    // TODO:
+                    _logger.LogCritical($"Failed to send job {job.JobId}, an exception occurred: {ex.Message}");
                 }
             }
-            catch (HttpRequestException ex)
-            {
-                // TODO:
-                _logger.LogCritical($"Failed to send job {job.JobId}, an exception occurred: {ex.Message}");
-            }
+        }
+        catch(Exception e)
+        {
+            _logger.LogWarning($"An exception: `{e.Message}` occurred during queue inspection, skipping that schedule...");
         }
     }
 

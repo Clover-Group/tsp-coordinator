@@ -89,7 +89,7 @@ else
         </Toggler>
         <Content>
             <BSAccordion>
-            @foreach (var pattern in Job.Request.Patterns)
+            @foreach (var pattern in Job.Request?.Patterns ?? new List<Data.TspApi.V3.Pattern>())
             {
                 <BSAccordionItem>
                     <Header>ID @pattern.Id</Header>
@@ -126,7 +126,7 @@ else
         {
             InvokeAsync( async () =>
             {
-                Job = JobService.FindJobById(Id);
+                Job = JobService.FindJobById(Id ?? "");
                 StateHasChanged();
             });
         }, null, 0, 5000);

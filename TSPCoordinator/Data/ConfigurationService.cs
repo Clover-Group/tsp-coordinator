@@ -2,13 +2,13 @@ namespace TspCoordinator.Data;
 
 public class StatusReportingSettings
 {
-    public string Broker { get; set; }
-    public string Topic { get; set; }
+    public string Broker { get; set; } = default! ;
+    public string Topic { get; set; } = default! ;
 }
 
 public class QueueStorageRedisSettings
 {
-    public string Host { get; set; }
+    public string Host { get; set; } = default! ;
 }
 
 public class ConfigurationService

@@ -15,7 +15,7 @@ public class TspInstance
 {
 
     [JsonIgnore]
-    public IPAddress Host { get; set; }
+    public IPAddress Host { get; set; } = default! ;
 
     [JsonIgnore]
     public int Port { get; set; }
