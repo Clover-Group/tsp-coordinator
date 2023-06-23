@@ -255,7 +255,10 @@ public class JobService
                         // TODO: Failed to send job
                         _logger.LogCritical($"Failed to send job {job.JobId}, returned status {(int)response.StatusCode} with {await response.Content.ReadAsStringAsync()}");
                         lock (runningJobs) runningJobs.Remove(job);
-                        job.Status = JobStatus.Canceled;
+                        job.Status = JobStatus.Failed;
+                        job.NotifyStatusChanged();
+                        job.Lifecycle.AddLogMessage($"Failed to send job {job.JobId}, returned status {(int)response.StatusCode} with {await response.Content.ReadAsStringAsync()}");
+                        _statusReportingService.SendJobStatus(job, $"Job {job.JobId} not started because of TSP failure (HTTP error {(int)response.StatusCode})");
                         lock (completedJobs) completedJobs.Add(job);
                     }
                 }
@@ -274,8 +277,13 @@ public class JobService
 
     public async Task<JobStopResult> StopJob(string jobId)
     {
-        if (jobQueue.RemoveById(jobId))
+        if (jobQueue.FindById(jobId) is Job job)
         {
+            job.Status = JobStatus.Canceled;
+            job.NotifyStatusChanged();
+            _statusReportingService.SendJobStatus(job, $"Job {jobId} was canceled before start and dequeued");
+            jobQueue.RemoveById(jobId);
+            completedJobs.Add(job);
             return JobStopResult.Dequeued;
         }
         var findInRunning = runningJobs.Find(j => j.JobId == jobId);
@@ -290,6 +298,9 @@ public class JobService
             var jobStopUrl = $"http://{instance.Host.MapToIPv4()}:{instance.Port}/job/{jobId}/stop/";
             var response = await client.PostAsync(jobStopUrl, null);
             // TODO: Handle response
+            findInRunning.Status = JobStatus.Canceled;
+            findInRunning.NotifyStatusChanged();
+            _statusReportingService.SendJobStatus(findInRunning, $"Job {findInRunning.JobId} was canceled");
             return JobStopResult.StopRequested;
         }
         return JobStopResult.NotFound;
