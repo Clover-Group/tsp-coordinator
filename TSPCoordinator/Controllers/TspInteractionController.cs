@@ -5,17 +5,17 @@ namespace TspCoordinator.Controllers;
 
 public class TspRegisterInfo
 {
-    public string Version { get; set; }
+    public string Version { get; set; } = "";
 }
 
 public class JobStartedInfo
 {
-    public string JobId { get; set; }
+    public string JobId { get; set; } = "";
 }
 
 public class JobCompletedInfo
 {
-    public string JobId { get; set; }
+    public string JobId { get; set; } = "";
     public bool Success { get; set; }
 
     public string? Error { get; set; }

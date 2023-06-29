@@ -13,7 +13,7 @@ namespace TSPCoordinator.Tests;
 [TestClass]
 public class TestTspInteraction
 {
-    private static WebApplicationFactory<Program> _factory;
+    private static WebApplicationFactory<Program> _factory = default!;
     private static JsonSerializerOptions _jsonOptions = new JsonSerializerOptions
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase

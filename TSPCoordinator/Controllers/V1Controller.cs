@@ -48,12 +48,14 @@ public class V1Controller : Controller
         var sourceOk = source switch
         {
             "jdbc" => request.Source is JdbcInputConf,
-            "kafka" => request.Source is KafkaInputConf
+            "kafka" => request.Source is KafkaInputConf,
+            _ => false
         };
         var sinkOk = sink switch
         {
             "jdbc" => request.Sink is JdbcOutputConf,
-            "kafka" => request.Sink is KafkaOutputConf
+            "kafka" => request.Sink is KafkaOutputConf,
+            _ => false
         };
         if (!(sourceOk && sinkOk))
         {

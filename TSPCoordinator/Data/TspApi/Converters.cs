@@ -124,18 +124,18 @@ public static class Converters
             {
                 Config = new Actual.NarrowDataUnfoldingConf
                 {
-                    KeyColumn = (ndu.Config as V1.NarrowDataUnfoldingConf).KeyColumn,
-                    DefaultValueColumn = (ndu.Config as V1.NarrowDataUnfoldingConf).DefaultValueColumn,
-                    FieldsTimeoutsMs = (ndu.Config as V1.NarrowDataUnfoldingConf).FieldsTimeoutsMs,
-                    ValueColumnMapping = (ndu.Config as V1.NarrowDataUnfoldingConf).ValueColumnMapping,
+                    KeyColumn = (ndu.Config as V1.NarrowDataUnfoldingConf)?.KeyColumn ?? default!,
+                    DefaultValueColumn = (ndu.Config as V1.NarrowDataUnfoldingConf)?.DefaultValueColumn ?? default!,
+                    FieldsTimeoutsMs = (ndu.Config as V1.NarrowDataUnfoldingConf)?.FieldsTimeoutsMs ?? default!,
+                    ValueColumnMapping = (ndu.Config as V1.NarrowDataUnfoldingConf)?.ValueColumnMapping,
                 }
             },
             V1.WideDataFilling wdf => new Actual.WideDataFilling
             {
                 Config = new Actual.WideDataFillingConf
                 {
-                    FieldsTimeoutsMs = (wdf.Config as V1.WideDataFillingConf).FieldsTimeoutsMs,
-                    DefaultTimeout = (wdf.Config as V1.WideDataFillingConf).DefaultTimeout,
+                    FieldsTimeoutsMs = (wdf.Config as V1.WideDataFillingConf)?.FieldsTimeoutsMs ?? default!,
+                    DefaultTimeout = (wdf.Config as V1.WideDataFillingConf)?.DefaultTimeout ?? default!,
                 }
             },
             _ => null
@@ -148,18 +148,18 @@ public static class Converters
             {
                 Config = new Actual.NarrowDataUnfoldingConf
                 {
-                    KeyColumn = (ndu.Config as V2.NarrowDataUnfoldingConf).KeyColumn,
-                    DefaultValueColumn = (ndu.Config as V2.NarrowDataUnfoldingConf).DefaultValueColumn,
-                    FieldsTimeoutsMs = (ndu.Config as V2.NarrowDataUnfoldingConf).FieldsTimeoutsMs,
-                    ValueColumnMapping = (ndu.Config as V2.NarrowDataUnfoldingConf).ValueColumnMapping,
+                    KeyColumn = (ndu.Config as V2.NarrowDataUnfoldingConf)?.KeyColumn ?? default!,
+                    DefaultValueColumn = (ndu.Config as V2.NarrowDataUnfoldingConf)?.DefaultValueColumn ?? default!,
+                    FieldsTimeoutsMs = (ndu.Config as V2.NarrowDataUnfoldingConf)?.FieldsTimeoutsMs ?? default!,
+                    ValueColumnMapping = (ndu.Config as V2.NarrowDataUnfoldingConf)?.ValueColumnMapping,
                 }
             },
             V2.WideDataFilling wdf => new Actual.WideDataFilling
             {
                 Config = new Actual.WideDataFillingConf
                 {
-                    FieldsTimeoutsMs = (wdf.Config as V2.WideDataFillingConf).FieldsTimeoutsMs,
-                    DefaultTimeout = (wdf.Config as V2.WideDataFillingConf).DefaultTimeout,
+                    FieldsTimeoutsMs = (wdf.Config as V2.WideDataFillingConf)?.FieldsTimeoutsMs ?? default!,
+                    DefaultTimeout = (wdf.Config as V2.WideDataFillingConf)?.DefaultTimeout ?? default!,
                 }
             },
             _ => null
@@ -215,7 +215,8 @@ public static class Converters
                     TimestampMultiplier = kafkaInputConf.TimestampMultiplier,
                     Topic = kafkaInputConf.Topic,
                     UnitIdField = kafkaInputConf.UnitIdField
-                }
+                },
+            _ => throw new ArgumentException($"Unsupported input configuration: {inputConf} was provided")
         };
 
     public static Actual.IInputConf ConvertInputConfFromV2(V2.IInputConf inputConf)
@@ -266,7 +267,8 @@ public static class Converters
                     TimestampMultiplier = kafkaInputConf.TimestampMultiplier,
                     Topic = kafkaInputConf.Topic,
                     UnitIdField = kafkaInputConf.UnitIdField
-                }
+                },
+            _ => throw new ArgumentException($"Unsupported input configuration: {inputConf} was provided")
         };
 
     public static Actual.IInputConf ConvertInputConfFromV3(V3.IInputConf inputConf)
@@ -295,7 +297,8 @@ public static class Converters
                 RowSchema = ConvertEventSchemaFromV1(kafkaOutputConf.RowSchema),
                 Serializer = kafkaOutputConf.Serializer,
                 Topic = kafkaOutputConf.Topic
-            }
+            },
+            _ => throw new ArgumentException($"Unsupported output configuration: {outputConf} was provided")
         };
 
     public static Actual.IOutputConf ConvertOutputConfFromV2(V2.IOutputConf outputConf)
@@ -319,7 +322,8 @@ public static class Converters
                 RowSchema = ConvertEventSchemaFromV2(kafkaOutputConf.RowSchema),
                 Serializer = kafkaOutputConf.Serializer,
                 Topic = kafkaOutputConf.Topic
-            }
+            },
+            _ => throw new ArgumentException($"Unsupported output configuration: {outputConf} was provided")
         };
 
     public static Actual.IOutputConf ConvertOutputConfFromV3(V3.IOutputConf outputConf)

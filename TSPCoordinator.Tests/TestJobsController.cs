@@ -7,7 +7,7 @@ namespace TSPCoordinator.Tests;
 [TestClass]
 public class TestJobsController
 {
-    private static WebApplicationFactory<Program> _factory;
+    private static WebApplicationFactory<Program> _factory = new WebApplicationFactory<Program>();
 
     [ClassInitialize]
     public static void ClassInit(TestContext testContext)

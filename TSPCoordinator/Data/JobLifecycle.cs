@@ -22,6 +22,11 @@ public class JobLifecycle
         events.Add(DateTime.Now, $"Job {jobId} was queued.");
     }
 
+    public void AddLogMessage(String message)
+    {
+        events.Add(DateTime.Now, $"Job {jobId} logged message: {message}");
+    }
+
     public void AddStatusChanged(JobStatus newStatus)
     {
         events.Add(DateTime.Now, $"Status of {jobId} was changed to {newStatus}");

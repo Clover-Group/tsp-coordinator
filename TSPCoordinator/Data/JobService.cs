@@ -126,8 +126,8 @@ public class JobService
             job.Lifecycle.AddFinished(info.Success, info.Error);
             job.RowsRead = info.RowsRead ?? 0;
             job.RowsWritten = info.RowsWritten ?? 0;
-            runningJobs.Remove(job);
-            completedJobs.Add(job);
+            lock (runningJobs) runningJobs.Remove(job);
+            lock (completedJobs) completedJobs.Add(job);
             _statusReportingService.SendJobStatus(job, $"Job {job.JobId} completed.");
             // if job completed quickly (between health checks), we remove it from sent ones manually
             job.RunningOn?.SentJobsIds?.RemoveAll(x => x == job.JobId);
@@ -139,7 +139,7 @@ public class JobService
         var jobsRunningOnFailedInstance = runningJobs.Where(j => j.RunningOn == instance).ToList();
         foreach (var job in jobsRunningOnFailedInstance)
         {
-            runningJobs.Remove(job);
+            lock (runningJobs) runningJobs.Remove(job);
             job.RunningOn = null;
             jobQueue.Enqueue(job);
         }
@@ -167,7 +167,7 @@ public class JobService
                         Status = JobStatus.Running
                     };
                     job.Lifecycle.AddExternalDiscovered();
-                    runningJobs.Add(job);
+                    lock (runningJobs) runningJobs.Add(job);
 
                 }
                 else
@@ -175,7 +175,7 @@ public class JobService
                     // TODO
                 }
             }
-            catch (HttpRequestException ex)
+            catch (HttpRequestException)
             {
                 // TODO:
             }
@@ -184,7 +184,12 @@ public class JobService
 
     public async void UpdateJobStates(Object? state)
     {
-        foreach (var job in runningJobs.ToList())
+        List<Job> jobsCopy;
+        lock(runningJobs)
+        {
+            jobsCopy = runningJobs.ToList();
+        }
+        foreach (var job in jobsCopy)
         {
             if (job.RunningOn != null)
             {
@@ -207,7 +212,7 @@ public class JobService
                         // TODO
                     }
                 }
-                catch (HttpRequestException ex)
+                catch (HttpRequestException)
                 {
                     // TODO:
                 }
@@ -217,53 +222,68 @@ public class JobService
 
     public async void InspectQueue(Object? state)
     {
-        //Console.WriteLine($"Inspecting queue: {jobQueue.Jobs.Count} jobs found");
-        while (jobQueue.Jobs.Count > 0)
+        try
         {
-            var firstFreeInstance = _instancesService.FindFirstFreeInstance();
-
-            if (firstFreeInstance == null) return;
-
-            var job = jobQueue.Dequeue()!;
-            job.RunningOn = firstFreeInstance;
-            firstFreeInstance.SentJobsIds.Add(job.JobId);
-            runningJobs.Add(job);
-
-            var jobSubmitUrl = $"http://{firstFreeInstance.Host.MapToIPv4()}:{firstFreeInstance.Port}/job/submit/";
-
-            var client = _clientFactory.CreateClient("TspJobRunner");
-            try
+            //Console.WriteLine($"Inspecting queue: {jobQueue.Jobs.Count} jobs found");
+            while (jobQueue.Jobs.Count > 0)
             {
-                var requestAsJson = JsonSerializer.Serialize(job.Request, jsonOptions);
-                //_logger.LogInformation(requestAsJson);
-                var response = await client.PostAsync(jobSubmitUrl,
-                    new StringContent(
-                        requestAsJson,
-                        Encoding.UTF8,
-                        "application/json")
-                );
-                _logger.LogInformation($"Job {job.JobId} sent, response code is {(int)response.StatusCode} with {await response.Content.ReadAsStringAsync()}");
-                if (!response.IsSuccessStatusCode)
+                var firstFreeInstance = _instancesService.FindFirstFreeInstance();
+
+                if (firstFreeInstance == null) return;
+
+                var job = jobQueue.Dequeue()!;
+                job.RunningOn = firstFreeInstance;
+                firstFreeInstance.SentJobsIds.Add(job.JobId);
+                lock (runningJobs) runningJobs.Add(job);
+
+                var jobSubmitUrl = $"http://{firstFreeInstance.Host.MapToIPv4()}:{firstFreeInstance.Port}/job/submit/";
+
+                var client = _clientFactory.CreateClient("TspJobRunner");
+                try
                 {
-                    // TODO: Failed to send job
-                    _logger.LogCritical($"Failed to send job {job.JobId}, returned status {(int)response.StatusCode} with {await response.Content.ReadAsStringAsync()}");
-                    runningJobs.Remove(job);
-                    job.Status = JobStatus.Canceled;
-                    completedJobs.Add(job);
+                    var requestAsJson = JsonSerializer.Serialize(job.Request, jsonOptions);
+                    //_logger.LogInformation(requestAsJson);
+                    var response = await client.PostAsync(jobSubmitUrl,
+                        new StringContent(
+                            requestAsJson,
+                            Encoding.UTF8,
+                            "application/json")
+                    );
+                    _logger.LogInformation($"Job {job.JobId} sent, response code is {(int)response.StatusCode} with {await response.Content.ReadAsStringAsync()}");
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        // TODO: Failed to send job
+                        _logger.LogCritical($"Failed to send job {job.JobId}, returned status {(int)response.StatusCode} with {await response.Content.ReadAsStringAsync()}");
+                        lock (runningJobs) runningJobs.Remove(job);
+                        job.Status = JobStatus.Failed;
+                        job.NotifyStatusChanged();
+                        job.Lifecycle.AddLogMessage($"Failed to send job {job.JobId}, returned status {(int)response.StatusCode} with {await response.Content.ReadAsStringAsync()}");
+                        _statusReportingService.SendJobStatus(job, $"Job {job.JobId} not started because of TSP failure (HTTP error {(int)response.StatusCode})");
+                        lock (completedJobs) completedJobs.Add(job);
+                    }
+                }
+                catch (HttpRequestException ex)
+                {
+                    // TODO:
+                    _logger.LogCritical($"Failed to send job {job.JobId}, an exception occurred: {ex.Message}");
                 }
             }
-            catch (HttpRequestException ex)
-            {
-                // TODO:
-                _logger.LogCritical($"Failed to send job {job.JobId}, an exception occurred: {ex.Message}");
-            }
+        }
+        catch(Exception e)
+        {
+            _logger.LogWarning($"An exception: `{e.Message}` occurred during queue inspection, skipping that schedule...");
         }
     }
 
     public async Task<JobStopResult> StopJob(string jobId)
     {
-        if (jobQueue.RemoveById(jobId))
+        if (jobQueue.FindById(jobId) is Job job)
         {
+            job.Status = JobStatus.Canceled;
+            job.NotifyStatusChanged();
+            _statusReportingService.SendJobStatus(job, $"Job {jobId} was canceled before start and dequeued");
+            jobQueue.RemoveById(jobId);
+            completedJobs.Add(job);
             return JobStopResult.Dequeued;
         }
         var findInRunning = runningJobs.Find(j => j.JobId == jobId);
@@ -278,6 +298,9 @@ public class JobService
             var jobStopUrl = $"http://{instance.Host.MapToIPv4()}:{instance.Port}/job/{jobId}/stop/";
             var response = await client.PostAsync(jobStopUrl, null);
             // TODO: Handle response
+            findInRunning.Status = JobStatus.Canceled;
+            findInRunning.NotifyStatusChanged();
+            _statusReportingService.SendJobStatus(findInRunning, $"Job {findInRunning.JobId} was canceled");
             return JobStopResult.StopRequested;
         }
         return JobStopResult.NotFound;

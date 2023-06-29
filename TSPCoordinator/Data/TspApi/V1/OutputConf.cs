@@ -11,10 +11,10 @@ public interface IOutputConf
 public class JdbcOutputConf : IOutputConf
 {
     [JsonRequired(RequirementPolicy.Always)]
-    public string TableName { get; set; }
-    public EventSchema RowSchema { get; set; }
-    public string JdbcUrl { get; set; }
-    public string DriverName { get; set; }
+    public string TableName { get; set; } = default! ;
+    public EventSchema RowSchema { get; set; } = default! ;
+    public string JdbcUrl { get; set; } = default! ;
+    public string DriverName { get; set; } = default! ;
     public string? Password { get; set; }
     public int? BatchInterval { get; set; }
     public string? UserName { get; set; }
@@ -24,9 +24,9 @@ public class JdbcOutputConf : IOutputConf
 public class KafkaOutputConf : IOutputConf
 {
     [JsonRequired(RequirementPolicy.Always)]
-    public string Broker { get; set; }
-    public string Topic { get; set; }
+    public string Broker { get; set; } = default! ;
+    public string Topic { get; set; } = default! ;
     public string? Serializer { get; set; }
     public int? Parallelism { get; set; }
-    public EventSchema RowSchema { get; set; }
+    public EventSchema RowSchema { get; set; } = default! ;
 }

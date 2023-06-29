@@ -8,10 +8,10 @@ namespace TspCoordinator.Data;
 
 public class StatusMessage
 {
-    public string Uuid { get; set; }
-    public string Timestamp { get; set; }
-    public string Status { get; set; }
-    public string Text { get; set; }
+    public string Uuid { get; set; } = default! ;
+    public string Timestamp { get; set; } = default! ;
+    public string Status { get; set; } = default! ;
+    public string Text { get; set; } = default! ;
 }
 
 public class JobStatusReportingService

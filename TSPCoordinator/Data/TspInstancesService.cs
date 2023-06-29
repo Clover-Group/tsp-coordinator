@@ -86,7 +86,7 @@ public class TspInstancesService
                     instance.SentJobsIds.Clear();
                 }
             }
-            catch (HttpRequestException ex)
+            catch (HttpRequestException)
             {
                 instance.Status = TspInstanceStatus.NotResponding;
                 instance.HealthCheckAttemptsRemaining--;
@@ -118,7 +118,7 @@ public class TspInstancesService
                         instance.SentJobsIds.Clear();
                     }
                 }
-                catch (HttpRequestException ex)
+                catch (HttpRequestException)
                 {
                     instance.Status = TspInstanceStatus.CannotGetExtendedInfo;
                     instance.SentJobsIds.Clear();
