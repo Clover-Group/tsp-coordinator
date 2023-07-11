@@ -10,26 +10,28 @@ public class JobLifecycle
 
     private List<(DateTime, DateTime?)> runningTimes = new List<(DateTime, DateTime?)>();
 
-    private readonly string jobId;
+    private readonly Job job;
+
+    public String JobId => job.JobId;
 
     public JobLifecycle(Job job)
     {
-        jobId = job.JobId;
+        this.job = job;
     }
 
     public void AddQueued()
     {
-        events.Add(DateTime.Now, $"Job {jobId} was queued.");
+        events.Add(DateTime.Now, $"Job {JobId} was queued.");
     }
 
     public void AddLogMessage(String message)
     {
-        events.Add(DateTime.Now, $"Job {jobId} logged message: {message}");
+        events.Add(DateTime.Now, $"Job {JobId} logged message: {message}");
     }
 
     public void AddStatusChanged(JobStatus newStatus)
     {
-        events.Add(DateTime.Now, $"Status of {jobId} was changed to {newStatus}");
+        events.Add(DateTime.Now, $"Status of {JobId} was changed to {newStatus}");
 
         if (newStatus == JobStatus.Running)
         {
@@ -49,14 +51,14 @@ public class JobLifecycle
     public void AddFinished(bool success, string? error)
     {
         var status = success ? "finished successfully" : $"failed with error: {error ?? "no error text reported"}";
-        events.Add(DateTime.Now, $"Job {jobId} {status}.");
+        events.Add(DateTime.Now, $"Job {JobId} {status}.");
     }
 
     public void AddExternalDiscovered()
     {
         events.Add(
             DateTime.Now,
-            $"Job {jobId} was discovered as external on a TSP instance. Not all events may be recorded"
+            $"Job {JobId} was discovered as external on a TSP instance. Not all events may be recorded"
             );
     }
 }

@@ -121,8 +121,11 @@ public class JobService
         }
         else
         {
-            job.Status = info.Success ? JobStatus.Finished : JobStatus.Failed;
-            job.NotifyStatusChanged();
+            if (job.Status != JobStatus.Canceled)
+            {
+                job.Status = info.Success ? JobStatus.Finished : JobStatus.Failed;
+                job.NotifyStatusChanged();
+            }
             job.Lifecycle.AddFinished(info.Success, info.Error);
             job.RowsRead = info.RowsRead ?? 0;
             job.RowsWritten = info.RowsWritten ?? 0;
@@ -141,6 +144,8 @@ public class JobService
         {
             lock (runningJobs) runningJobs.Remove(job);
             job.RunningOn = null;
+            job.Status = JobStatus.Enqueued;
+            job.NotifyStatusChanged();
             jobQueue.Enqueue(job);
         }
     }
