@@ -14,7 +14,11 @@ else
 {
     <h2>@Loc["JobDetails"]: @Job.JobId</h2>
 
-    <BSButton Color="@BlazorStrap.BSColor.Danger" @onclick=StopJob>Stop/Cancel</BSButton>
+    <div class="card card-body">
+        <BSContainer Container="Container.Fluid">
+            <BSButton Color="@(JobCanBeStopped() ? BlazorStrap.BSColor.Danger : BlazorStrap.BSColor.Default)" @onclick=StopJob IsDisabled="@(!JobCanBeStopped())">Stop/Cancel</BSButton>
+        </BSContainer>
+    </div>
 
     @if(JobStopMessage != null)
     {
@@ -155,4 +159,10 @@ else
                 ("Something went wrong, invalid value for job stop status reported.", BlazorStrap.BSColor.Warning)
         };
     }
+
+    public bool JobCanBeStopped() => Job?.Status switch {
+        JobStatus.Enqueued => true,
+        JobStatus.Running => true,
+        _ => false
+    };
 }

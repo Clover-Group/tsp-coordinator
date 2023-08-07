@@ -13,6 +13,7 @@ public enum TspInstanceStatus
 
 public class TspInstance
 {
+    public Guid Uuid { get; set; }
 
     [JsonIgnore]
     public IPAddress Host { get; set; } = default! ;
@@ -43,6 +44,6 @@ public class TspInstance
 
     public override string ToString()
     {
-        return $"TSP instance v{Version} at {Location}";
+        return $"TSP instance {Uuid} v{Version} at {Location}";
     }
 }

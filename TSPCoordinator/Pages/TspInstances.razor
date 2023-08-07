@@ -19,6 +19,7 @@ else
         <thead>
             <tr>
                 <th>@Loc["Number"]</th>
+                <th>TSP ID</th>
                 <th>@Loc["Location"]</th>
                 <th>@Loc["Version"]</th>
                 <th>@Loc["LastHealthCheck"]</th>
@@ -31,6 +32,7 @@ else
             {
                 <tr>
                     <td scope="row">@index</td>
+                    <td>@instance.Uuid</td>
                     <td>@instance.Location</td>
                     <td>@instance.Version</td>
                     <td>@instance.HealthCheckDate.ToString("G")</td>

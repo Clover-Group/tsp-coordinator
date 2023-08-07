@@ -6,6 +6,7 @@ namespace TspCoordinator.Controllers;
 public class TspRegisterInfo
 {
     public string Version { get; set; } = "";
+    public Guid? Uuid { get; set; } = null;
 }
 
 public class JobStartedInfo
@@ -55,6 +56,7 @@ public class TspInteractionController : ControllerBase
         }
         TspInstance instance = new TspInstance
         {
+            Uuid = info.Uuid ?? GetIDFromIP(Request.HttpContext.Connection.RemoteIpAddress),
             Host = Request.HttpContext.Connection.RemoteIpAddress,
             Port = 8080,//Request.HttpContext.Connection.RemotePort,
             Version = info.Version,
@@ -90,5 +92,25 @@ public class TspInteractionController : ControllerBase
     {
         _jobService.OnJobCompleted(info);
         return Ok();
+    }
+
+    public Guid GetIDFromIP(System.Net.IPAddress address)
+    {
+        /* 
+            For older TSP versions (19.2.1 and below), compute ID from IP address
+            in the following form:  	00545350-0000-0000-0000-0000xxxxxxxx,
+            where '00545350' is a magic constant standing for 'TSP',
+            and 'xxxxxxxx' are IPv4 address bytes.
+            E.g. for IP 10.83.0.8 the ID will be 00545350-0000-0000-0000-00000a530008.
+            Newer versions (19.2.2+) send unique IDs upon registration.
+        */
+        var guidBinaryData = new byte[16];
+        guidBinaryData[3] = 0x00;
+        guidBinaryData[2] = 0x54; // 'T'
+        guidBinaryData[1] = 0x53; // 'S'
+        guidBinaryData[0] = 0x50; // 'P'
+        var addressBytes = address.MapToIPv4().GetAddressBytes();
+        Array.Copy(addressBytes, 0, guidBinaryData, 12, 4);
+        return new Guid(guidBinaryData);
     }
 }
