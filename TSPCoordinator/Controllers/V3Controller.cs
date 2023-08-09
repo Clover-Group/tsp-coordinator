@@ -43,4 +43,12 @@ public class V3Controller : Controller
         _jobService.EnqueueJob(job);
         return Ok(job);
     }
+
+    [HttpPost("job/{id}/stop")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Stop(string id)
+    {
+        return RedirectToAction("Stop", "Jobs", new { id });
+    }
 }
