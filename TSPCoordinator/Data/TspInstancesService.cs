@@ -86,13 +86,18 @@ public class TspInstancesService
                     instance.HealthCheckAttemptsRemaining--;
                     instance.SentJobsIds.Clear();
                 }
+                instance.HealthCheckDate = DateTime.Now;
             }
             catch (HttpRequestException)
             {
                 instance.Status = TspInstanceStatus.NotResponding;
                 instance.HealthCheckAttemptsRemaining--;
+                instance.HealthCheckDate = DateTime.Now;
             }
-            instance.HealthCheckDate = DateTime.Now;
+            catch (TaskCanceledException)
+            {
+                instance.Status = TspInstanceStatus.Busy;
+            }
             if (instance.HealthCheckAttemptsRemaining == 0)
             {
                 TspInstanceFailed?.Invoke(instance);

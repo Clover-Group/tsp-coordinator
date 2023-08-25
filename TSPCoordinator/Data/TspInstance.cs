@@ -8,6 +8,7 @@ public enum TspInstanceStatus
     Active,
     NotWorking,
     NotResponding,
+    Busy,
     CannotGetExtendedInfo
 }
 

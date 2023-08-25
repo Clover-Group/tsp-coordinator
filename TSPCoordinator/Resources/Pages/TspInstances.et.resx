@@ -153,6 +153,10 @@
     <value>Ei vasta</value>
     <comment/>
   </data>
+  <data name="Busy" xml:space="preserve">
+    <value>Kinni</value>
+    <comment/>
+  </data>
   <data name="CannotGetExtendedInfo" xml:space="preserve">
     <value>On võimatu üksikasjade saada</value>
     <comment/>

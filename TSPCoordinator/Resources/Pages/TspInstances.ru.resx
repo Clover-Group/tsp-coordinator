@@ -153,6 +153,10 @@
     <value>Не отвечает</value>
     <comment/>
   </data>
+  <data name="Busy" xml:space="preserve">
+    <value>Занята</value>
+    <comment/>
+  </data>
   <data name="CannotGetExtendedInfo" xml:space="preserve">
     <value>Невозможно получить подробности</value>
     <comment/>

@@ -50,8 +50,11 @@ else
                             <span class="badge rounded-pill bg-warning">@Loc["NotResponding"]</span>
                             <span class="badge rounded-pill bg-warning">@Loc["HealthCheckAttemptsRemaining"]: @instance.HealthCheckAttemptsRemaining</span>
                             break;
+                        case TspInstanceStatus.Busy:
+                            <span class="badge rounded-pill bg-warning">@Loc["Busy"]</span>
+                            break;
                         case TspInstanceStatus.CannotGetExtendedInfo:
-                            <span class="badge rounded-pill bg-warning">@Loc["Cannot get extended info"]</span>
+                            <span class="badge rounded-pill bg-warning">@Loc["CannotGetExtendedInfo"]</span>
                             break;
                     }
                     </td>

@@ -153,6 +153,10 @@
     <value>Nie odpowiada</value>
     <comment/>
   </data>
+  <data name="Busy" xml:space="preserve">
+    <value>Zajęta</value>
+    <comment/>
+  </data>
   <data name="CannotGetExtendedInfo" xml:space="preserve">
     <value>Niemożliwe dostać szczegółów </value>
     <comment/>
