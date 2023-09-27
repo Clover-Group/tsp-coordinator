@@ -221,6 +221,11 @@ public class JobService
                 {
                     // TODO:
                 }
+                catch (TaskCanceledException)
+                {
+                    // TSP is busy, do nothing (yet)
+                    _logger.LogWarning($"TSP is probably busy, no update for job {job.JobId} yet");
+                }
             }
         }
     }
