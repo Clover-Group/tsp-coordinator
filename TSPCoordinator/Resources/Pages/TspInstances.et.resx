@@ -165,4 +165,16 @@
     <value>Tervisekontrolli katsed jäänud</value>
     <comment/>
   </data>
+  <data name="AutoIP" xml:space="preserve">
+      <value>automaatne IP-aadress</value>
+    </data>
+  <data name="AdvertisedIP" xml:space="preserve">
+      <value>teatatud IP-aadress</value>
+  </data>
+  <data name="AutoPort" xml:space="preserve">
+      <value>automaatne pordinumber</value>
+  </data>
+  <data name="AdvertisedPort" xml:space="preserve">
+      <value>teatatud pordinumber</value>
+  </data>
 </root>

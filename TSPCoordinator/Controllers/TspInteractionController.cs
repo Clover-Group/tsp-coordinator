@@ -7,6 +7,10 @@ public class TspRegisterInfo
 {
     public string Version { get; set; } = "";
     public Guid? Uuid { get; set; } = null;
+
+    public string? AdvertisedIp { get; set; } = null;
+
+    public int? AdvertisedPort { get; set; } = null;
 }
 
 public class JobStartedInfo
@@ -54,11 +58,19 @@ public class TspInteractionController : ControllerBase
         {
             return BadRequest();
         }
-        TspInstance instance = new TspInstance
+        System.Net.IPAddress host = System.Net.IPAddress.Loopback;
+        bool hostAdvertised = System.Net.IPAddress.TryParse(info.AdvertisedIp, out host);
+        if (!hostAdvertised)
+        {
+            host = Request.HttpContext.Connection.RemoteIpAddress;
+        }
+        TspInstance instance = new()
         {
             Uuid = info.Uuid ?? GetIDFromIP(Request.HttpContext.Connection.RemoteIpAddress),
-            Host = Request.HttpContext.Connection.RemoteIpAddress,
-            Port = 8080,//Request.HttpContext.Connection.RemotePort,
+            Host = host,
+            Port = info.AdvertisedPort ?? 8080, //Request.HttpContext.Connection.RemotePort,
+            IsHostAdvertised = hostAdvertised,
+            IsPortAdvertised = info.AdvertisedPort.HasValue,
             Version = info.Version,
             HealthCheckDate = DateTime.Now
         };

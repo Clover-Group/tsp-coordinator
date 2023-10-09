@@ -165,4 +165,16 @@
     <value>Осталось попыток проверки</value>
     <comment/>
   </data>
+  <data name="AutoIP" xml:space="preserve">
+    <value>авто IP-адрес</value>
+  </data>
+  <data name="AdvertisedIP" xml:space="preserve">
+      <value>объявленный IP-адрес</value>
+  </data>
+  <data name="AutoPort" xml:space="preserve">
+      <value>авто-номер порта</value>
+  </data>
+  <data name="AdvertisedPort" xml:space="preserve">
+      <value>объявленный номер порта</value>
+  </data>
 </root>

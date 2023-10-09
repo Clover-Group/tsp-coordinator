@@ -165,4 +165,16 @@
     <value>Pozostało prób kontroli zdrowia</value>
     <comment/>
   </data>
+  <data name="AutoIP" xml:space="preserve">
+    <value>IP-adres automatyczny</value>
+  </data>
+  <data name="AdvertisedIP" xml:space="preserve">
+      <value>IP-adres ogłoszony</value>
+  </data>
+  <data name="AutoPort" xml:space="preserve">
+      <value>Numer portu automatyczny</value>
+  </data>
+  <data name="AdvertisedPort" xml:space="preserve">
+      <value>Numer portu ogłoszony</value>
+  </data>
 </root>

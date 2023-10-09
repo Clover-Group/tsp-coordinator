@@ -25,6 +25,12 @@ public class TspInstance
     [JsonInclude]
     public string Location => $"{Host.MapToIPv4()}:{Port}";
 
+    [JsonIgnore]
+    public bool IsHostAdvertised { get; set; } = false;
+
+    [JsonIgnore]
+    public bool IsPortAdvertised { get; set; } = false;
+
     public string? Version { get; set; }
 
     public TspInstanceStatus Status { get; set; }

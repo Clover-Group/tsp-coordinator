@@ -33,7 +33,11 @@ else
                 <tr>
                     <td scope="row">@index</td>
                     <td>@instance.Uuid</td>
-                    <td>@instance.Location</td>
+                    <td>
+                        @instance.Location
+                        (@(instance.IsHostAdvertised ? Loc["AdvertisedIP"] : Loc["AutoIP"]),
+                        @(instance.IsPortAdvertised ? Loc["AdvertisedPort"] : Loc["AutoPort"]))
+                        </td>
                     <td>@instance.Version</td>
                     <td>@instance.HealthCheckDate.ToString("G")</td>
                     <td>
