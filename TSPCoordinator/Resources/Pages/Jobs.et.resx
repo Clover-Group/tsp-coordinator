@@ -179,4 +179,7 @@
     <data name="RunningTime" xml:space="preserve">
         <value>Sõiduaeg</value>
     </data>
+    <data name="Patterns" xml:space="preserve">
+        <value>Reeglid</value>
+    </data>
 </root>

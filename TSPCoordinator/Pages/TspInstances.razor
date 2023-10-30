@@ -7,15 +7,70 @@
 @inject IStringLocalizer<TspInstances> Loc
 @inject TspInstancesService TSPInstancesService
 
-<h1>TSP instance list</h1>
+<MudText Typo="Typo.h4">TSP instance list</MudText>
 
 @if (instances == null)
 {
-    <p><em>Loading...</em></p>
+    <MudText>Loading...</MudText>
 }
 else
 {
-    <table class="table table-striped">
+    <MudGrid Spacing="4" Justify="MudBlazor.Justify.FlexStart" >
+        @foreach (var (instance, index) in instances.Select((val, idx) => (val, idx + 1)))
+        {
+            <MudItem xs="6" sm="4">
+                <MudCard>
+                    <MudCardHeader>
+                        <CardHeaderAvatar>
+                            <MudAvatar Variant="Variant.Outlined" Color="@GetColorByStatus(instance.Status)">
+                                <MudIcon Icon="@Icons.Material.Filled.Storage" />
+                            </MudAvatar>
+                        </CardHeaderAvatar>
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.h5">TSP @Loc["Number"]@index</MudText>
+                            <MudText Typo="Typo.body2">
+                                @switch(instance.Status)
+                                {
+                                    case TspInstanceStatus.Active:
+                                        <MudAlert Dense="true" Severity="Severity.Success">@Loc["Active"]</MudAlert>
+                                        break;
+                                    case TspInstanceStatus.NotWorking:
+                                        <MudAlert Dense="true" Severity="Severity.Error">@Loc["NotWorking"]
+                                            (@instance.HealthCheckAttemptsRemaining)</MudAlert>
+                                        break;
+                                    case TspInstanceStatus.NotResponding:
+                                        <MudAlert Dense="true" Severity="Severity.Warning">@Loc["NotResponding"]
+                                            (@instance.HealthCheckAttemptsRemaining)</MudAlert>
+                                        break;
+                                    case TspInstanceStatus.Busy:
+                                        <MudAlert Dense="true" Severity="Severity.Warning">@Loc["Busy"]</MudAlert>
+                                        break;
+                                    case TspInstanceStatus.CannotGetExtendedInfo:
+                                        <MudAlert Dense="true" Severity="Severity.Info">@Loc["CannotGetExtendedInfo"]</MudAlert>
+                                        break;
+                                }
+                            </MudText>
+                        </CardHeaderContent>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudText Typo="Typo.body2">ID: @instance.Uuid</MudText>
+                        <MudText>@Loc["Version"] @instance.Version</MudText>
+                        <MudText>@Loc["Location"]: @instance.Location</MudText>
+                        <MudText>
+                            @Loc["JobsRunning"]: 
+                            @(instance.RunningJobsCount)
+                            @if(instance.SentJobsCount > 0)
+                            {
+                            @: + @(instance.SentJobsCount)
+                            }
+                        </MudText>
+                        <MudText Typo="Typo.body2">@Loc["LastHealthCheck"]: @instance.HealthCheckDate.ToString("G")</MudText>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        }
+    </MudGrid>
+    @* <table class="table table-striped">
         <thead>
             <tr>
                 <th>@Loc["Number"]</th>
@@ -72,11 +127,19 @@ else
                 </tr>
             }
         </tbody>
-    </table>
+    </table> *@
 }
 
 @code {
     private TspInstance[]? instances;
+
+    private Color GetColorByStatus(TspInstanceStatus status) => status switch {
+        TspInstanceStatus.Active => Color.Success,
+        TspInstanceStatus.NotWorking => Color.Error,
+        TspInstanceStatus.NotResponding => Color.Warning,
+        TspInstanceStatus.Busy => Color.Warning,
+        TspInstanceStatus.CannotGetExtendedInfo => Color.Dark,
+    };
 
     protected override async Task OnInitializedAsync()
     {
@@ -86,8 +149,8 @@ else
         {
             InvokeAsync( async () =>
             {
-               instances = await TSPInstancesService.GetInstancesAsync();
-               StateHasChanged();
+                instances = await TSPInstancesService.GetInstancesAsync();
+                StateHasChanged();
             });
         }, null, 0, 5000);
     }
