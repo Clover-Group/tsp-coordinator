@@ -1,10 +1,11 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
-using BlazorStrap;
 using Dahomey.Json;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Mvc;
+using MudBlazor.Services;
+using Prometheus;
 using TspCoordinator.Data;
 using TspCoordinator.Data.TspApi;
 
@@ -30,7 +31,7 @@ builder.Services.AddSwaggerGen(options =>
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory,
         $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
 });
-builder.Services.AddBlazorStrap();
+builder.Services.AddMudServices();
 builder.Services.AddLocalization(options => { options.ResourcesPath = "Resources"; });
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<ConfigurationService>();
@@ -57,6 +58,8 @@ app.UseHttpLogging();
 app.UseStaticFiles();
 app.UseRouting();
 
+app.UseHttpMetrics();
+
 var supportedCultures = new[] { "en-US", "ru-RU", "et-EE", "pl-PL" };
 
 app.UseRequestLocalization(new RequestLocalizationOptions()
@@ -70,6 +73,8 @@ app.UseSwaggerUI();
 app.MapControllers();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
+
+app.MapMetrics();
 
 app.Run();
 

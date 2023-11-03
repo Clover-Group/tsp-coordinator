@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/aspnet:7.0-jammy AS base
+FROM mcr.microsoft.com/dotnet/aspnet:7.0-bookworm-slim AS base
 WORKDIR /app
 EXPOSE 5000
 # EXPOSE 5001
@@ -6,12 +6,16 @@ EXPOSE 5000
 ENV ASPNETCORE_URLS=http://+:5000
 # ENV ASPNETCORE_URLS=http://+:5000;https://+:5001
 
+# Install packages
+RUN apt update
+RUN apt install tzdata
+
 # Creates a non-root user with an explicit UID and adds permission to access the /app folder
 # For more info, please refer to https://aka.ms/vscode-docker-dotnet-configure-containers
 RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /app
 USER appuser
 
-FROM mcr.microsoft.com/dotnet/sdk:7.0-jammy AS build
+FROM mcr.microsoft.com/dotnet/sdk:7.0-bookworm-slim AS build
 WORKDIR /src
 COPY ["TspCoordinator.csproj", "./"]
 RUN dotnet restore "TspCoordinator.csproj"
@@ -25,5 +29,6 @@ RUN dotnet publish "TspCoordinator.csproj" -c Release -o /app/publish /p:UseAppH
 
 FROM base AS final
 WORKDIR /app
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "TspCoordinator.dll", "--server.urls", "http://+:5000"]

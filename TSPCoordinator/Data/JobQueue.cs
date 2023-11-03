@@ -105,4 +105,7 @@ public class JobQueue
             db.StringSet(_storageKey, serialized);
         }
     }
+
+    public Dictionary<JobStatus, int> GetCountsByStatus() => 
+        jobs.GroupBy(job => job.Status).ToDictionary(group => group.Key, group => group.Count());
 }

@@ -2,31 +2,79 @@
 
 @using TspCoordinator.Data
 @inject TspInstancesService TspInstancesService
+@inject JobService JobService
 @inject IStringLocalizer<Index> Loc
 
 <PageTitle>Index</PageTitle>
 
-<h1>TSP Coordinator</h1>
+<MudPaper>
+    <MudText Typo="Typo.h4">@Loc["Welcome"]</MudText>
 
-<p>@Loc["Welcome"]</p>
-
-@if(tspInstanceCount == null)
-{
-    <p>Loading TSP instances...</p>
-}
-else
-{
-    <p>
-        @String.Format(Loc["TSPInstancesTotal"], tspInstanceCount.Value.Item1)
-        (@String.Format(Loc["TSPInstancesActiveNotWorking"], tspInstanceCount.Value.Item2, tspInstanceCount.Value.Item1 - tspInstanceCount.Value.Item2)).
-    </p>
-}
+        @if (tspInstanceCount == null)
+    {
+        <MudText Typo="Typo.h5">Loading TSP instances...</MudText>
+    }
+    else
+    {
+        <MudText Typo="Typo.h5">
+            @String.Format(Loc["TSPInstancesTotal"], tspInstanceCount.Value.Item1)
+            (@String.Format(Loc["TSPInstancesActiveNotWorking"], tspInstanceCount.Value.Item2, tspInstanceCount.Value.Item1
+                    - tspInstanceCount.Value.Item2)).
+        </MudText>
+        <MudText Typo="Typo.h5" Color="Color.Primary">
+            <MudIcon Icon="@Icons.Material.Filled.AllInclusive" />Total jobs: @TotalJobs
+        </MudText>
+        <MudText Typo="Typo.h5" Color="Color.Secondary">
+            <MudIcon Icon="@Icons.Material.Filled.Queue"/>queued @(jobsCount?.Item1 ?? 0)
+        </MudText>
+        <MudText Typo="Typo.h5" Color="Color.Info">
+            <MudIcon Icon="@Icons.Material.Filled.DirectionsRun"/>running @(jobsCount?.Item2 ?? 0)
+        </MudText>
+        <MudText Typo="Typo.h5" Color="Color.Success">
+            <MudIcon Icon="@Icons.Material.Filled.CheckCircle"/>finished @(jobsCount?.Item3 ?? 0)
+        </MudText>
+        <MudText Typo="Typo.h5" Color="Color.Error">
+            <MudIcon Icon="@Icons.Material.Filled.Error"/>failed @(jobsCount?.Item4 ?? 0)
+        </MudText>
+        <MudText Typo="Typo.h5" Color="Color.Tertiary">
+            <MudIcon Icon="@Icons.Material.Filled.Cancel"/>canceled @(jobsCount?.Item5 ?? 0)
+        </MudText>
+        
+    }
+</MudPaper>
 
 @code {
     private (int, int)? tspInstanceCount;
 
+    private (int, int, int, int, int)? jobsCount;
+
+    private int TotalJobs { 
+        get {
+            var x = jobsCount.GetValueOrDefault();
+            return x.Item1 + x.Item2 + x.Item3 + x.Item4 + x.Item5;
+        }
+    }
+
     protected override async Task OnInitializedAsync()
     {
-        tspInstanceCount = await TspInstancesService.GetInstancesCountAsync();
+        base.OnInitialized();
+
+        var timer = new System.Threading.Timer((_) =>
+        {
+            InvokeAsync(async () =>
+            {
+                tspInstanceCount = await TspInstancesService.GetInstancesCountAsync();
+                var jobsCountsPerStatus = JobService.JobCountsByStatus();
+                jobsCount = (
+                    jobsCountsPerStatus.GetValueOrDefault(JobStatus.Enqueued, 0),
+                    jobsCountsPerStatus.GetValueOrDefault(JobStatus.Running, 0),
+                    jobsCountsPerStatus.GetValueOrDefault(JobStatus.Finished, 0),
+                    jobsCountsPerStatus.GetValueOrDefault(JobStatus.Failed, 0),
+                    jobsCountsPerStatus.GetValueOrDefault(JobStatus.Canceled, 0)
+                );
+                StateHasChanged();
+            });
+        }, null, 0, 5000);
+
     }
 }

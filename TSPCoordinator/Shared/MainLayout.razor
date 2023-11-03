@@ -2,22 +2,39 @@
 
 <PageTitle>TSP Coordinator</PageTitle>
 
-<div class="page">
-    <div class="sidebar">
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
+            OnClick="@((e) => DrawerToggle())" />
+        <MudText Typo="Typo.h5" Class="ml-3">TSP Coordinator</MudText>
+        <MudSpacer />
+        <MudLink Href="https://github.com/Clover-Group/tsp-coordinator" Color="Color.Secondary" Target="_blank">About</MudLink>
+        <MudSpacer />
+        <CultureSelector />
+        <MudSpacer />
+        <MudText>@(ThisAssembly.AssemblyInformationalVersion)</MudText>
+        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
+    </MudAppBar>
+    <MudDrawer @bind-Open="drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
         <NavMenu />
-    </div>
+    </MudDrawer>
 
-    <main>
-        <div class="top-row px-4">
-            <span>@(ThisAssembly.AssemblyInformationalVersion)</span>
-            <a href="https://github.com/Clover-Group/tsp-coordinator" target="_blank">About</a>
-
-            <div style="margin: 8mm;"><CultureSelector /></div>
-        </div>
-
-        <article class="content px-4">
+    <MudMainContent >
+        <MudContainer Class="my-8 pt-8">
             @Body
-        </article>
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
 
-    </main>
-</div>
+@code {
+    bool drawerOpen = true;
+
+    void DrawerToggle()
+    {
+        drawerOpen = !drawerOpen;
+    }
+}

@@ -180,4 +180,7 @@
     <data name="RunningTime" xml:space="preserve">
         <value>Running time</value>
     </data>
+    <data name="Patterns" xml:space="preserve">
+        <value>Patterns</value>
+    </data>
 </root>

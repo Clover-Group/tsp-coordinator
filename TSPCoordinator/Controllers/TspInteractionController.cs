@@ -105,8 +105,7 @@ public class TspInteractionController : ControllerBase
         _jobService.OnJobCompleted(info);
         return Ok();
     }
-
-    public Guid GetIDFromIP(System.Net.IPAddress address)
+    public static Guid GetIDFromIP(System.Net.IPAddress address)
     {
         /* 
             For older TSP versions (19.2.1 and below), compute ID from IP address

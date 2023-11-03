@@ -6,170 +6,158 @@
 @inject IStringLocalizer<Jobs> Loc
 @inject JobService JobService
 
-<h1>@Loc["Jobs"]</h1>
+<MudText Typo="Typo.h4">@Loc["Jobs"]</MudText>
 
 @if (jobQueue == null)
 {
-    <h4>@Loc["JobQueue"] </h4>
-    <p>Loading...</p>
+    <MudText Typo="Typo.h5">@Loc["JobQueue"] </MudText>
+    <MudText>Loading...</MudText>
 }
 else
 {
-    <h4>@Loc["JobQueue"] (@jobQueue.Count())</h4>
-    <table class="table table-striped">
-    <thead>
-        <tr>
-            <th>@Loc["JobID"]</th>
-            <th>@Loc["Priority"]</th>
-            <th>@Loc["Status"]</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var job in jobQueue)
-            {
-                <tr>
-                    <td>
-                        <a href="jobs/@job.JobId">@job.JobId</a>
-                        @if(job.IsExternal)
-                        {
-                            <span class="badge rounded-pill bg-primary">EXTERNAL</span>
-                        }
-                    </td>
-                    <td>@(job.Request?.Priority ?? 0)</td>
-                    <td>
-                        @switch (job.Status)
-                        {
-                            case JobStatus.Enqueued:
-                                <span class="badge rounded-pill bg-secondary">@Loc["Enqueued"]</span>
-                                break;
-                            case JobStatus.Running:
-                                <span class="badge rounded-pill bg-primary">@Loc["Running"]</span>
-                                break;
-                            case JobStatus.Finished:
-                                <span class="badge rounded-pill bg-success">@Loc["Finished"]</span>
-                                break;
-                            case JobStatus.Failed:
-                                <span class="badge rounded-pill bg-danger">@Loc["Failed"]</span>
-                                break;
-                            case JobStatus.Canceled:
-                                <span class="badge rounded-pill bg-dark">@Loc["Canceled"]</span>
-                                break;
-                        }
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <MudText Typo="Typo.h5">@Loc["JobQueue"] (@jobQueue.Count())</MudText>
+    <MudTable Items="@jobQueue" Striped="true">
+        <HeaderContent>
+            <MudTh>@Loc["JobID"]</MudTh>
+            <MudTh>@Loc["Priority"]</MudTh>
+            <MudTh>@Loc["Patterns"]</MudTh>
+            <MudTh>@Loc["Status"]</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd><MudLink Href="@("jobs/" +context.JobId)">@context.JobId</MudLink></MudTd>
+            <MudTd>@(context.Request?.Priority ?? 0)</MudTd>
+            <MudTd>@(context.Request?.Patterns.Count ?? 0)</MudTd>
+            <MudTd>
+                @switch (context.Status)
+                {
+                    case JobStatus.Enqueued:
+                        <MudChip Icon="@Icons.Material.Filled.Queue" Color="Color.Secondary">@Loc["Enqueued"]</MudChip>
+                        break;
+                    case JobStatus.Running:
+                        <MudChip Icon="@Icons.Material.Filled.DirectionsRun" Color="Color.Info">@Loc["Running"]</MudChip>
+                        break;
+                    case JobStatus.Finished:
+                        <MudChip Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success">@Loc["Finished"]</MudChip>
+                        break;
+                    case JobStatus.Failed:
+                        <MudChip Icon="@Icons.Material.Filled.Error">@Loc["Failed"]</MudChip>
+                        break;
+                    case JobStatus.Canceled:
+                        <MudChip Icon="@Icons.Material.Filled.Cancel">@Loc["Canceled"]</MudChip>
+                        break;
+                }
+            </MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
 }
 
 @if (runningJobs == null)
 {
-    <h4>@Loc["RunningJobs"]</h4>
-    <p>Loading...</p>
+    <MudText Typo="Typo.h5">@Loc["RunningJobs"]</MudText>
+    <MudText>Loading...</MudText>
 }
 else
 {
-    <h4>@Loc["RunningJobs"] (@runningJobs.Count())</h4>
-    <table class="table table-striped">
-    <thead>
-        <tr>
-            <th>@Loc["JobID"]</th>
-            <th>@Loc["Priority"]</th>
-            <th>@Loc["RunningOn"]</th>
-            <th>@Loc["RunningTime"]</th>
-            <th>@Loc["RowsRead"]</th>
-            <th>@Loc["RowsWritten"]</th>
-            <th>@Loc["Status"]</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var job in runningJobs)
-            {
-                <tr>
-                    <td><a href="jobs/@job.JobId">@job.JobId</a></td>
-                    <td>@(job.Request?.Priority ?? 0)</td>
-                    <td>@job.RunningOn</td>
-                    <td>@job.Lifecycle.RunningTime</td>
-                    <td>@job.RowsRead</td>
-                    <td>@job.RowsWritten</td>
-                    <td>
-                        @switch (job.Status)
-                        {
-                            case JobStatus.Enqueued:
-                                <span class="badge rounded-pill bg-secondary">@Loc["Enqueued"]</span>
-                                break;
-                            case JobStatus.Running:
-                                <span class="badge rounded-pill bg-primary">@Loc["Running"]</span>
-                                break;
-                            case JobStatus.Finished:
-                                <span class="badge rounded-pill bg-success">@Loc["Finished"]</span>
-                                break;
-                            case JobStatus.Failed:
-                                <span class="badge rounded-pill bg-danger">@Loc["Failed"]</span>
-                                break;
-                            case JobStatus.Canceled:
-                                <span class="badge rounded-pill bg-dark">@Loc["Canceled"]</span>
-                                break;
-                        }
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <MudText Typo="Typo.h5">@Loc["RunningJobs"] (@runningJobs.Count())</MudText>
+    <MudTable Items="@runningJobs" Striped="true">
+        <HeaderContent>
+            <MudTh>@Loc["JobID"]</MudTh>
+            <MudTh>@Loc["Priority"]</MudTh>
+            <MudTh>@Loc["Patterns"]</MudTh>
+            <MudTh>@Loc["RunningOn"]</MudTh>
+            <MudTh>@Loc["RunningTime"]</MudTh>
+            <MudTh>@Loc["RowsRead"]</MudTh>
+            <MudTh>@Loc["RowsWritten"]</MudTh>
+            <MudTh>@Loc["Status"]</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd><MudLink Href="@("jobs/" +context.JobId)">@context.JobId</MudLink></MudTd>
+            <MudTd>@(context.Request?.Priority ?? 0)</MudTd>
+            <MudTd>@(context.Request?.Patterns.Count ?? 0)</MudTd>
+            <MudTd>@context.RunningOn</MudTd>
+            <MudTd>@context.Lifecycle.RunningTime</MudTd>
+            <MudTd>@context.RowsRead</MudTd>
+            <MudTd>@context.RowsWritten</MudTd>
+            <MudTd>
+                @switch (context.Status)
+                {
+                    case JobStatus.Enqueued:
+                        <MudChip Icon="@Icons.Material.Filled.Queue" Color="Color.Secondary">@Loc["Enqueued"]</MudChip>
+                        break;
+                    case JobStatus.Running:
+                        <MudChip Icon="@Icons.Material.Filled.DirectionsRun" Color="Color.Info">@Loc["Running"]</MudChip>
+                        break;
+                    case JobStatus.Finished:
+                        <MudChip Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success">@Loc["Finished"]</MudChip>
+                        break;
+                    case JobStatus.Failed:
+                        <MudChip Icon="@Icons.Material.Filled.Error">@Loc["Failed"]</MudChip>
+                        break;
+                    case JobStatus.Canceled:
+                        <MudChip Icon="@Icons.Material.Filled.Cancel">@Loc["Canceled"]</MudChip>
+                        break;
+                }
+            </MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
 }
 
 @if (completedJobs == null)
 {
-    <h4>@Loc["CompletedJobs"]</h4>
-    <p>Loading...</p>
+    <MudText Typo="Typo.h5">@Loc["CompletedJobs"]</MudText>
+    <MudText>Loading...</MudText>
 }
 else
 {
-    <h4>@Loc["CompletedJobs"] (@completedJobs.Count())</h4>
-    <table class="table table-striped">
-    <thead>
-        <tr>
-            <th>@Loc["JobID"]</th>
-            <th>@Loc["Priority"]</th>
-            <th>@Loc["RunningTime"]</th>
-            <th>@Loc["RowsRead"]</th>
-            <th>@Loc["RowsWritten"]</th>
-            <th>@Loc["Status"]</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var job in completedJobs)
-            {
-                <tr>
-                    <td><a href="jobs/@job.JobId">@job.JobId</a></td>
-                    <td>@(job.Request?.Priority ?? 0)</td>
-                    <td>@job.Lifecycle.RunningTime</td>
-                    <td>@job.RowsRead</td>
-                    <td>@job.RowsWritten</td>
-                    <td>
-                        @switch (job.Status)
-                        {
-                            case JobStatus.Enqueued:
-                                <span class="badge rounded-pill bg-secondary">@Loc["Enqueued"]</span>
-                                break;
-                            case JobStatus.Running:
-                                <span class="badge rounded-pill bg-primary">@Loc["Running"]</span>
-                                break;
-                            case JobStatus.Finished:
-                                <span class="badge rounded-pill bg-success">@Loc["Finished"]</span>
-                                break;
-                            case JobStatus.Failed:
-                                <span class="badge rounded-pill bg-danger">@Loc["Failed"]</span>
-                                break;
-                            case JobStatus.Canceled:
-                                <span class="badge rounded-pill bg-dark">@Loc["Canceled"]</span>
-                                break;
-                        }
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <MudText Typo="Typo.h5">@Loc["CompletedJobs"] (@completedJobs.Count())</MudText>
+    <MudTable Items="@completedJobs" Striped="true">
+        <HeaderContent>
+            <MudTh>@Loc["JobID"]</MudTh>
+            <MudTh>@Loc["Priority"]</MudTh>
+            <MudTh>@Loc["Patterns"]</MudTh>
+            <MudTh>@Loc["RunningTime"]</MudTh>
+            <MudTh>@Loc["RowsRead"]</MudTh>
+            <MudTh>@Loc["RowsWritten"]</MudTh>
+            <MudTh>@Loc["Status"]</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd><MudLink Href="@("jobs/" +context.JobId)">@context.JobId</MudLink></MudTd>
+            <MudTd>@(context.Request?.Priority ?? 0)</MudTd>
+            <MudTd>@(context.Request?.Patterns.Count ?? 0)</MudTd>
+            <MudTd>@context.Lifecycle.RunningTime</MudTd>
+            <MudTd>@context.RowsRead</MudTd>
+            <MudTd>@context.RowsWritten</MudTd>
+            <MudTd>
+                @switch (context.Status)
+                {
+                    case JobStatus.Enqueued:
+                        <MudChip Icon="@Icons.Material.Filled.Queue" Color="Color.Secondary">@Loc["Enqueued"]</MudChip>
+                        break;
+                    case JobStatus.Running:
+                        <MudChip Icon="@Icons.Material.Filled.DirectionsRun" Color="Color.Info">@Loc["Running"]</MudChip>
+                        break;
+                    case JobStatus.Finished:
+                        <MudChip Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success">@Loc["Finished"]</MudChip>
+                        break;
+                    case JobStatus.Failed:
+                        <MudChip Icon="@Icons.Material.Filled.Error" Color="Color.Error">@Loc["Failed"]</MudChip>
+                        break;
+                    case JobStatus.Canceled:
+                        <MudChip Icon="@Icons.Material.Filled.Cancel" Color="Color.Dark">@Loc["Canceled"]</MudChip>
+                        break;
+                }
+            </MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
 }
 
 @code {

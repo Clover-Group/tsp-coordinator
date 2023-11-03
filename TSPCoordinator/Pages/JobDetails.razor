@@ -12,114 +12,161 @@
 }
 else
 {
-    <h2>@Loc["JobDetails"]: @Job.JobId</h2>
+    <MudText Typo="Typo.h4">@Loc["JobDetails"]: @Job.JobId</MudText>
 
-    <div class="card card-body">
-        <BSContainer Container="Container.Fluid">
-            <BSButton Color="@(JobCanBeStopped() ? BlazorStrap.BSColor.Danger : BlazorStrap.BSColor.Default)" @onclick=StopJob IsDisabled="@(!JobCanBeStopped())">Stop/Cancel</BSButton>
-        </BSContainer>
-    </div>
+    <MudGrid Spacing="4">
+        <MudItem xs="12" md="4">
+            <MudCard>
+                <MudCardContent>
+                    <MudGrid Spacing="2">
+                        <MudItem xs="12">
+                            <MudStack>
+                                <MudText Typo="Typo.overline">@Loc["Status"]</MudText>
+                                <MudText Typo="Typo.h4">@(Job.Status.ToString().ToUpper())</MudText>
+                            </MudStack>
+                        </MudItem>
+                        <MudItem xs="12">
+                            <MudStack>
+                                <MudText Typo="Typo.overline">@Loc["TimeSinceLastActivity"]</MudText>
+                                <MudText Typo="Typo.h4">@((DateTime.Now - Job.Lifecycle.Events.LastOrDefault().Key).ToString(@"d\:hh\:mm\:ss\.fff"))</MudText>
+                            </MudStack>
+                        </MudItem>
+                        <MudItem xs="12">
+                            <MudStack>
+                                <MudText Typo="Typo.overline">@Loc["RunningTime"]</MudText>
+                                <MudText Typo="Typo.h4">@(Job.Lifecycle.RunningTime.ToString(@"d\:hh\:mm\:ss\.fff"))</MudText>
+                            </MudStack>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudStack>
+                                <MudText Typo="Typo.overline" Color="Color.Primary">@Loc["RowsRead"]</MudText>
+                                <MudText Typo="Typo.h4" Color="Color.Primary">@Job.RowsRead</MudText>
+                            </MudStack>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudStack>
+                                <MudText Typo="Typo.overline" Color="Color.Secondary">@Loc["RowsWritten"]</MudText>
+                                <MudText Typo="Typo.h4" Color="Color.Secondary">@Job.RowsWritten</MudText>
+                            </MudStack>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudStack>
+                                <MudText Typo="Typo.overline" Color="Color.Tertiary">@Loc["ReadSpeed"]</MudText>
+                                <MudText Typo="Typo.h4" Color="Color.Tertiary">@Job.Speed.Item1</MudText>
+                            </MudStack>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudStack>
+                                <MudText Typo="Typo.overline" Color="Color.Dark">@Loc["WriteSpeed"]</MudText>
+                                <MudText Typo="Typo.h4" Color="Color.Dark">@Job.Speed.Item2</MudText>
+                            </MudStack>
+                        </MudItem>
+                    </MudGrid>                    
+                    @if (JobStopMessage != null)
+                    {
+                        <MudAlert Severity="@(JobStopMessageSeverity ?? Severity.Info)">@JobStopMessage</MudAlert>
+                    }
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton Color="@(JobCanBeStopped() ? Color.Error : Color.Default)" @onclick=StopJob
+                        Disabled="@(!JobCanBeStopped())">Stop/Cancel</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+        <MudItem xs="12" md="8">
+            <MudChart ChartType="ChartType.Line" ChartSeries="@Series" ChartOptions="@chartOptions"></MudChart>
+        </MudItem>
+    </MudGrid>
 
-    @if(JobStopMessage != null)
-    {
-        <BSAlert Color="@(JobStopMessageColor ?? BlazorStrap.BSColor.Primary)">@JobStopMessage</BSAlert>
-    }
-
-    <div class="card card-body">
-        <p>@Loc["Status"]: @Job.Status</p>
-        <p>@Loc["TimeSinceLastActivity"]: @((DateTime.Now - Job.Lifecycle.Events.LastOrDefault().Key).ToString(@"d\:hh\:mm\:ss\.fff"))</p>
-        <p>@Loc["RunningTime"]: @(Job.Lifecycle.RunningTime.ToString(@"d\:hh\:mm\:ss\.fff"))</p>
-        <p>@Loc["RowsRead"]: @Job.RowsRead</p>
-        <p>@Loc["RowsWritten"]: @Job.RowsWritten</p>
-    </div>
-    <h4>Lifecycle (@(Job.Lifecycle.Events.Count))</h4>
-    @foreach (var e in Job.Lifecycle.Events)
-    {
-        <p>
-            @e.Key : @e.Value
-        </p>
-    }
-    <h4>@Loc["Request"]</h4>
-    <h5>@Loc["Source"]</h5>
-    <BSAccordion>
-        <BSAccordionItem>
-            <Header>
-                @Loc["Source"] 
-                <BSBadge Color="@BlazorStrap.BSColor.Secondary" IsPill="true">@(Job.Request.Source.Type)</BSBadge>
-            </Header>
-            <Content>
-                <BSListGroup>
-                @if(Job.Request.Source.Config is Data.TspApi.V3.JdbcInputConf jdbcConf)
-                {
-                    <BSListGroupItem>JDBC URL: @(new Uri(jdbcConf.JdbcUrl).AbsolutePath)</BSListGroupItem>
-                    <BSListGroupItem>Query: @jdbcConf.Query</BSListGroupItem>
-                    <BSListGroupItem>Max time-series gap, ms: @(jdbcConf.EventsMaxGapMs ?? 60000)</BSListGroupItem>
-                    <BSListGroupItem>Max incident gap, ms: @(jdbcConf.DefaultEventsGapMs ?? 2000)</BSListGroupItem>
-                }
-                @if(Job.Request.Source.Config is Data.TspApi.V3.KafkaInputConf kafkaConf)
-                {
-                    <BSListGroupItem>Broker(s): @kafkaConf.Brokers</BSListGroupItem>
-                    <BSListGroupItem>Topic: @kafkaConf.Topic</BSListGroupItem>
-                    <BSListGroupItem>Max time-series gap, ms: @(kafkaConf.EventsMaxGapMs ?? 60000)</BSListGroupItem>
-                    <BSListGroupItem>Max incident gap, ms: @(kafkaConf.DefaultEventsGapMs ?? 2000)</BSListGroupItem>
-                }
-                </BSListGroup>
-            </Content>
-        </BSAccordionItem>
-    </BSAccordion>
-    <h5>@Loc["Sinks"] (@(Job.Request.Sinks.Count))</h5>
-    <BSAccordion>        
+    <MudText>Lifecycle (@(Job.Lifecycle.Events.Count))</MudText>
+    <MudTimeline TimelineOrientation="TimelineOrientation.Horizontal">
+        @foreach (var e in Job.Lifecycle.Events)
+        {
+            <MudTimelineItem>
+                <MudText Typo="Typo.body2" Class="mud-text-secondary">@e.Key</MudText>
+                <MudText Typo="Typo.body2">@e.Value</MudText>
+            </MudTimelineItem>
+        }
+    </MudTimeline>
+    <MudText Typo="Typo.h5">@Loc["Request"]</MudText>
+    <MudText Typo="Typo.h6">@Loc["Source"]</MudText>
+    <MudCard>
+        <MudCardHeader>
+            @Loc["Source"] 
+            <MudChip Color="Color.Secondary">@(Job.Request.Source.Type)</MudChip>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudList>
+            @if(Job.Request.Source.Config is Data.TspApi.V3.JdbcInputConf jdbcConf)
+            {
+                <MudListItem>JDBC URL: @(new Uri(jdbcConf.JdbcUrl).AbsolutePath)</MudListItem>
+                <MudListItem>Query: @jdbcConf.Query</MudListItem>
+                <MudListItem>Max time-series gap, ms: @(jdbcConf.EventsMaxGapMs ?? 60000)</MudListItem>
+                <MudListItem>Max incident gap, ms: @(jdbcConf.DefaultEventsGapMs ?? 2000)</MudListItem>
+                <MudListItem>Data chunk size, ms: @(jdbcConf.ChunkSizeMs ?? 900000)</MudListItem>
+            }
+            @if(Job.Request.Source.Config is Data.TspApi.V3.KafkaInputConf kafkaConf)
+            {
+                <MudListItem>Broker(s): @kafkaConf.Brokers</MudListItem>
+                <MudListItem>Topic: @kafkaConf.Topic</MudListItem>
+                <MudListItem>Max time-series gap, ms: @(kafkaConf.EventsMaxGapMs ?? 60000)</MudListItem>
+                <MudListItem>Max incident gap, ms: @(kafkaConf.DefaultEventsGapMs ?? 2000)</MudListItem>
+                <MudListItem>Data chunk size, ms: @(kafkaConf.ChunkSizeMs ?? 900000)</MudListItem>
+            }
+            </MudList>
+        </MudCardContent>
+    </MudCard>
+    <MudText Typo="Typo.h6">@Loc["Sinks"] (@(Job.Request.Sinks.Count))</MudText>
+    <MudGrid Spacing="4">    
         @foreach (var (sink, index) in Job.Request.Sinks.Select((x, i) => (x, i + 1)))
         {
-            <BSAccordionItem>
-            <Header>
-                @Loc["SinkNo"] @index 
-                <BSBadge Color="@BlazorStrap.BSColor.Secondary" IsPill="true">@(sink.Type)</BSBadge>
-            </Header>
-            <Content>
-                <BSListGroup>
-                @if(sink.Config is Data.TspApi.V3.JdbcOutputConf jdbcConf)
-                {
-                    <BSListGroupItem>JDBC URL: @(new Uri(jdbcConf.JdbcUrl).AbsolutePath)</BSListGroupItem>
-                }
-                @if(sink.Config is Data.TspApi.V3.KafkaOutputConf kafkaConf)
-                {
-                    <BSListGroupItem>Broker: @kafkaConf.Broker</BSListGroupItem>
-                    <BSListGroupItem>Topic: @kafkaConf.Topic</BSListGroupItem>
-                }
-                </BSListGroup>
-            </Content>
-        </BSAccordionItem>
-        }
-    </BSAccordion>
-    <h4>@Loc["Patterns"] (@(Job.Request?.Patterns.Count ?? 0))</h4>
-    <BSCollapse>
-        <Toggler>
-            <BSToggle IsButton="false" Color="@BlazorStrap.BSColor.Primary">@Loc["Patterns"] (@(Job.Request?.Patterns.Count ?? 0))</BSToggle>
-        </Toggler>
-        <Content>
-            <BSAccordion>
-            @foreach (var pattern in Job.Request?.Patterns ?? new List<Data.TspApi.V3.Pattern>())
-            {
-                <BSAccordionItem>
-                    <Header>ID @pattern.Id</Header>
-                    <Content>
-                        <p>Subunit: <b>@pattern.Subunit</b></p>
-                        @if (pattern.Metadata?.Count > 0)
+            <MudItem>
+                <MudCard>
+                    <MudCardHeader>
+                        @Loc["SinkNo"] @index 
+                        <MudChip Color="@Color.Secondary" IsPill="true">@(sink.Type)</MudChip>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudList>
+                        @if(sink.Config is Data.TspApi.V3.JdbcOutputConf jdbcConf)
                         {
-                            <p>Metadata: @String.Join("; ", pattern.Metadata) </p>
-                        }                        
+                            <MudListItem>JDBC URL: @(new Uri(jdbcConf.JdbcUrl).AbsolutePath)</MudListItem>
+                        }
+                        @if(sink.Config is Data.TspApi.V3.KafkaOutputConf kafkaConf)
+                        {
+                            <MudListItem>Broker: @kafkaConf.Broker</MudListItem>
+                            <MudListItem>Topic: @kafkaConf.Topic</MudListItem>
+                        }
+                        </MudList>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        }
+    </MudGrid>
+    <MudText Typo="Typo.h6">@Loc["Patterns"] (@(Job.Request?.Patterns.Count ?? 0))</MudText>
+
+    <MudExpansionPanels MultiExpansion="true">
+        @foreach (var (pattern, index) in (Job.Request?.Patterns ?? new List<Data.TspApi.V3.Pattern>()).Select((x, i) => (x, i + 1)))
+            {
+                <MudExpansionPanel Text="@($"{index}. ID {pattern.Id}")">
+                    @if (pattern.Subunit != null)
+                    {
+                        <MudText>Subunit: @pattern.Subunit</MudText>
+                    }            
+                    @if (pattern.Metadata?.Count > 0)
+                    {
+                        <MudText>Metadata: @String.Join("; ", pattern.Metadata) </MudText>
+                    } 
+                    <MudText>                     
                         <pre>
                             <code style="display: inline-block;white-space: normal;max-width:100%; word-break:break-all; word-wrap:break-word;">
                                 @pattern.SourceCode
                             </code>
                         </pre>
-                    </Content>
-                </BSAccordionItem>
+                    </MudText>
+                </MudExpansionPanel>
             }
-            </BSAccordion>
-        </Content>
-    </BSCollapse>
+    </MudExpansionPanels>
 }
 
 @code {
@@ -129,17 +176,34 @@ else
     public Job? Job { get; set; }
 
     public string? JobStopMessage { get; set; } = null;
-    public BlazorStrap.BSColor? JobStopMessageColor { get; set; } = null;
+    public Severity? JobStopMessageSeverity { get; set; } = null;
+
+    public List<ChartSeries> Series = new()
+    {
+        new ChartSeries() { Name = "Read speed (\x00d71000 rows per 1 s)", Data = new double[10] }
+    };
+
+    private readonly ChartOptions chartOptions = new();
 
     protected override async Task OnInitializedAsync()
     {
         base.OnInitialized();
+
+        chartOptions.YAxisTicks = 1;
+        chartOptions.MaxNumYAxisTicks = 10;
+        chartOptions.InterpolationOption = InterpolationOption.NaturalSpline;
 
         var timer = new System.Threading.Timer((_) =>
         {
             InvokeAsync( async () =>
             {
                 Job = JobService.FindJobById(Id ?? "");
+                if (Job != null)
+                    Series[0].Data = Job.SpeedData.Select(x => x.Item1 / 1000.0).ToArray();
+                chartOptions.InterpolationOption = (
+                    Series[0].Data.Length >= 4 ?
+                    InterpolationOption.NaturalSpline : InterpolationOption.Straight
+                );
                 StateHasChanged();
             });
         }, null, 0, 5000);
@@ -147,16 +211,16 @@ else
 
     public async void StopJob()
     {
-        (JobStopMessage, JobStopMessageColor) = await JobService.StopJob(Job?.JobId ?? "") switch
+        (JobStopMessage, JobStopMessageSeverity) = await JobService.StopJob(Job?.JobId ?? "") switch
         {
             JobStopResult.Dequeued => 
-                ($"Job {Job?.JobId} successfully dequeued.", BlazorStrap.BSColor.Info),
+                ($"Job {Job?.JobId} successfully dequeued.", Severity.Info),
             JobStopResult.StopRequested => 
-                ($"Stop request for job {Job?.JobId} sent.", BlazorStrap.BSColor.Info),
+            ($"Stop request for job {Job?.JobId} sent.", Severity.Info),
             JobStopResult.NotFound => 
-                ($"Job with {Job?.JobId} not queued or running (can be already completed).", BlazorStrap.BSColor.Danger),
+            ($"Job with {Job?.JobId} not queued or running (can be already completed).", Severity.Error),
             _ => 
-                ("Something went wrong, invalid value for job stop status reported.", BlazorStrap.BSColor.Warning)
+            ("Something went wrong, invalid value for job stop status reported.", Severity.Warning)
         };
     }
 

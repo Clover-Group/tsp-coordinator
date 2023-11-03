@@ -1,43 +1,12 @@
 ﻿@inject IStringLocalizer<NavMenu> Loc
 
-<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">TSP Coordinator</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-</div>
-
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span>@Loc["Home"]
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="tsp-instances">
-                <span class="oi oi-list-rich" aria-hidden="true"></span>@Loc["TSPInstances"]
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="jobs">
-                <span class="oi oi-wrench" aria-hidden="true"></span>@Loc["Jobs"]
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="config">
-                <span class="oi oi-cog" aria-hidden="true"></span>@Loc["ViewConfig"]
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="swagger" target="_blank">
-                <span class="oi oi-document" aria-hidden="true"></span>@Loc["SwaggerDocs"]
-            </NavLink>
-        </div>
-    </nav>
-</div>
+<MudNavMenu Rounded="true" Margin="Margin.Dense" Color="Color.Primary" Class="pa-2">
+    <MudNavLink Match="NavLinkMatch.All" Href="" Icon="@Icons.Material.Filled.Home">@Loc["Home"]</MudNavLink>
+    <MudNavLink Match="NavLinkMatch.Prefix" Href="tsp-instances" Icon="@Icons.Material.Filled.Storage">@Loc["TSPInstances"]</MudNavLink>
+    <MudNavLink Match="NavLinkMatch.Prefix" Href="jobs" Icon="@Icons.Material.Filled.Work">@Loc["Jobs"]</MudNavLink>
+    <MudNavLink Match="NavLinkMatch.Prefix" Href="config" Icon="@Icons.Material.Filled.Build">@Loc["ViewConfig"]</MudNavLink>
+    <MudNavLink Match="NavLinkMatch.Prefix" Href="swagger" Icon="@Icons.Material.Filled.Api">@Loc["SwaggerDocs"]</MudNavLink>
+</MudNavMenu>
 
 @code {
     private bool collapseNavMenu = true;
