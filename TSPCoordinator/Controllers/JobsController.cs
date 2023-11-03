@@ -82,6 +82,7 @@ public class JobsController : Controller
     /// <param name="id">The ID of a job to stop</param>
     /// <response code="200">Success</response>
     /// <response code="404">The specified job ID was not found (the job can be already completed).</response>
+    [HttpGet("{id}/stop")]
     [HttpPost("{id}/stop")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

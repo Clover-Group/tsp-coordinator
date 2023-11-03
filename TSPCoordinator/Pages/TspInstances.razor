@@ -19,6 +19,7 @@ else
         <thead>
             <tr>
                 <th>@Loc["Number"]</th>
+                <th>TSP ID</th>
                 <th>@Loc["Location"]</th>
                 <th>@Loc["Version"]</th>
                 <th>@Loc["LastHealthCheck"]</th>
@@ -31,7 +32,12 @@ else
             {
                 <tr>
                     <td scope="row">@index</td>
-                    <td>@instance.Location</td>
+                    <td>@instance.Uuid</td>
+                    <td>
+                        @instance.Location
+                        (@(instance.IsHostAdvertised ? Loc["AdvertisedIP"] : Loc["AutoIP"]),
+                        @(instance.IsPortAdvertised ? Loc["AdvertisedPort"] : Loc["AutoPort"]))
+                        </td>
                     <td>@instance.Version</td>
                     <td>@instance.HealthCheckDate.ToString("G")</td>
                     <td>
@@ -48,8 +54,11 @@ else
                             <span class="badge rounded-pill bg-warning">@Loc["NotResponding"]</span>
                             <span class="badge rounded-pill bg-warning">@Loc["HealthCheckAttemptsRemaining"]: @instance.HealthCheckAttemptsRemaining</span>
                             break;
+                        case TspInstanceStatus.Busy:
+                            <span class="badge rounded-pill bg-warning">@Loc["Busy"]</span>
+                            break;
                         case TspInstanceStatus.CannotGetExtendedInfo:
-                            <span class="badge rounded-pill bg-warning">@Loc["Cannot get extended info"]</span>
+                            <span class="badge rounded-pill bg-warning">@Loc["CannotGetExtendedInfo"]</span>
                             break;
                     }
                     </td>

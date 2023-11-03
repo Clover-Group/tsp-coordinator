@@ -3,7 +3,6 @@
 <PageTitle>Job details</PageTitle>
 
 @using TspCoordinator.Data
-@using Humanizer
 @inject IStringLocalizer<JobDetails> Loc
 @inject JobService JobService
 
@@ -14,6 +13,17 @@
 else
 {
     <h2>@Loc["JobDetails"]: @Job.JobId</h2>
+
+    <div class="card card-body">
+        <BSContainer Container="Container.Fluid">
+            <BSButton Color="@(JobCanBeStopped() ? BlazorStrap.BSColor.Danger : BlazorStrap.BSColor.Default)" @onclick=StopJob IsDisabled="@(!JobCanBeStopped())">Stop/Cancel</BSButton>
+        </BSContainer>
+    </div>
+
+    @if(JobStopMessage != null)
+    {
+        <BSAlert Color="@(JobStopMessageColor ?? BlazorStrap.BSColor.Primary)">@JobStopMessage</BSAlert>
+    }
 
     <div class="card card-body">
         <p>@Loc["Status"]: @Job.Status</p>
@@ -118,6 +128,9 @@ else
 
     public Job? Job { get; set; }
 
+    public string? JobStopMessage { get; set; } = null;
+    public BlazorStrap.BSColor? JobStopMessageColor { get; set; } = null;
+
     protected override async Task OnInitializedAsync()
     {
         base.OnInitialized();
@@ -131,4 +144,25 @@ else
             });
         }, null, 0, 5000);
     }
+
+    public async void StopJob()
+    {
+        (JobStopMessage, JobStopMessageColor) = await JobService.StopJob(Job?.JobId ?? "") switch
+        {
+            JobStopResult.Dequeued => 
+                ($"Job {Job?.JobId} successfully dequeued.", BlazorStrap.BSColor.Info),
+            JobStopResult.StopRequested => 
+                ($"Stop request for job {Job?.JobId} sent.", BlazorStrap.BSColor.Info),
+            JobStopResult.NotFound => 
+                ($"Job with {Job?.JobId} not queued or running (can be already completed).", BlazorStrap.BSColor.Danger),
+            _ => 
+                ("Something went wrong, invalid value for job stop status reported.", BlazorStrap.BSColor.Warning)
+        };
+    }
+
+    public bool JobCanBeStopped() => Job?.Status switch {
+        JobStatus.Enqueued => true,
+        JobStatus.Running => true,
+        _ => false
+    };
 }

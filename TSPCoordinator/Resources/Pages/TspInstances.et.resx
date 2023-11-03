@@ -153,6 +153,10 @@
     <value>Ei vasta</value>
     <comment/>
   </data>
+  <data name="Busy" xml:space="preserve">
+    <value>Kinni</value>
+    <comment/>
+  </data>
   <data name="CannotGetExtendedInfo" xml:space="preserve">
     <value>On võimatu üksikasjade saada</value>
     <comment/>
@@ -160,5 +164,17 @@
   <data name="HealthCheckAttemptsRemaining" xml:space="preserve">
     <value>Tervisekontrolli katsed jäänud</value>
     <comment/>
+  </data>
+  <data name="AutoIP" xml:space="preserve">
+      <value>automaatne IP-aadress</value>
+    </data>
+  <data name="AdvertisedIP" xml:space="preserve">
+      <value>teatatud IP-aadress</value>
+  </data>
+  <data name="AutoPort" xml:space="preserve">
+      <value>automaatne pordinumber</value>
+  </data>
+  <data name="AdvertisedPort" xml:space="preserve">
+      <value>teatatud pordinumber</value>
   </data>
 </root>

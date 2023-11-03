@@ -8,11 +8,13 @@ public enum TspInstanceStatus
     Active,
     NotWorking,
     NotResponding,
+    Busy,
     CannotGetExtendedInfo
 }
 
 public class TspInstance
 {
+    public Guid Uuid { get; set; }
 
     [JsonIgnore]
     public IPAddress Host { get; set; } = default! ;
@@ -22,6 +24,12 @@ public class TspInstance
 
     [JsonInclude]
     public string Location => $"{Host.MapToIPv4()}:{Port}";
+
+    [JsonIgnore]
+    public bool IsHostAdvertised { get; set; } = false;
+
+    [JsonIgnore]
+    public bool IsPortAdvertised { get; set; } = false;
 
     public string? Version { get; set; }
 
@@ -43,6 +51,6 @@ public class TspInstance
 
     public override string ToString()
     {
-        return $"TSP instance v{Version} at {Location}";
+        return $"TSP instance {Uuid} v{Version} at {Location}";
     }
 }

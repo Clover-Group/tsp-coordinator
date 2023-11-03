@@ -30,7 +30,7 @@ public class TspInstancesService
 
     public bool AddInstance(TspInstance instance)
     {
-        if (instances.FirstOrDefault(i => i.Location == instance.Location) is TspInstance foundInstance)
+        if (instances.FirstOrDefault(i => i.Uuid == instance.Uuid) is TspInstance foundInstance)
         {
             foundInstance.Version = instance.Version;
             return false;
@@ -74,7 +74,8 @@ public class TspInstancesService
             try
             {
                 var response = await client.SendAsync(getVersionRequest);
-                if (response.IsSuccessStatusCode)
+                var responseBody = await response.Content.ReadAsStringAsync();
+                if (response.IsSuccessStatusCode && responseBody.Contains(instance.Uuid.ToString()))
                 {
                     instance.Status = TspInstanceStatus.Active;
                     instance.HealthCheckAttemptsRemaining = _configurationService.HealthCheckAttempts;
@@ -85,13 +86,18 @@ public class TspInstancesService
                     instance.HealthCheckAttemptsRemaining--;
                     instance.SentJobsIds.Clear();
                 }
+                instance.HealthCheckDate = DateTime.Now;
             }
             catch (HttpRequestException)
             {
                 instance.Status = TspInstanceStatus.NotResponding;
                 instance.HealthCheckAttemptsRemaining--;
+                instance.HealthCheckDate = DateTime.Now;
             }
-            instance.HealthCheckDate = DateTime.Now;
+            catch (TaskCanceledException)
+            {
+                instance.Status = TspInstanceStatus.Busy;
+            }
             if (instance.HealthCheckAttemptsRemaining == 0)
             {
                 TspInstanceFailed?.Invoke(instance);

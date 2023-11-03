@@ -35,7 +35,7 @@ else
                             <span class="badge rounded-pill bg-primary">EXTERNAL</span>
                         }
                     </td>
-                    <td>@job.Request?.Priority ?? 0</td>
+                    <td>@(job.Request?.Priority ?? 0)</td>
                     <td>
                         @switch (job.Status)
                         {
@@ -87,7 +87,7 @@ else
             {
                 <tr>
                     <td><a href="jobs/@job.JobId">@job.JobId</a></td>
-                    <td>@job.Request?.Priority ?? 0</td>
+                    <td>@(job.Request?.Priority ?? 0)</td>
                     <td>@job.RunningOn</td>
                     <td>@job.Lifecycle.RunningTime</td>
                     <td>@job.RowsRead</td>
@@ -142,7 +142,7 @@ else
             {
                 <tr>
                     <td><a href="jobs/@job.JobId">@job.JobId</a></td>
-                    <td>@job.Request?.Priority ?? 0</td>
+                    <td>@(job.Request?.Priority ?? 0)</td>
                     <td>@job.Lifecycle.RunningTime</td>
                     <td>@job.RowsRead</td>
                     <td>@job.RowsWritten</td>

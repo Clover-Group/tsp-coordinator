@@ -153,6 +153,10 @@
     <value>Nie odpowiada</value>
     <comment/>
   </data>
+  <data name="Busy" xml:space="preserve">
+    <value>Zajęta</value>
+    <comment/>
+  </data>
   <data name="CannotGetExtendedInfo" xml:space="preserve">
     <value>Niemożliwe dostać szczegółów </value>
     <comment/>
@@ -160,5 +164,17 @@
   <data name="HealthCheckAttemptsRemaining" xml:space="preserve">
     <value>Pozostało prób kontroli zdrowia</value>
     <comment/>
+  </data>
+  <data name="AutoIP" xml:space="preserve">
+    <value>IP-adres automatyczny</value>
+  </data>
+  <data name="AdvertisedIP" xml:space="preserve">
+      <value>IP-adres ogłoszony</value>
+  </data>
+  <data name="AutoPort" xml:space="preserve">
+      <value>Numer portu automatyczny</value>
+  </data>
+  <data name="AdvertisedPort" xml:space="preserve">
+      <value>Numer portu ogłoszony</value>
   </data>
 </root>
