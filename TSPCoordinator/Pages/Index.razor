@@ -22,22 +22,22 @@
                     - tspInstanceCount.Value.Item2)).
         </MudText>
         <MudText Typo="Typo.h5" Color="Color.Primary">
-            <MudIcon Icon="@Icons.Material.Filled.AllInclusive" />Total jobs: @TotalJobs
+            <MudIcon Icon="@Icons.Material.Filled.AllInclusive" />@Loc["TotalJobs"]: @TotalJobs
         </MudText>
         <MudText Typo="Typo.h5" Color="Color.Secondary">
-            <MudIcon Icon="@Icons.Material.Filled.Queue"/>queued @(jobsCount?.Item1 ?? 0)
+            <MudIcon Icon="@Icons.Material.Filled.Queue"/>@Loc["Queued"] @(jobsCount?.Item1 ?? 0)
         </MudText>
         <MudText Typo="Typo.h5" Color="Color.Info">
-            <MudIcon Icon="@Icons.Material.Filled.DirectionsRun"/>running @(jobsCount?.Item2 ?? 0)
+            <MudIcon Icon="@Icons.Material.Filled.DirectionsRun"/>@Loc["Running"] @(jobsCount?.Item2 ?? 0)
         </MudText>
         <MudText Typo="Typo.h5" Color="Color.Success">
-            <MudIcon Icon="@Icons.Material.Filled.CheckCircle"/>finished @(jobsCount?.Item3 ?? 0)
+            <MudIcon Icon="@Icons.Material.Filled.CheckCircle"/>@Loc["Finished"] @(jobsCount?.Item3 ?? 0)
         </MudText>
         <MudText Typo="Typo.h5" Color="Color.Error">
-            <MudIcon Icon="@Icons.Material.Filled.Error"/>failed @(jobsCount?.Item4 ?? 0)
+            <MudIcon Icon="@Icons.Material.Filled.Error"/>@Loc["Failed"] @(jobsCount?.Item4 ?? 0)
         </MudText>
         <MudText Typo="Typo.h5" Color="Color.Tertiary">
-            <MudIcon Icon="@Icons.Material.Filled.Cancel"/>canceled @(jobsCount?.Item5 ?? 0)
+            <MudIcon Icon="@Icons.Material.Filled.Cancel"/>@Loc["Canceled"] @(jobsCount?.Item5 ?? 0)
         </MudText>
         
     }

@@ -117,16 +117,34 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Welcome" xml:space="preserve">
-    <value>Welcome to TSP Coordinator!</value>
+  <data name="Canceled" xml:space="preserve">
+    <value>canceled</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>failed</value>
+  </data>
+  <data name="Finished" xml:space="preserve">
+    <value>finished</value>
+  </data>
+  <data name="Queued" xml:space="preserve">
+    <value>queued</value>
+  </data>
+  <data name="Running" xml:space="preserve">
+    <value>running</value>
+  </data>
+  <data name="TSPInstancesActiveNotWorking" xml:space="preserve">
+    <value>{0} active and {1} not working</value>
     <comment/>
   </data>
   <data name="TSPInstancesTotal" xml:space="preserve">
     <value>Total TSP instances connected: {0}</value>
     <comment/>
   </data>
-  <data name="TSPInstancesActiveNotWorking" xml:space="preserve">
-    <value>{0} active and {1} not working</value>
+  <data name="TotalJobs" xml:space="preserve">
+    <value>Total jobs</value>
+  </data>
+  <data name="Welcome" xml:space="preserve">
+    <value>Welcome to TSP Coordinator!</value>
     <comment/>
   </data>
 </root>

@@ -2,11 +2,26 @@ using System.Collections.ObjectModel;
 
 namespace TspCoordinator.Data;
 
+public abstract record LifecycleEvent
+{
+    private LifecycleEvent() { }
+
+    public record Enqueued() : LifecycleEvent { }
+
+    public record LoggedMessage(string Message) : LifecycleEvent { }
+    
+    public record StatusChanged(JobStatus NewStatus) : LifecycleEvent { }
+
+    public record Finished(bool Success, string? Error) : LifecycleEvent { }
+
+    public record ExternalDiscovered() : LifecycleEvent { }
+}
+
 public class JobLifecycle
 {
-    private Dictionary<DateTime, String> events = new Dictionary<DateTime, String>();
+    private Dictionary<DateTime, LifecycleEvent> events = new Dictionary<DateTime, LifecycleEvent>();
 
-    public ReadOnlyDictionary<DateTime, String> Events { get => new ReadOnlyDictionary<DateTime, string>(events); }
+    public ReadOnlyDictionary<DateTime, LifecycleEvent> Events { get => new ReadOnlyDictionary<DateTime, LifecycleEvent>(events); }
 
     private List<(DateTime, DateTime?)> runningTimes = new List<(DateTime, DateTime?)>();
 
@@ -21,17 +36,17 @@ public class JobLifecycle
 
     public void AddQueued()
     {
-        events.Add(DateTime.Now, $"Job {JobId} was queued.");
+        events.Add(DateTime.Now, new LifecycleEvent.Enqueued());
     }
 
     public void AddLogMessage(String message)
     {
-        events.Add(DateTime.Now, $"Job {JobId} logged message: {message}");
+        events.Add(DateTime.Now, new LifecycleEvent.LoggedMessage(message));
     }
 
     public void AddStatusChanged(JobStatus newStatus)
     {
-        events.Add(DateTime.Now, $"Status of {JobId} was changed to {newStatus}");
+        events.Add(DateTime.Now, new LifecycleEvent.StatusChanged(newStatus));
 
         if (newStatus == JobStatus.Running)
         {
@@ -43,22 +58,22 @@ public class JobLifecycle
         }
     }
 
-    public TimeSpan RunningTime => 
+    public TimeSpan RunningTime =>
         runningTimes
         .Select(range => (range.Item2 ?? DateTime.Now) - range.Item1)
         .Aggregate(TimeSpan.Zero, (sum, value) => sum + value);
 
     public void AddFinished(bool success, string? error)
     {
-        var status = success ? "finished successfully" : $"failed with error: {error ?? "no error text reported"}";
-        events.Add(DateTime.Now, $"Job {JobId} {status}.");
+        //var status = success ? "finished successfully" : $"failed with error: {error ?? "no error text reported"}";
+        events.Add(DateTime.Now, new LifecycleEvent.Finished(success, error));
     }
 
     public void AddExternalDiscovered()
     {
         events.Add(
             DateTime.Now,
-            $"Job {JobId} was discovered as external on a TSP instance. Not all events may be recorded"
+            new LifecycleEvent.ExternalDiscovered()
             );
     }
 }

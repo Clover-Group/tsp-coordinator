@@ -16,7 +16,7 @@
 else
 {
     <MudText Typo="Typo.h5">@Loc["JobQueue"] (@jobQueue.Count())</MudText>
-    <MudTable Items="@jobQueue" Striped="true">
+    <MudTable Items="@(jobQueue.Reverse<Job>())" Striped="true">
         <HeaderContent>
             <MudTh>@Loc["JobID"]</MudTh>
             <MudTh>@Loc["Priority"]</MudTh>
@@ -62,7 +62,7 @@ else
 else
 {
     <MudText Typo="Typo.h5">@Loc["RunningJobs"] (@runningJobs.Count())</MudText>
-    <MudTable Items="@runningJobs" Striped="true">
+    <MudTable Items="@(runningJobs.Reverse<Job>())" Striped="true">
         <HeaderContent>
             <MudTh>@Loc["JobID"]</MudTh>
             <MudTh>@Loc["Priority"]</MudTh>
@@ -116,7 +116,7 @@ else
 else
 {
     <MudText Typo="Typo.h5">@Loc["CompletedJobs"] (@completedJobs.Count())</MudText>
-    <MudTable Items="@completedJobs" Striped="true">
+    <MudTable Items="@(completedJobs.Reverse<Job>())" Striped="true">
         <HeaderContent>
             <MudTh>@Loc["JobID"]</MudTh>
             <MudTh>@Loc["Priority"]</MudTh>

@@ -117,16 +117,31 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Welcome" xml:space="preserve">
-    <value>Tere tulemast TSP koordinaatorisse!</value>
+  <data name="Failed" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Finished" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Queued" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Running" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="TSPInstancesActiveNotWorking" xml:space="preserve">
+    <value>{0} aktiivne ja {1} surnud</value>
     <comment/>
   </data>
   <data name="TSPInstancesTotal" xml:space="preserve">
     <value>Kokku TSP teenuse ühendatud: {0}</value>
     <comment/>
   </data>
-  <data name="TSPInstancesActiveNotWorking" xml:space="preserve">
-    <value>{0} aktiivne ja {1} surnud</value>
+  <data name="TotalJobs" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Welcome" xml:space="preserve">
+    <value>Tere tulemast TSP koordinaatorisse!</value>
     <comment/>
   </data>
 </root>

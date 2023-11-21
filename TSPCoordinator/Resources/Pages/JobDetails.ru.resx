@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-    <!--
+  <!--
     Microsoft ResX Schema
 
     Version 2.0
@@ -59,116 +59,167 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
-        <xsd:element name="root" msdata:IsDataSet="true">
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
             <xsd:complexType>
-                <xsd:choice maxOccurs="unbounded">
-                    <xsd:element name="metadata">
-                        <xsd:complexType>
-                            <xsd:sequence>
-                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
-                            </xsd:sequence>
-                            <xsd:attribute name="name" use="required" type="xsd:string"/>
-                            <xsd:attribute name="type" type="xsd:string"/>
-                            <xsd:attribute name="mimetype" type="xsd:string"/>
-                            <xsd:attribute ref="xml:space"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element name="assembly">
-                        <xsd:complexType>
-                            <xsd:attribute name="alias" type="xsd:string"/>
-                            <xsd:attribute name="name" type="xsd:string"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element name="data">
-                        <xsd:complexType>
-                            <xsd:sequence>
-                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
-                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
-                            </xsd:sequence>
-                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
-                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
-                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
-                            <xsd:attribute ref="xml:space"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element name="resheader">
-                        <xsd:complexType>
-                            <xsd:sequence>
-                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
-                            </xsd:sequence>
-                            <xsd:attribute name="name" type="xsd:string" use="required"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                </xsd:choice>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
-        </xsd:element>
-    </xsd:schema>
-    <resheader name="resmimetype">
-        <value>text/microsoft-resx</value>
-    </resheader>
-    <resheader name="version">
-        <value>2.0</value>
-    </resheader>
-    <resheader name="reader">
-        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-    </resheader>
-    <resheader name="writer">
-        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-    </resheader>
-    <data name="JobDetails" xml:space="preserve">
-        <value>Подробности задачи</value>
-        <comment/>
-    </data>
-    <data name="Status" xml:space="preserve">
-        <value>Статус</value>
-        <comment/>
-    </data>
-    <data name="TimeSinceLastActivity" xml:space="preserve">
-        <value>Время с момента последней активности</value>
-        <comment/>
-    </data>
-    <data name="RunningTime" xml:space="preserve">
-        <value>Время выполнения</value>
-        <comment/>
-    </data>
-    <data name="RowsRead" xml:space="preserve">
-        <value>Считано строк</value>
-        <comment/>
-    </data>
-    <data name="RowsWritten" xml:space="preserve">
-        <value>Записано строк</value>
-        <comment/>
-    </data>
-    <data name="Lifecycle" xml:space="preserve">
-        <value>Жизненный цикл</value>
-        <comment/>
-    </data>
-    <data name="Request" xml:space="preserve">
-        <value>Запрос</value>
-        <comment/>
-    </data>
-    <data name="Source" xml:space="preserve">
-        <value>Источник</value>
-        <comment/>
-    </data>
-    <data name="Sinks" xml:space="preserve">
-        <value>Приемники</value>
-        <comment/>
-    </data>
-    <data name="SinkNo" xml:space="preserve">
-        <value>Приемник №</value>
-        <comment/>
-    </data>
-    <data name="Patterns" xml:space="preserve">
-        <value>Правила</value>
-        <comment/>
-    </data>
-    <data name="ReadSpeed" xml:space="preserve">
-        <value>Скорость чтения</value>
-    </data>
-    <data name="WriteSpeed" xml:space="preserve">
-        <value>Скорость записи</value>
-    </data>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="DataChunkSize" xml:space="preserve">
+    <value>Размер порции данных, мс</value>
+  </data>
+  <data name="DataTransformation" xml:space="preserve">
+    <value>Преобразование данных</value>
+  </data>
+  <data name="DefaultTimeout" xml:space="preserve">
+    <value>Таймаут по умолчанию</value>
+  </data>
+  <data name="DefaultValueColumn" xml:space="preserve">
+    <value>Столбец по умолчанию, содержащий значение</value>
+  </data>
+  <data name="History" xml:space="preserve">
+    <value>История</value>
+  </data>
+  <data name="JobDetails" xml:space="preserve">
+    <value>Подробности задачи</value>
+    <comment/>
+  </data>
+  <data name="JobEnqueued" xml:space="preserve">
+    <value>Задание было поставлено в очередь</value>
+  </data>
+  <data name="JobExternalDiscovered" xml:space="preserve">
+    <value>Задание было обнаружено вне координатора</value>
+  </data>
+  <data name="JobFinished" xml:space="preserve">
+    <value>Задание было завершено</value>
+  </data>
+  <data name="JobLoggedMessage" xml:space="preserve">
+    <value>Задание зафиксировало сообщение: {0}</value>
+  </data>
+  <data name="JobStatusChanged" xml:space="preserve">
+    <value>Статус был изменен на {0}</value>
+  </data>
+  <data name="KeyColumn" xml:space="preserve">
+    <value>Столбец, содержащий ключ</value>
+  </data>
+  <data name="Lifecycle" xml:space="preserve">
+    <value>Жизненный цикл</value>
+    <comment/>
+  </data>
+  <data name="MaxEventsGap" xml:space="preserve">
+    <value>Макс. разрыв в инцидентах</value>
+  </data>
+  <data name="MaxTSGap" xml:space="preserve">
+    <value>Макс. разрыв в данных</value>
+  </data>
+  <data name="NoDataTransformation" xml:space="preserve">
+    <value>Без преобразования данных</value>
+  </data>
+  <data name="Patterns" xml:space="preserve">
+    <value>Правила</value>
+    <comment/>
+  </data>
+  <data name="Query" xml:space="preserve">
+    <value>Запрос</value>
+  </data>
+  <data name="ReadSpeed" xml:space="preserve">
+    <value>Скорость чтения</value>
+  </data>
+  <data name="Request" xml:space="preserve">
+    <value>Запрос</value>
+    <comment/>
+  </data>
+  <data name="RowsRead" xml:space="preserve">
+    <value>Считано строк</value>
+    <comment/>
+  </data>
+  <data name="RowsWritten" xml:space="preserve">
+    <value>Записано строк</value>
+    <comment/>
+  </data>
+  <data name="RunningTime" xml:space="preserve">
+    <value>Время выполнения</value>
+    <comment/>
+  </data>
+  <data name="SinkNo" xml:space="preserve">
+    <value>Приемник №</value>
+    <comment/>
+  </data>
+  <data name="Sinks" xml:space="preserve">
+    <value>Приемники</value>
+    <comment/>
+  </data>
+  <data name="Source" xml:space="preserve">
+    <value>Источник</value>
+    <comment/>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Статус</value>
+    <comment/>
+  </data>
+  <data name="TimeSinceLastActivity" xml:space="preserve">
+    <value>Время с момента последней активности</value>
+    <comment/>
+  </data>
+  <data name="TimeoutOverrides" xml:space="preserve">
+    <value>Переопределение таймаутов</value>
+  </data>
+  <data name="ValueColumnOverrides" xml:space="preserve">
+    <value>Переопределение столбцов со значениями</value>
+  </data>
+  <data name="WriteSpeed" xml:space="preserve">
+    <value>Скорость записи</value>
+  </data>
 </root>

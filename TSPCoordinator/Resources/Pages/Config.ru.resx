@@ -117,34 +117,64 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Canceled" xml:space="preserve">
-    <value>отмененных</value>
+  <data name="CompletedJobsCleanupInterval" xml:space="preserve">
+    <value>Интервал очистки списка завершенных заданий (в миллисекундах)</value>
   </data>
-  <data name="Failed" xml:space="preserve">
-    <value>с ошибкой</value>
+  <data name="Configuration" xml:space="preserve">
+    <value>Конфигурация</value>
   </data>
-  <data name="Finished" xml:space="preserve">
-    <value>завершенных</value>
+  <data name="Disabled" xml:space="preserve">
+    <value>Выключено</value>
   </data>
-  <data name="Queued" xml:space="preserve">
-    <value>в очереди</value>
+  <data name="Enabled" xml:space="preserve">
+    <value>Включено</value>
   </data>
-  <data name="Running" xml:space="preserve">
-    <value>работающих</value>
+  <data name="EnvVariable" xml:space="preserve">
+    <value>Переменная окружения</value>
   </data>
-  <data name="TSPInstancesActiveNotWorking" xml:space="preserve">
-    <value>{0} активных и {1} неработающих</value>
-    <comment/>
+  <data name="HealthCheckAttempts" xml:space="preserve">
+    <value>Количество попыток проверки состояния TSP</value>
   </data>
-  <data name="TSPInstancesTotal" xml:space="preserve">
-    <value>Всего подключено экземпляров TSP: {0}</value>
-    <comment/>
+  <data name="HealthCheckInterval" xml:space="preserve">
+    <value>Интервал проверки состояния TSP (в миллисекундах)</value>
   </data>
-  <data name="TotalJobs" xml:space="preserve">
-    <value>Всего заданий</value>
+  <data name="JobManagementHeader" xml:space="preserve">
+    <value>Управление заданиями</value>
   </data>
-  <data name="Welcome" xml:space="preserve">
-    <value>Добро пожаловать в координатор TSP!</value>
-    <comment/>
+  <data name="JobReporting" xml:space="preserve">
+    <value>Отправка отчетов</value>
+  </data>
+  <data name="JobReportingBroker" xml:space="preserve">
+    <value>Брокер</value>
+  </data>
+  <data name="JobReportingHeader" xml:space="preserve">
+    <value>Отчеты о заданиях (в Kafka)</value>
+  </data>
+  <data name="JobReportingTopic" xml:space="preserve">
+    <value>Рубрика (topic)</value>
+  </data>
+  <data name="MaxJobsPerTSP" xml:space="preserve">
+    <value>Максимальное количество выполняемых заданий на экземпляр TSP</value>
+  </data>
+  <data name="QueueInspectionInterval" xml:space="preserve">
+    <value>Интервал проверки очереди (в миллисекундах)</value>
+  </data>
+  <data name="QueueStorage" xml:space="preserve">
+    <value>Хранение очереди</value>
+  </data>
+  <data name="QueueStorageHeader" xml:space="preserve">
+    <value>Хранение очереди</value>
+  </data>
+  <data name="QueueStorageHost" xml:space="preserve">
+    <value>Адрес хоста Redis</value>
+  </data>
+  <data name="Setting" xml:space="preserve">
+    <value>Настройка</value>
+  </data>
+  <data name="TimeIntervalsHeader" xml:space="preserve">
+    <value>Интервалы времени</value>
+  </data>
+  <data name="Value" xml:space="preserve">
+    <value>Значение</value>
   </data>
 </root>

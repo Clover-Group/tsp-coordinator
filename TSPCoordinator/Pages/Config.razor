@@ -2,76 +2,77 @@
 
 @using TspCoordinator.Data;
 @inject ConfigurationService ConfigurationService;
+@inject IStringLocalizer<Config> Loc;
 
 <PageTitle>View config</PageTitle>
 
-<h2>Configuration</h2>
+<MudText Typo="Typo.h4">@Loc["Configuration"]</MudText>
 
-<div class="row">
-    <div class="col">
-        <h4>Job reporting (to Kafka)</h4>
+<MudGrid>
+    <MudItem xs="6">
+        <MudText Typo="Typo.h5">@Loc["JobReportingHeader"]</MudText>
         @if(ConfigurationService.StatusReportingSettings != null)
         {
-            <table class="table table-striped">
+            <MudSimpleTable Striped="true">
                 <thead>
                     <tr>
-                        <th>Setting</th>
-                        <th>Environment variable</th>
-                        <th>Value</th>
+                        <th>@Loc["Setting"]</th>
+                        <th>@Loc["EnvVariable"]</th>
+                        <th>@Loc["Value"]</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Job reporting</td>
+                        <td>@Loc["JobReporting"]</td>
                         <td>JOB_REPORTING_ENABLED</td>
-                        <td>enabled</td>
+                        <td>@Loc["Enabled"]</td>
                     </tr>
                     <tr>
-                        <td>Broker</td>
+                        <td>@Loc["JobReportingBroker"]</td>
                         <td>JOB_REPORTING_BROKER</td>
                         <td>@ConfigurationService.StatusReportingSettings.Broker</td>
                     </tr>
                     <tr>
-                        <td>Topic</td>
+                        <td>@Loc["JobReportingTopic"]</td>
                         <td>JOB_REPORTING_TOPIC</td>
                         <td>@ConfigurationService.StatusReportingSettings.Topic</td>
                     </tr>
                 </tbody>
-            </table>
+            </MudSimpleTable>
         }
         else
         {
-            <table class="table table-striped">
+            <MudSimpleTable Striped="true">
                 <thead>
                     <tr>
-                        <th>Setting</th>
-                        <th>Environment variable</th>
-                        <th>Value</th>
+                        <th>@Loc["Setting"]</th>
+                        <th>@Loc["EnvVariable"]</th>
+                        <th>@Loc["Value"]</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Job reporting</td>
+                        <td>@Loc["JobReporting"]</td>
                         <td>JOB_REPORTING_ENABLED</td>
-                        <td>disabled</td>
+                        <td>@Loc["Disabled"]</td>
                     </tr>
                 </tbody>
-            </table>
+            </MudSimpleTable>
         }
-    </div>
-    <div class="col">
-        <h4>Time intervals</h4>
-        <table class="table table-striped">
+    </MudItem>
+    <MudItem xs="6">
+        <MudText Typo="Typo.h5">@Loc["TimeIntervalsHeader"]</MudText>
+        <MudSimpleTable Striped="true">
             <thead>
                 <tr>
-                    <th>Setting</th>
-                    <th>Environment variable</th>
-                    <th>Value</th>
+                    <th>@Loc["Setting"]</th>
+                    <th>@Loc["EnvVariable"]</th>
+                    <th>@Loc["Value"]</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>Queue inspection interval (in milliseconds)</td>
+                    <td>@Loc["QueueInspectionInterval"]</td>
                     <td>QUEUE_INSPECTION_INTERVAL</td>
                     <td>
                         @ConfigurationService.QueueInspectionInterval
@@ -79,7 +80,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Health check interval (in milliseconds)</td>
+                    <td>@Loc["HealthCheckInterval"]</td>
                     <td>HEALTH_CHECK_INTERVAL</td>
                     <td>
                         @ConfigurationService.HealthCheckInterval
@@ -87,7 +88,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Completed jobs cleanup interval (in milliseconds)</td>
+                    <td>@Loc["CompletedJobsCleanupInterval"]</td>
                     <td>CLEANUP_COMPLETED_INTERVAL</td>
                     <td>
                         @ConfigurationService.CleanupCompletedInterval
@@ -95,79 +96,76 @@
                     </td>
                 </tr>
             </tbody>
-        </table>
-    </div>
-</div>
-<div class="row">
-     <div class="col">
-        <h4>Job management</h4>
-        <table class="table table-striped">
+        </MudSimpleTable>
+    </MudItem>
+    <MudItem xs="6">
+        <MudText Typo="Typo.h5">@Loc["JobManagementHeader"]</MudText>
+        <MudSimpleTable Striped="true">
             <thead>
                 <tr>
-                    <th>Setting</th>
-                    <th>Environment variable</th>
-                    <th>Value</th>
+                    <th>@Loc["Setting"]</th>
+                    <th>@Loc["EnvVariable"]</th>
+                    <th>@Loc["Value"]</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>Maximum running jobs number per TSP instance</td>
+                    <td>@Loc["MaxJobsPerTSP"]</td>
                     <td>MAX_JOBS_PER_TSP</td>
                     <td>@ConfigurationService.MaxJobsPerTsp</td>
                 </tr>
                 <tr>
-                    <td>Health check attempts</td>
+                    <td>@Loc["HealthCheckAttempts"]</td>
                     <td>HEALTH_CHECK_ATTEMPTS</td>
                     <td>@ConfigurationService.HealthCheckAttempts</td>
                 </tr>
             </tbody>
-        </table>
-    </div>
-    <div class="col">
-        <h4>Queue storage</h4>
+        </MudSimpleTable>
+    </MudItem>
+    <MudItem xs="6">
+        <MudText Typo="Typo.h5">@Loc["QueueStorageHeader"]</MudText>
         @if(ConfigurationService.QueueStorageRedisSettings != null)
         {
-            <table class="table table-striped">
+            <MudSimpleTable Striped="true">
                 <thead>
                     <tr>
-                        <th>Setting</th>
-                        <th>Environment variable</th>
-                        <th>Value</th>
+                        <th>@Loc["Setting"]</th>
+                        <th>@Loc["EnvVariable"]</th>
+                        <th>@Loc["Value"]</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Queue storage</td>
+                        <td>@Loc["QueueStorage"]</td>
                         <td>QUEUE_STORAGE_ENABLED</td>
-                        <td>enabled</td>
+                        <td>@Loc["Enabled"]</td>
                     </tr>
                     <tr>
-                        <td>Host (Redis)</td>
+                        <td>@Loc["QueueStorageHost"]</td>
                         <td>QUEUE_STORAGE_HOST</td>
                         <td>@ConfigurationService.QueueStorageRedisSettings.Host</td>
                     </tr>
                 </tbody>
-            </table>
+            </MudSimpleTable>
         }
         else
         {
-            <table class="table table-striped">
+            <MudSimpleTable Striped="true">
                 <thead>
                     <tr>
-                        <th>Setting</th>
-                        <th>Environment variable</th>
-                        <th>Value</th>
+                        <th>@Loc["Setting"]</th>
+                        <th>@Loc["EnvVariable"]</th>
+                        <th>@Loc["Value"]</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Queue storage</td>
+                        <td>@Loc["QueueStorage"]</td>
                         <td>QUEUE_STORAGE_ENABLED</td>
-                        <td>disabled</td>
+                        <td>@Loc["Disabled"]</td>
                     </tr>
                 </tbody>
-            </table>
+            </MudSimpleTable>
         }
-    </div>
-
-</div>
+    </MudItem>
+</MudGrid>
