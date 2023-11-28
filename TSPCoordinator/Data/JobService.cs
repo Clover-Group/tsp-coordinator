@@ -153,14 +153,17 @@ public class JobService
 
     public void OnInstanceFailed(TspInstance instance)
     {
-        var jobsRunningOnFailedInstance = runningJobs.Where(j => j.RunningOn == instance && j.Status == JobStatus.Running).ToList();
+        var jobsRunningOnFailedInstance = runningJobs.Where(j => j.RunningOn == instance).ToList();
         foreach (var job in jobsRunningOnFailedInstance)
         {
             lock (runningJobs) runningJobs.Remove(job);
             job.RunningOn = null;
-            job.Status = JobStatus.Enqueued;
-            job.NotifyStatusChanged();
-            jobQueue.Enqueue(job);
+            if (job.Status == JobStatus.Running)
+            {
+                job.Status = JobStatus.Enqueued;
+                job.NotifyStatusChanged();
+                jobQueue.Enqueue(job);
+            }
         }
     }
 
