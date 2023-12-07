@@ -129,6 +129,9 @@
   <data name="DefaultValueColumn" xml:space="preserve">
     <value>Default value-containing column</value>
   </data>
+  <data name="Errors" xml:space="preserve">
+    <value>Errors</value>
+  </data>
   <data name="History" xml:space="preserve">
     <value>History</value>
   </data>
@@ -176,6 +179,9 @@
   </data>
   <data name="ReadSpeed" xml:space="preserve">
     <value>Read speed</value>
+  </data>
+  <data name="RegularityInterval" xml:space="preserve">
+    <value>Regularity interval</value>
   </data>
   <data name="Request" xml:space="preserve">
     <value>Request</value>

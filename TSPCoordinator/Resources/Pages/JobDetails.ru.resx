@@ -129,6 +129,9 @@
   <data name="DefaultValueColumn" xml:space="preserve">
     <value>Столбец по умолчанию, содержащий значение</value>
   </data>
+  <data name="Errors" xml:space="preserve">
+    <value>Ошибки</value>
+  </data>
   <data name="History" xml:space="preserve">
     <value>История</value>
   </data>
@@ -176,6 +179,9 @@
   </data>
   <data name="ReadSpeed" xml:space="preserve">
     <value>Скорость чтения</value>
+  </data>
+  <data name="RegularityInterval" xml:space="preserve">
+    <value>Интервал регулярности</value>
   </data>
   <data name="Request" xml:space="preserve">
     <value>Запрос</value>

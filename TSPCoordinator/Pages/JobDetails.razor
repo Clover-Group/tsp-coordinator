@@ -77,68 +77,81 @@ else
             <MudChart ChartType="ChartType.Line" ChartSeries="@Series" ChartOptions="@chartOptions"></MudChart>
         </MudItem>
     </MudGrid>
-
-    <MudText Typo="Typo.h5">@Loc["History"] (@(Job.Lifecycle.Events.Count))</MudText>
-
-    <MudContainer Class="pa-4">
-        <MudTimeline TimelineOrientation="TimelineOrientation.Horizontal">
-            @foreach (var e in Job.Lifecycle.Events)
-            {
-                var itemColor = e.Value switch
-                {
-                    LifecycleEvent.Enqueued => Color.Secondary,
-                    LifecycleEvent.StatusChanged(var newStatus) => newStatus switch
+    <MudTabs Outlined="true" Rounded="true">
+        <MudTabPanel Text='@Loc["History"]' BadgeData="@(Job.Lifecycle.Events.Count)" BadgeColor="Color.Info">
+            <MudContainer Class="pa-4">
+                <MudTimeline TimelineOrientation="TimelineOrientation.Horizontal">
+                    @foreach (var e in Job.Lifecycle.Events)
                     {
-                        JobStatus.Enqueued => Color.Secondary,
-                        JobStatus.Running => Color.Primary,
-                        JobStatus.Failed => Color.Error,
-                        JobStatus.Finished => Color.Success,
-                        JobStatus.Canceled => Color.Tertiary,
-                        _ => Color.Default
-                    },
-                    LifecycleEvent.LoggedMessage(_) => Color.Warning,
-                    LifecycleEvent.Finished(var success, _) => success ? Color.Success : Color.Error,
-                    LifecycleEvent.ExternalDiscovered => Color.Dark,
-                    _ => Color.Default
-                };
-                var severity = e.Value switch
-                {
-                    LifecycleEvent.Enqueued => Severity.Info,
-                    LifecycleEvent.StatusChanged(var newStatus) => newStatus switch
-                    {
-                        JobStatus.Enqueued => Severity.Normal,
-                        JobStatus.Running => Severity.Info,
-                        JobStatus.Failed => Severity.Error,
-                        JobStatus.Finished => Severity.Success,
-                        JobStatus.Canceled => Severity.Warning,
-                        _ => Severity.Normal
-                    },
-                    LifecycleEvent.LoggedMessage(_) => Severity.Warning,
-                    LifecycleEvent.Finished(var success, _) => success ? Severity.Success : Severity.Error,
-                    LifecycleEvent.ExternalDiscovered => Severity.Normal,
-                    _ => Severity.Normal
-                };
-                <MudTimelineItem Color="@itemColor">
-                    <ItemOpposite>
-                        <MudText Typo="Typo.body2" Color="@itemColor" Class="mud-text-secondary">@e.Key</MudText>
-                    </ItemOpposite>
-                    <ItemContent>
-                        <MudAlert Severity="severity">
-                            @(e.Value switch
+                        var itemColor = e.Value switch
+                        {
+                            LifecycleEvent.Enqueued => Color.Secondary,
+                            LifecycleEvent.StatusChanged(var newStatus) => newStatus switch
                             {
-                                LifecycleEvent.Enqueued => Loc["JobEnqueued"],
-                                LifecycleEvent.StatusChanged(var newStatus) => Loc["JobStatusChanged", newStatus],
-                                LifecycleEvent.Finished(var success, var error) => Loc["JobFinished", (success ? "successfully" : $"with error {error}")],
-                                LifecycleEvent.LoggedMessage(var message) => Loc["JobLoggedMessage", message],
-                                LifecycleEvent.ExternalDiscovered => Loc["JobExternalDiscovered"],
-                                _ => Loc["JobUnknownEvent"]
-                            })
-                        </MudAlert>
-                    </ItemContent>
-                </MudTimelineItem>
-            }
-        </MudTimeline>
-    </MudContainer>
+                                JobStatus.Enqueued => Color.Secondary,
+                                JobStatus.Running => Color.Primary,
+                                JobStatus.Failed => Color.Error,
+                                JobStatus.Finished => Color.Success,
+                                JobStatus.Canceled => Color.Tertiary,
+                                _ => Color.Default
+                            },
+                            LifecycleEvent.LoggedMessage(_) => Color.Warning,
+                            LifecycleEvent.Finished(var success, _) => success ? Color.Success : Color.Error,
+                            LifecycleEvent.ExternalDiscovered => Color.Dark,
+                            _ => Color.Default
+                        };
+                        var severity = e.Value switch
+                        {
+                            LifecycleEvent.Enqueued => Severity.Info,
+                            LifecycleEvent.StatusChanged(var newStatus) => newStatus switch
+                            {
+                                JobStatus.Enqueued => Severity.Normal,
+                                JobStatus.Running => Severity.Info,
+                                JobStatus.Failed => Severity.Error,
+                                JobStatus.Finished => Severity.Success,
+                                JobStatus.Canceled => Severity.Warning,
+                                _ => Severity.Normal
+                            },
+                            LifecycleEvent.LoggedMessage(_) => Severity.Warning,
+                            LifecycleEvent.Finished(var success, _) => success ? Severity.Success : Severity.Error,
+                            LifecycleEvent.ExternalDiscovered => Severity.Normal,
+                            _ => Severity.Normal
+                        };
+                        <MudTimelineItem Color="@itemColor">
+                            <ItemOpposite>
+                                <MudText Typo="Typo.body2" Color="@itemColor" Class="mud-text-secondary">@e.Key</MudText>
+                            </ItemOpposite>
+                            <ItemContent>
+                                <MudAlert Severity="severity">
+                                    @(e.Value switch
+                                    {
+                                        LifecycleEvent.Enqueued => Loc["JobEnqueued"],
+                                        LifecycleEvent.StatusChanged(var newStatus) => Loc["JobStatusChanged", newStatus],
+                                        LifecycleEvent.Finished(var success, var error) => Loc["JobFinished", (success ?
+                                        "successfully" : $"with error {error}")],
+                                        LifecycleEvent.LoggedMessage(var message) => Loc["JobLoggedMessage", message],
+                                        LifecycleEvent.ExternalDiscovered => Loc["JobExternalDiscovered"],
+                                        _ => Loc["JobUnknownEvent"]
+                                    })
+                                </MudAlert>
+                            </ItemContent>
+                        </MudTimelineItem>
+                    }
+                </MudTimeline>
+            </MudContainer>
+        </MudTabPanel>
+        
+        <MudTabPanel Text='@Loc["Errors"]' BadgeData="@(Errors.Count)" BadgeColor="Color.Error">
+            <MudList>
+                @foreach(var error in Errors)
+                {
+                    <MudListItem>
+                        <MudText Typo="Typo.body1">@error</MudText>
+                    </MudListItem>
+                }
+            </MudList>
+        </MudTabPanel>
+    </MudTabs>
 
     <MudText Typo="Typo.h5">@Loc["Request"]</MudText>
     <MudText Typo="Typo.h6">@Loc["Source"]</MudText>
@@ -174,12 +187,20 @@ else
                 <MudListItem>@Loc["DefaultTimeout"]: @(ndu.DefaultTimeout) ms</MudListItem>
                 <MudListItem>@Loc["ValueColumnOverrides"]: @(String.Join(", ", ndu.ValueColumnMapping?.Select(kv => kv.Key + ": " + kv.Value) ?? Enumerable.Empty<String>()))</MudListItem>
                 <MudListItem>@Loc["TimeoutOverrides"]: @(String.Join(", ", ndu.FieldsTimeoutsMs?.Select(kv => kv.Key + ": " + kv.Value) ?? Enumerable.Empty<String>()))</MudListItem>
+                if (ndu.RegularityInterval != null)
+                {
+                    <MudListItem>@Loc["RegularityInterval"]: @(ndu.RegularityInterval) ms</MudListItem>
+                }
             }
             @if (Job.Request.Source.Config.DataTransformation?.Config is Data.TspApi.V3.WideDataFillingConf wdf)
             {
                 <MudListItem>@Loc["DataTransformation"]: Wide data filling</MudListItem>
                 <MudListItem>@Loc["DefaultTimeout"]: @(wdf.DefaultTimeout) ms</MudListItem>
                 <MudListItem>@Loc["TimeoutOverrides"]: @(wdf.FieldsTimeoutsMs?.Select(kv => kv.Key + ": " + kv.Value))</MudListItem>
+                if (wdf.RegularityInterval != null)
+                {
+                    <MudListItem>@Loc["RegularityInterval"]: @(wdf.RegularityInterval) ms</MudListItem>
+                }
             }
             @if(Job.Request.Source.Config.DataTransformation is null)
             {
@@ -256,6 +277,14 @@ else
     };
 
     private readonly ChartOptions chartOptions = new();
+
+    public List<String> Errors => 
+        Job?.Lifecycle.Events
+        .Select(e => e.Value)
+        .OfType<LifecycleEvent.Finished>()
+        .Where(e => !e.Success)
+        .Select(e => e.Error ?? "(no error message arrived)").ToList()
+        ?? new();
 
     protected override async Task OnInitializedAsync()
     {

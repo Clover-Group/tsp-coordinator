@@ -16,6 +16,8 @@ public class NarrowDataUnfoldingConf : ISourceDataTransformationConf
     public Dictionary<String, List<String>>? ValueColumnMapping { get; set; }
 
     public long DefaultTimeout { get; set; }
+
+    public long? RegularityInterval { get; set; }
 }
 
 public class WideDataFillingConf : ISourceDataTransformationConf
@@ -23,6 +25,8 @@ public class WideDataFillingConf : ISourceDataTransformationConf
     public Dictionary<String, long> FieldsTimeoutsMs { get; set; } = default! ;
 
     public long DefaultTimeout { get; set; }
+
+    public long? RegularityInterval { get; set; }
 }
 
 public interface ISourceDataTransformation
