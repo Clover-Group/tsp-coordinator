@@ -117,6 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Canceled" xml:space="preserve">
+    <value>Canceled</value>
+    <comment/>
+  </data>
   <data name="DataChunkSize" xml:space="preserve">
     <value>Data chunk size, ms</value>
   </data>
@@ -129,8 +133,20 @@
   <data name="DefaultValueColumn" xml:space="preserve">
     <value>Default value-containing column</value>
   </data>
+  <data name="Enqueued" xml:space="preserve">
+    <value>Enqueued</value>
+    <comment/>
+  </data>
   <data name="Errors" xml:space="preserve">
     <value>Errors</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>Failed</value>
+    <comment/>
+  </data>
+  <data name="Finished" xml:space="preserve">
+    <value>Finished</value>
+    <comment/>
   </data>
   <data name="History" xml:space="preserve">
     <value>History</value>
@@ -152,7 +168,7 @@
     <value>Job logged message: {0}</value>
   </data>
   <data name="JobStatusChanged" xml:space="preserve">
-    <value>Status was changed to {0}</value>
+    <value>Status was changed to "{0}"</value>
   </data>
   <data name="KeyColumn" xml:space="preserve">
     <value>Key-containing column</value>
@@ -166,6 +182,9 @@
   </data>
   <data name="MaxTSGap" xml:space="preserve">
     <value>Max time-series gap</value>
+  </data>
+  <data name="NarrowDataUnfolding" xml:space="preserve">
+    <value>Narrow data unfolding</value>
   </data>
   <data name="NoDataTransformation" xml:space="preserve">
     <value>No data transformation</value>
@@ -193,6 +212,10 @@
   </data>
   <data name="RowsWritten" xml:space="preserve">
     <value>Rows written</value>
+    <comment/>
+  </data>
+  <data name="Running" xml:space="preserve">
+    <value>Running</value>
     <comment/>
   </data>
   <data name="RunningTime" xml:space="preserve">
@@ -224,6 +247,9 @@
   </data>
   <data name="ValueColumnOverrides" xml:space="preserve">
     <value>Value-column overrides</value>
+  </data>
+  <data name="WideDataFilling" xml:space="preserve">
+    <value>Wide data filling</value>
   </data>
   <data name="WriteSpeed" xml:space="preserve">
     <value>Write speed</value>

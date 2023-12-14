@@ -117,6 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Canceled" xml:space="preserve">
+    <value>Tühistatud</value>
+    <comment/>
+  </data>
   <data name="DataChunkSize" xml:space="preserve">
     <value/>
   </data>
@@ -129,8 +133,20 @@
   <data name="DefaultValueColumn" xml:space="preserve">
     <value/>
   </data>
+  <data name="Enqueued" xml:space="preserve">
+    <value>Järjekorras</value>
+    <comment/>
+  </data>
   <data name="Errors" xml:space="preserve">
     <value>Vead</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>Läbi kukutud</value>
+    <comment/>
+  </data>
+  <data name="Finished" xml:space="preserve">
+    <value>Lõpetatud</value>
+    <comment/>
   </data>
   <data name="History" xml:space="preserve">
     <value>Ajalugu</value>
@@ -167,6 +183,9 @@
   <data name="MaxTSGap" xml:space="preserve">
     <value/>
   </data>
+  <data name="NarrowDataUnfolding" xml:space="preserve">
+    <value/>
+  </data>
   <data name="NoDataTransformation" xml:space="preserve">
     <value/>
   </data>
@@ -180,6 +199,9 @@
   <data name="ReadSpeed" xml:space="preserve">
     <value>Lugemise kiirus</value>
   </data>
+  <data name="RegularityInterval" xml:space="preserve">
+    <value/>
+  </data>
   <data name="Request" xml:space="preserve">
     <value>Päring</value>
     <comment/>
@@ -190,6 +212,10 @@
   </data>
   <data name="RowsWritten" xml:space="preserve">
     <value>Rida kirjutatud</value>
+    <comment/>
+  </data>
+  <data name="Running" xml:space="preserve">
+    <value>Töötab</value>
     <comment/>
   </data>
   <data name="RunningTime" xml:space="preserve">

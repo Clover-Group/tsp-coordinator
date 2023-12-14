@@ -22,7 +22,7 @@ else
                         <MudItem xs="12">
                             <MudStack>
                                 <MudText Typo="Typo.overline">@Loc["Status"]</MudText>
-                                <MudText Typo="Typo.h4">@(Job.Status.ToString().ToUpper())</MudText>
+                                <MudText Typo="Typo.h4">@Loc[Job.Status.ToString()] (@(Job.Status.ToString().ToUpper()))</MudText>
                             </MudStack>
                         </MudItem>
                         <MudItem xs="12">
@@ -126,9 +126,8 @@ else
                                     @(e.Value switch
                                     {
                                         LifecycleEvent.Enqueued => Loc["JobEnqueued"],
-                                        LifecycleEvent.StatusChanged(var newStatus) => Loc["JobStatusChanged", newStatus],
-                                        LifecycleEvent.Finished(var success, var error) => Loc["JobFinished", (success ?
-                                        "successfully" : $"with error {error}")],
+                                        LifecycleEvent.StatusChanged(var newStatus) => Loc["JobStatusChanged", Loc[newStatus.ToString()]],
+                                        LifecycleEvent.Finished(var success, var error) => Loc["JobFinished", (success ? "successfully" : $"with error {error}")],
                                         LifecycleEvent.LoggedMessage(var message) => Loc["JobLoggedMessage", message],
                                         LifecycleEvent.ExternalDiscovered => Loc["JobExternalDiscovered"],
                                         _ => Loc["JobUnknownEvent"]
@@ -181,7 +180,7 @@ else
             <MudDivider />
             @if(Job.Request.Source.Config.DataTransformation?.Config is Data.TspApi.V3.NarrowDataUnfoldingConf ndu)
             {
-                <MudListItem>@Loc["DataTransformation"]: Narrow data unfolding</MudListItem>
+                <MudListItem>@Loc["DataTransformation"]: @Loc["NarrowDataUnfolding"]</MudListItem>
                 <MudListItem>@Loc["KeyColumn"]: @(ndu.KeyColumn)</MudListItem>
                 <MudListItem>@Loc["DefaultValueColumn"]: @(ndu.DefaultValueColumn)</MudListItem>
                 <MudListItem>@Loc["DefaultTimeout"]: @(ndu.DefaultTimeout) ms</MudListItem>
@@ -194,7 +193,7 @@ else
             }
             @if (Job.Request.Source.Config.DataTransformation?.Config is Data.TspApi.V3.WideDataFillingConf wdf)
             {
-                <MudListItem>@Loc["DataTransformation"]: Wide data filling</MudListItem>
+                <MudListItem>@Loc["DataTransformation"]: @Loc["WideDataFilling"]</MudListItem>
                 <MudListItem>@Loc["DefaultTimeout"]: @(wdf.DefaultTimeout) ms</MudListItem>
                 <MudListItem>@Loc["TimeoutOverrides"]: @(wdf.FieldsTimeoutsMs?.Select(kv => kv.Key + ": " + kv.Value))</MudListItem>
                 if (wdf.RegularityInterval != null)

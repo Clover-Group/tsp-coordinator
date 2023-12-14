@@ -117,6 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Canceled" xml:space="preserve">
+    <value>Отменена</value>
+    <comment/>
+  </data>
   <data name="DataChunkSize" xml:space="preserve">
     <value>Размер порции данных, мс</value>
   </data>
@@ -129,8 +133,20 @@
   <data name="DefaultValueColumn" xml:space="preserve">
     <value>Столбец по умолчанию, содержащий значение</value>
   </data>
+  <data name="Enqueued" xml:space="preserve">
+    <value>В очереди</value>
+    <comment/>
+  </data>
   <data name="Errors" xml:space="preserve">
     <value>Ошибки</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>С ошибкой</value>
+    <comment/>
+  </data>
+  <data name="Finished" xml:space="preserve">
+    <value>Завершена</value>
+    <comment/>
   </data>
   <data name="History" xml:space="preserve">
     <value>История</value>
@@ -152,7 +168,7 @@
     <value>Задание зафиксировало сообщение: {0}</value>
   </data>
   <data name="JobStatusChanged" xml:space="preserve">
-    <value>Статус был изменен на {0}</value>
+    <value>Статус был изменен на «{0}»</value>
   </data>
   <data name="KeyColumn" xml:space="preserve">
     <value>Столбец, содержащий ключ</value>
@@ -166,6 +182,9 @@
   </data>
   <data name="MaxTSGap" xml:space="preserve">
     <value>Макс. разрыв в данных</value>
+  </data>
+  <data name="NarrowDataUnfolding" xml:space="preserve">
+    <value>Развертка «узких» данных</value>
   </data>
   <data name="NoDataTransformation" xml:space="preserve">
     <value>Без преобразования данных</value>
@@ -193,6 +212,10 @@
   </data>
   <data name="RowsWritten" xml:space="preserve">
     <value>Записано строк</value>
+    <comment/>
+  </data>
+  <data name="Running" xml:space="preserve">
+    <value>Работает</value>
     <comment/>
   </data>
   <data name="RunningTime" xml:space="preserve">
@@ -224,6 +247,9 @@
   </data>
   <data name="ValueColumnOverrides" xml:space="preserve">
     <value>Переопределение столбцов со значениями</value>
+  </data>
+  <data name="WideDataFilling" xml:space="preserve">
+    <value>Протяжка «широких» данных</value>
   </data>
   <data name="WriteSpeed" xml:space="preserve">
     <value>Скорость записи</value>
