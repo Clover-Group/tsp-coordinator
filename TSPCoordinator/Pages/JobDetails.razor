@@ -70,6 +70,8 @@ else
                 <MudCardActions>
                     <MudButton Color="@(JobCanBeStopped() ? Color.Error : Color.Default)" @onclick=StopJob
                         Disabled="@(!JobCanBeStopped())">Stop/Cancel</MudButton>
+                    <MudButton Color="@(JobCanBeRestarted() ? Color.Success : Color.Default)" @onclick=RestartJob
+                        Disabled="@(!JobCanBeRestarted())">Restart</MudButton>
                 </MudCardActions>
             </MudCard>
         </MudItem>
@@ -324,9 +326,17 @@ else
         };
     }
 
+    public void RestartJob()
+    {
+        // TODO: Message
+        JobService.RestartJob(Job?.JobId ?? "");
+    }
+
     public bool JobCanBeStopped() => Job?.Status switch {
         JobStatus.Enqueued => true,
         JobStatus.Running => true,
         _ => false
     };
+
+    public bool JobCanBeRestarted() => !JobCanBeStopped();
 }

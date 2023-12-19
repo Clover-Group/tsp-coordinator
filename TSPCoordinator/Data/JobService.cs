@@ -18,6 +18,13 @@ public enum JobStopResult
     NotFound
 }
 
+public enum JobRestartResult
+{
+    Restarted,
+    Error,
+    NotFound
+}
+
 public class JobService
 {
     private JobQueue jobQueue;
@@ -336,6 +343,25 @@ public class JobService
             return JobStopResult.StopRequested;
         }
         return JobStopResult.NotFound;
+    }
+
+    public JobRestartResult RestartJob(string jobId)
+    {
+        if (jobQueue.FindById(jobId) != null || runningJobs.Find(j => j.JobId == jobId) != null)
+        {
+            // cannot (yet) restart a job which is running or enqueued
+            return JobRestartResult.Error;
+        }
+        if (completedJobs.Find(j => j.JobId == jobId) is Job job)
+        {
+            // re-enqueue the job and notify status change
+            completedJobs.Remove(job);
+            job.Status = JobStatus.Enqueued;
+            _statusReportingService.SendJobStatus(job, $"Job {job.JobId} was restarted");
+            job.NotifyStatusChanged();
+            jobQueue.Enqueue(job);
+        }
+        return JobRestartResult.NotFound;
     }
 
     public void CleanupCompletedJobs(Object? state)

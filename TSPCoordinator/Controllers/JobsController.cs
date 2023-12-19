@@ -96,4 +96,27 @@ public class JobsController : Controller
             _ => StatusCode(500, "Something went wrong, invalid value for job stop status reported.")
         };
     }
+
+    /// <summary>
+    ///  Orders to restart the job (re-enqueue a completed (finished, failed or canceled) job).
+    /// </summary>
+    /// <param name="id">The ID of a job to stop</param>
+    /// <response code="200">Success</response>
+    /// <response code="404">The specified job ID was not found</response>
+    /// <response code="423">The specified job is enqueued or running, thus cannot be restarted right now</response>
+    [HttpGet("{id}/restart")]
+    [HttpPost("{id}/restart")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status423Locked)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult Restart(string id)
+    {
+        return _jobService.RestartJob(id) switch
+        {
+            JobRestartResult.Restarted => Ok($"Job {id} successfully restarted."),
+            JobRestartResult.Error => StatusCode(423, $"Job {id} is queued or running thus cannot yet be restarted."),
+            JobRestartResult.NotFound => NotFound($"Job with {id} not found"),
+            _ => StatusCode(500, "Something went wrong, invalid value for job stop status reported.")
+        };
+    }
 }
