@@ -53,7 +53,7 @@ public class JobService
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
     }.SetupExtensions();
 
-    private readonly Counter rowsReadCounter = 
+    private readonly Counter rowsReadCounter =
         Metrics.CreateCounter("tsp_coordinator_rows_read", "Rows read by a job", "job_id");
     private readonly Counter rowsWrittenCounter =
         Metrics.CreateCounter("tsp_coordinator_rows_written", "Rows written by a job", "job_id");
@@ -155,6 +155,15 @@ public class JobService
             _statusReportingService.SendJobStatus(job, $"Job {job.JobId} completed.");
             // if job completed quickly (between health checks), we remove it from sent ones manually
             job.RunningOn?.SentJobsIds?.RemoveAll(x => x == job.JobId);
+            if (job.Status == JobStatus.Failed && !(info?.Fatal ?? false))
+            {
+                // restart on non-fatal error
+                job.RestartAttempts++;
+                if (job.RestartAttempts < _configurationService.JobRestartAttempts)
+                {
+                    RestartJob(job.JobId);
+                }
+            }
         }
     }
 
@@ -234,7 +243,7 @@ public class JobService
                     {
                         var statusInfo = await response.Content.ReadFromJsonAsync<JobStatusInfo>();
                         UpdateJobMetric(job, statusInfo ?? new JobStatusInfo());
-                        
+
                     }
                     else
                     {
@@ -259,7 +268,7 @@ public class JobService
         try
         {
             var jobCounts = JobCountsByStatus();
-            foreach(var (status, count) in jobCounts)
+            foreach (var (status, count) in jobCounts)
             {
                 jobCountsByStatusGauge.WithLabels(status.ToString().ToUpper()).Set(count);
             }

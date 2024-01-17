@@ -2,13 +2,13 @@ namespace TspCoordinator.Data;
 
 public class StatusReportingSettings
 {
-    public string Broker { get; set; } = default! ;
-    public string Topic { get; set; } = default! ;
+    public string Broker { get; set; } = default!;
+    public string Topic { get; set; } = default!;
 }
 
 public class QueueStorageRedisSettings
 {
-    public string Host { get; set; } = default! ;
+    public string Host { get; set; } = default!;
 }
 
 public class ConfigurationService
@@ -124,6 +124,15 @@ public class ConfigurationService
         {
             _logger.LogWarning($"Health check attempts not set, defaulting to {HealthCheckAttempts}");
         }
+        var jobRestartAttemptsVar = Environment.GetEnvironmentVariable("JOB_RESTART_ATTEMPTS") ?? "";
+        if (UInt32.TryParse(jobRestartAttemptsVar, out var jobRestartAttempts))
+        {
+            JobRestartAttempts = jobRestartAttempts;
+        }
+        else
+        {
+            _logger.LogWarning($"Health check attempts not set, defaulting to {JobRestartAttempts}");
+        }
     }
 
     public StatusReportingSettings? StatusReportingSettings { get; private set; }
@@ -139,5 +148,7 @@ public class ConfigurationService
     public uint MaxJobsPerTsp { get; set; } = 1;
 
     public uint HealthCheckAttempts { get; set; } = 10;
+
+    public uint JobRestartAttempts { get; set; } = 0;
 
 }

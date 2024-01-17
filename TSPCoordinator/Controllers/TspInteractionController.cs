@@ -25,6 +25,8 @@ public class JobCompletedInfo
 
     public string? Error { get; set; }
 
+    public bool? Fatal { get; set; }
+
     public long? RowsRead { get; set; }
     public long? RowsWritten { get; set; }
 }

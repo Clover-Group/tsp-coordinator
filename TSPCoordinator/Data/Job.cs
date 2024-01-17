@@ -53,6 +53,8 @@ public class Job
     [JsonIgnore]
     public JobLifecycle Lifecycle { get; private set; }
 
+    public uint RestartAttempts { get; set; } = 0;
+
     public void NotifyStatusChanged() => Lifecycle.AddStatusChanged(Status);
 
     public void CacheSpeed()
