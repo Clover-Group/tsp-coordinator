@@ -158,9 +158,9 @@ public class JobService
             if (job.Status == JobStatus.Failed && !(info?.Fatal ?? false))
             {
                 // restart on non-fatal error
-                job.RestartAttempts++;
                 if (job.RestartAttempts < _configurationService.JobRestartAttempts)
                 {
+                    job.RestartAttempts++;
                     RestartJob(job.JobId);
                 }
             }

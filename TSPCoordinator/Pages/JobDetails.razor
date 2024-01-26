@@ -5,8 +5,9 @@
 @using TspCoordinator.Data
 @inject IStringLocalizer<JobDetails> Loc
 @inject JobService JobService
+@inject ConfigurationService ConfigurationService
 
-@if(Job == null)
+@if (Job == null)
 {
     <p>Job with id @Id not found.</p>
 }
@@ -21,48 +22,52 @@ else
                     <MudGrid Spacing="2">
                         <MudItem xs="12">
                             <MudStack>
-                                <MudText Typo="Typo.overline">@Loc["Status"]</MudText>
-                                <MudText Typo="Typo.h4">@Loc[Job.Status.ToString()] (@(Job.Status.ToString().ToUpper()))</MudText>
+                                <MudText Typo="Typo.overline">@Loc["Status"] (used restart attempts: @(Job.RestartAttempts)
+                                    out of @(ConfigurationService.JobRestartAttempts))</MudText>
+                                <MudText Typo="Typo.h4">@Loc[Job.Status.ToString()] (@(Job.Status.ToString().ToUpper()))
+                                </MudText>
                             </MudStack>
                         </MudItem>
                         <MudItem xs="12">
                             <MudStack>
                                 <MudText Typo="Typo.overline">@Loc["TimeSinceLastActivity"]</MudText>
-                                <MudText Typo="Typo.h4">@((DateTime.Now - Job.Lifecycle.Events.LastOrDefault().Key).ToString(@"d\:hh\:mm\:ss\.fff"))</MudText>
-                            </MudStack>
-                        </MudItem>
-                        <MudItem xs="12">
-                            <MudStack>
-                                <MudText Typo="Typo.overline">@Loc["RunningTime"]</MudText>
-                                <MudText Typo="Typo.h4">@(Job.Lifecycle.RunningTime.ToString(@"d\:hh\:mm\:ss\.fff"))</MudText>
-                            </MudStack>
-                        </MudItem>
-                        <MudItem xs="6">
-                            <MudStack>
-                                <MudText Typo="Typo.overline" Color="Color.Primary">@Loc["RowsRead"]</MudText>
-                                <MudText Typo="Typo.h4" Color="Color.Primary">@Job.RowsRead</MudText>
-                            </MudStack>
-                        </MudItem>
-                        <MudItem xs="6">
-                            <MudStack>
-                                <MudText Typo="Typo.overline" Color="Color.Secondary">@Loc["RowsWritten"]</MudText>
-                                <MudText Typo="Typo.h4" Color="Color.Secondary">@Job.RowsWritten</MudText>
-                            </MudStack>
-                        </MudItem>
-                        <MudItem xs="6">
-                            <MudStack>
-                                <MudText Typo="Typo.overline" Color="Color.Tertiary">@Loc["ReadSpeed"]</MudText>
-                                <MudText Typo="Typo.h4" Color="Color.Tertiary">@Job.Speed.Item1</MudText>
-                            </MudStack>
-                        </MudItem>
-                        <MudItem xs="6">
-                            <MudStack>
-                                <MudText Typo="Typo.overline" Color="Color.Dark">@Loc["WriteSpeed"]</MudText>
-                                <MudText Typo="Typo.h4" Color="Color.Dark">@Job.Speed.Item2</MudText>
-                            </MudStack>
-                        </MudItem>
-                    </MudGrid>                    
-                    @if (JobStopMessage != null)
+                                <MudText Typo="Typo.h4">@((DateTime.Now -
+                                Job.Lifecycle.Events.LastOrDefault().Key).ToString(@"d\:hh\:mm\:ss\.fff"))</MudText>
+                                </MudStack>
+                            </MudItem>
+                            <MudItem xs="12">
+                                <MudStack>
+                                    <MudText Typo="Typo.overline">@Loc["RunningTime"]</MudText>
+                                    <MudText Typo="Typo.h4">@(Job.Lifecycle.RunningTime.ToString(@"d\:hh\:mm\:ss\.fff"))
+                                    </MudText>
+                                </MudStack>
+                            </MudItem>
+                            <MudItem xs="6">
+                                <MudStack>
+                                    <MudText Typo="Typo.overline" Color="Color.Primary">@Loc["RowsRead"]</MudText>
+                                    <MudText Typo="Typo.h4" Color="Color.Primary">@Job.RowsRead</MudText>
+                                </MudStack>
+                            </MudItem>
+                            <MudItem xs="6">
+                                <MudStack>
+                                    <MudText Typo="Typo.overline" Color="Color.Secondary">@Loc["RowsWritten"]</MudText>
+                                    <MudText Typo="Typo.h4" Color="Color.Secondary">@Job.RowsWritten</MudText>
+                                </MudStack>
+                            </MudItem>
+                            <MudItem xs="6">
+                                <MudStack>
+                                    <MudText Typo="Typo.overline" Color="Color.Tertiary">@Loc["ReadSpeed"]</MudText>
+                                    <MudText Typo="Typo.h4" Color="Color.Tertiary">@Job.Speed.Item1</MudText>
+                                </MudStack>
+                            </MudItem>
+                            <MudItem xs="6">
+                                <MudStack>
+                                    <MudText Typo="Typo.overline" Color="Color.Dark">@Loc["WriteSpeed"]</MudText>
+                                    <MudText Typo="Typo.h4" Color="Color.Dark">@Job.Speed.Item2</MudText>
+                                </MudStack>
+                            </MudItem>
+                        </MudGrid>
+                        @if (JobStopMessage != null)
                     {
                         <MudAlert Severity="@(JobStopMessageSeverity ?? Severity.Info)">@JobStopMessage</MudAlert>
                     }
@@ -128,8 +133,10 @@ else
                                     @(e.Value switch
                                     {
                                         LifecycleEvent.Enqueued => Loc["JobEnqueued"],
-                                        LifecycleEvent.StatusChanged(var newStatus) => Loc["JobStatusChanged", Loc[newStatus.ToString()]],
-                                        LifecycleEvent.Finished(var success, var error) => Loc["JobFinished", (success ? "successfully" : $"with error {error}")],
+                                        LifecycleEvent.StatusChanged(var newStatus) => Loc["JobStatusChanged",
+                                        Loc[newStatus.ToString()]],
+                                        LifecycleEvent.Finished(var success, var error) => Loc["JobFinished", (success ?
+                                        "successfully" : $"with error {error}")],
                                         LifecycleEvent.LoggedMessage(var message) => Loc["JobLoggedMessage", message],
                                         LifecycleEvent.ExternalDiscovered => Loc["JobExternalDiscovered"],
                                         _ => Loc["JobUnknownEvent"]
@@ -141,10 +148,10 @@ else
                 </MudTimeline>
             </MudContainer>
         </MudTabPanel>
-        
+
         <MudTabPanel Text='@Loc["Errors"]' BadgeData="@(Errors.Count)" BadgeColor="Color.Error">
             <MudList>
-                @foreach(var error in Errors)
+                @foreach (var error in Errors)
                 {
                     <MudListItem>
                         <MudText Typo="Typo.body1">@error</MudText>
@@ -158,55 +165,58 @@ else
     <MudText Typo="Typo.h6">@Loc["Source"]</MudText>
     <MudCard Class="pa-4">
         <MudCardHeader>
-            @Loc["Source"] 
+            @Loc["Source"]
             <MudChip Color="Color.Secondary">@(Job.Request.Source.Type)</MudChip>
         </MudCardHeader>
         <MudCardContent>
             <MudList>
-            @if(Job.Request.Source.Config is Data.TspApi.V3.JdbcInputConf jdbcConf)
-            {
-                <MudListItem>JDBC URL: @(new Uri(jdbcConf.JdbcUrl).AbsolutePath)</MudListItem>
-                <MudListItem>@Loc["Query"]: @jdbcConf.Query</MudListItem>
-                <MudListItem>@Loc["MaxTSGap"]: @(jdbcConf.EventsMaxGapMs ?? 60000)</MudListItem>
-                <MudListItem>@Loc["MaxEventsGap"]: @(jdbcConf.DefaultEventsGapMs ?? 2000)</MudListItem>
-                <MudListItem>@Loc["DataChunkSize"]: @(jdbcConf.ChunkSizeMs ?? 900000)</MudListItem>
-            }
-            @if(Job.Request.Source.Config is Data.TspApi.V3.KafkaInputConf kafkaConf)
-            {
-                <MudListItem>Broker(s): @kafkaConf.Brokers</MudListItem>
-                <MudListItem>Topic: @kafkaConf.Topic</MudListItem>
-                <MudListItem>@Loc["MaxTSGap"]: @(kafkaConf.EventsMaxGapMs ?? 60000) ms</MudListItem>
-                <MudListItem>@Loc["MaxEventsGap"]: @(kafkaConf.DefaultEventsGapMs ?? 2000) ms</MudListItem>
-                <MudListItem>@Loc["DataChunkSize"]: @(kafkaConf.ChunkSizeMs ?? 900000) ms</MudListItem>
-            }
-            <MudDivider />
-            @if(Job.Request.Source.Config.DataTransformation?.Config is Data.TspApi.V3.NarrowDataUnfoldingConf ndu)
-            {
-                <MudListItem>@Loc["DataTransformation"]: @Loc["NarrowDataUnfolding"]</MudListItem>
-                <MudListItem>@Loc["KeyColumn"]: @(ndu.KeyColumn)</MudListItem>
-                <MudListItem>@Loc["DefaultValueColumn"]: @(ndu.DefaultValueColumn)</MudListItem>
-                <MudListItem>@Loc["DefaultTimeout"]: @(ndu.DefaultTimeout) ms</MudListItem>
-                <MudListItem>@Loc["ValueColumnOverrides"]: @(String.Join(", ", ndu.ValueColumnMapping?.Select(kv => kv.Key + ": " + kv.Value) ?? Enumerable.Empty<String>()))</MudListItem>
-                <MudListItem>@Loc["TimeoutOverrides"]: @(String.Join(", ", ndu.FieldsTimeoutsMs?.Select(kv => kv.Key + ": " + kv.Value) ?? Enumerable.Empty<String>()))</MudListItem>
-                if (ndu.RegularityInterval != null)
+                @if (Job.Request.Source.Config is Data.TspApi.V3.JdbcInputConf jdbcConf)
                 {
-                    <MudListItem>@Loc["RegularityInterval"]: @(ndu.RegularityInterval) ms</MudListItem>
+                    <MudListItem>JDBC URL: @(new Uri(jdbcConf.JdbcUrl).AbsolutePath)</MudListItem>
+                    <MudListItem>@Loc["Query"]: @jdbcConf.Query</MudListItem>
+                    <MudListItem>@Loc["MaxTSGap"]: @(jdbcConf.EventsMaxGapMs ?? 60000)</MudListItem>
+                    <MudListItem>@Loc["MaxEventsGap"]: @(jdbcConf.DefaultEventsGapMs ?? 2000)</MudListItem>
+                    <MudListItem>@Loc["DataChunkSize"]: @(jdbcConf.ChunkSizeMs ?? 900000)</MudListItem>
                 }
-            }
-            @if (Job.Request.Source.Config.DataTransformation?.Config is Data.TspApi.V3.WideDataFillingConf wdf)
-            {
-                <MudListItem>@Loc["DataTransformation"]: @Loc["WideDataFilling"]</MudListItem>
-                <MudListItem>@Loc["DefaultTimeout"]: @(wdf.DefaultTimeout) ms</MudListItem>
-                <MudListItem>@Loc["TimeoutOverrides"]: @(wdf.FieldsTimeoutsMs?.Select(kv => kv.Key + ": " + kv.Value))</MudListItem>
-                if (wdf.RegularityInterval != null)
+                @if (Job.Request.Source.Config is Data.TspApi.V3.KafkaInputConf kafkaConf)
                 {
-                    <MudListItem>@Loc["RegularityInterval"]: @(wdf.RegularityInterval) ms</MudListItem>
+                    <MudListItem>Broker(s): @kafkaConf.Brokers</MudListItem>
+                    <MudListItem>Topic: @kafkaConf.Topic</MudListItem>
+                    <MudListItem>@Loc["MaxTSGap"]: @(kafkaConf.EventsMaxGapMs ?? 60000) ms</MudListItem>
+                    <MudListItem>@Loc["MaxEventsGap"]: @(kafkaConf.DefaultEventsGapMs ?? 2000) ms</MudListItem>
+                    <MudListItem>@Loc["DataChunkSize"]: @(kafkaConf.ChunkSizeMs ?? 900000) ms</MudListItem>
                 }
-            }
-            @if(Job.Request.Source.Config.DataTransformation is null)
-            {
-                <MudListItem>@Loc["NoDataTransformation"]</MudListItem>
-            }
+                <MudDivider />
+                @if (Job.Request.Source.Config.DataTransformation?.Config is Data.TspApi.V3.NarrowDataUnfoldingConf ndu)
+                {
+                    <MudListItem>@Loc["DataTransformation"]: @Loc["NarrowDataUnfolding"]</MudListItem>
+                    <MudListItem>@Loc["KeyColumn"]: @(ndu.KeyColumn)</MudListItem>
+                    <MudListItem>@Loc["DefaultValueColumn"]: @(ndu.DefaultValueColumn)</MudListItem>
+                    <MudListItem>@Loc["DefaultTimeout"]: @(ndu.DefaultTimeout) ms</MudListItem>
+                    <MudListItem>@Loc["ValueColumnOverrides"]: @(String.Join(", ", ndu.ValueColumnMapping?.Select(kv => kv.Key +
+                ": " + kv.Value) ?? Enumerable.Empty<String>()))</MudListItem>
+                    <MudListItem>@Loc["TimeoutOverrides"]: @(String.Join(", ", ndu.FieldsTimeoutsMs?.Select(kv => kv.Key + ": "
+                + kv.Value) ?? Enumerable.Empty<String>()))</MudListItem>
+                    if (ndu.RegularityInterval != null)
+                    {
+                        <MudListItem>@Loc["RegularityInterval"]: @(ndu.RegularityInterval) ms</MudListItem>
+                    }
+                }
+                @if (Job.Request.Source.Config.DataTransformation?.Config is Data.TspApi.V3.WideDataFillingConf wdf)
+                {
+                    <MudListItem>@Loc["DataTransformation"]: @Loc["WideDataFilling"]</MudListItem>
+                    <MudListItem>@Loc["DefaultTimeout"]: @(wdf.DefaultTimeout) ms</MudListItem>
+                    <MudListItem>@Loc["TimeoutOverrides"]: @(wdf.FieldsTimeoutsMs?.Select(kv => kv.Key + ": " + kv.Value))
+                    </MudListItem>
+                    if (wdf.RegularityInterval != null)
+                    {
+                        <MudListItem>@Loc["RegularityInterval"]: @(wdf.RegularityInterval) ms</MudListItem>
+                    }
+                }
+                @if (Job.Request.Source.Config.DataTransformation is null)
+                {
+                    <MudListItem>@Loc["NoDataTransformation"]</MudListItem>
+                }
             </MudList>
         </MudCardContent>
     </MudCard>
@@ -217,50 +227,51 @@ else
             <MudItem>
                 <MudCard>
                     <MudCardHeader>
-                        @Loc["SinkNo"] @index 
+                        @Loc["SinkNo"] @index
                         <MudChip Color="@Color.Secondary" IsPill="true">@(sink.Type)</MudChip>
                     </MudCardHeader>
                     <MudCardContent>
                         <MudList>
-                        @if(sink.Config is Data.TspApi.V3.JdbcOutputConf jdbcConf)
-                        {
-                            <MudListItem>JDBC URL: @(new Uri(jdbcConf.JdbcUrl).AbsolutePath)</MudListItem>
-                        }
-                        @if(sink.Config is Data.TspApi.V3.KafkaOutputConf kafkaConf)
-                        {
-                            <MudListItem>Broker: @kafkaConf.Broker</MudListItem>
-                            <MudListItem>Topic: @kafkaConf.Topic</MudListItem>
-                        }
+                            @if (sink.Config is Data.TspApi.V3.JdbcOutputConf jdbcConf)
+                            {
+                                <MudListItem>JDBC URL: @(new Uri(jdbcConf.JdbcUrl).AbsolutePath)</MudListItem>
+                            }
+                            @if (sink.Config is Data.TspApi.V3.KafkaOutputConf kafkaConf)
+                            {
+                                <MudListItem>Broker: @kafkaConf.Broker</MudListItem>
+                                <MudListItem>Topic: @kafkaConf.Topic</MudListItem>
+                            }
                         </MudList>
                     </MudCardContent>
                 </MudCard>
             </MudItem>
         }
-    </MudGrid>
+        </MudGrid>
     <MudText Typo="Typo.h6">@Loc["Patterns"] (@(Job.Request?.Patterns.Count ?? 0))</MudText>
 
     <MudExpansionPanels MultiExpansion="true" Class="pa-4">
-        @foreach (var (pattern, index) in (Job.Request?.Patterns ?? new List<Data.TspApi.V3.Pattern>()).Select((x, i) => (x, i + 1)))
-            {
-                <MudExpansionPanel Text="@($"{index}. ID {pattern.Id}")">
-                    @if (pattern.Subunit != null)
-                    {
-                        <MudText>Subunit: @pattern.Subunit</MudText>
-                    }            
-                    @if (pattern.Metadata?.Count > 0)
-                    {
-                        <MudText>Metadata: @String.Join("; ", pattern.Metadata) </MudText>
-                    } 
-                    <MudText>                     
-                        <pre>
-                            <code style="display: inline-block;white-space: normal;max-width:100%; word-break:break-all; word-wrap:break-word;">
-                                @pattern.SourceCode
-                            </code>
-                        </pre>
-                    </MudText>
-                </MudExpansionPanel>
-            }
-    </MudExpansionPanels>
+        @foreach (var (pattern, index) in (Job.Request?.Patterns ?? new List<Data.TspApi.V3.Pattern>()).Select((x, i) => (x,
+       i + 1)))
+        {
+            <MudExpansionPanel Text="@($"{index}. ID {pattern.Id}")">
+                @if (pattern.Subunit != null)
+                {
+                    <MudText>Subunit: @pattern.Subunit</MudText>
+                }
+                @if (pattern.Metadata?.Count > 0)
+                {
+                    <MudText>Metadata: @String.Join("; ", pattern.Metadata) </MudText>
+                }
+                <MudText>
+                    <pre>
+                                            <code style="display: inline-block;white-space: normal;max-width:100%; word-break:break-all; word-wrap:break-word;">
+                            @pattern.SourceCode
+                                            </code>
+                                        </pre>
+                </MudText>
+            </MudExpansionPanel>
+        }
+        </MudExpansionPanels>
 }
 
 @code {
@@ -273,19 +284,19 @@ else
     public Severity? JobStopMessageSeverity { get; set; } = null;
 
     public List<ChartSeries> Series = new()
-    {
-        new ChartSeries() { Name = "Read speed (\x00d71000 rows per 1 s)", Data = new double[10] }
-    };
+{
+new ChartSeries() { Name = "Read speed (\x00d71000 rows per 1 s)", Data = new double[10] }
+};
 
     private readonly ChartOptions chartOptions = new();
 
-    public List<String> Errors => 
-        Job?.Lifecycle.Events
-        .Select(e => e.Value)
-        .OfType<LifecycleEvent.Finished>()
-        .Where(e => !e.Success)
-        .Select(e => e.Error ?? "(no error message arrived)").ToList()
-        ?? new();
+    public List<String> Errors =>
+    Job?.Lifecycle.Events
+    .Select(e => e.Value)
+    .OfType<LifecycleEvent.Finished>()
+    .Where(e => !e.Success)
+    .Select(e => e.Error ?? "(no error message arrived)").ToList()
+    ?? new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -297,16 +308,16 @@ else
 
         var timer = new System.Threading.Timer((_) =>
         {
-            InvokeAsync( async () =>
-            {
-                Job = JobService.FindJobById(Id ?? "");
-                if (Job != null)
-                    Series[0].Data = Job.SpeedData.Select(x => x.Item1 / 1000.0).ToArray();
-                chartOptions.InterpolationOption = (
-                    Series[0].Data.Length >= 4 ?
-                    InterpolationOption.NaturalSpline : InterpolationOption.Straight
-                );
-                StateHasChanged();
+            InvokeAsync(async () =>
+    {
+    Job = JobService.FindJobById(Id ?? "");
+    if (Job != null)
+        Series[0].Data = Job.SpeedData.Select(x => x.Item1 / 1000.0).ToArray();
+    chartOptions.InterpolationOption = (
+    Series[0].Data.Length >= 4 ?
+    InterpolationOption.NaturalSpline : InterpolationOption.Straight
+    );
+    StateHasChanged();
             });
         }, null, 0, 5000);
     }
@@ -315,13 +326,13 @@ else
     {
         (JobStopMessage, JobStopMessageSeverity) = await JobService.StopJob(Job?.JobId ?? "") switch
         {
-            JobStopResult.Dequeued => 
-                ($"Job {Job?.JobId} successfully dequeued.", Severity.Info),
-            JobStopResult.StopRequested => 
+            JobStopResult.Dequeued =>
+            ($"Job {Job?.JobId} successfully dequeued.", Severity.Info),
+            JobStopResult.StopRequested =>
             ($"Stop request for job {Job?.JobId} sent.", Severity.Info),
-            JobStopResult.NotFound => 
+            JobStopResult.NotFound =>
             ($"Job with {Job?.JobId} not queued or running (can be already completed).", Severity.Error),
-            _ => 
+            _ =>
             ("Something went wrong, invalid value for job stop status reported.", Severity.Warning)
         };
     }
@@ -332,7 +343,8 @@ else
         JobService.RestartJob(Job?.JobId ?? "");
     }
 
-    public bool JobCanBeStopped() => Job?.Status switch {
+    public bool JobCanBeStopped() => Job?.Status switch
+    {
         JobStatus.Enqueued => true,
         JobStatus.Running => true,
         _ => false
