@@ -86,7 +86,7 @@ else
     </MudGrid>
     <MudTabs Outlined="true" Rounded="true">
         <MudTabPanel Text='@Loc["History"]' BadgeData="@(Job.Lifecycle.Events.Count)" BadgeColor="Color.Info">
-            <MudContainer Class="pa-4">
+            <MudContainer Class="pa-4" Style="overflow-x: scroll; overflow-y: scroll">
                 <MudTimeline TimelineOrientation="TimelineOrientation.Horizontal">
                     @foreach (var e in Job.Lifecycle.Events)
                     {
@@ -124,7 +124,7 @@ else
                             LifecycleEvent.ExternalDiscovered => Severity.Normal,
                             _ => Severity.Normal
                         };
-                        <MudTimelineItem Color="@itemColor">
+                        <MudTimelineItem Color="@itemColor" Style="min-width: 200px">
                             <ItemOpposite>
                                 <MudText Typo="Typo.body2" Color="@itemColor" Class="mud-text-secondary">@e.Key</MudText>
                             </ItemOpposite>
@@ -264,10 +264,10 @@ else
                 }
                 <MudText>
                     <pre>
-                                            <code style="display: inline-block;white-space: normal;max-width:100%; word-break:break-all; word-wrap:break-word;">
+                                                                                    <code style="display: inline-block;white-space: normal;max-width:100%; word-break:break-all; word-wrap:break-word;">
                             @pattern.SourceCode
-                                            </code>
-                                        </pre>
+                                                                                    </code>
+                                                                                </pre>
                 </MudText>
             </MudExpansionPanel>
         }

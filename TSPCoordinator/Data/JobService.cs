@@ -115,7 +115,7 @@ public class JobService
     public void EnqueueJob(Job job)
     {
         job.Lifecycle.AddQueued();
-        jobQueue.Enqueue(job);
+        lock (jobQueue) jobQueue.Enqueue(job);
         _statusReportingService.SendJobStatus(job, $"Job {job.JobId} enqueued.");
     }
 
