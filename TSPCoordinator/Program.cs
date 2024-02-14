@@ -8,6 +8,7 @@ using MudBlazor.Services;
 using Prometheus;
 using TspCoordinator.Data;
 using TspCoordinator.Data.TspApi;
+using AspNetCore.Proxy;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +40,7 @@ builder.Services.AddSingleton<TspInstancesService>();
 builder.Services.AddSingleton<JobService>();
 builder.Services.AddSingleton<JobStatusReportingService>();
 builder.Services.AddHostedService<ApplicationPartsLogger>();
+builder.Services.AddProxies();
 
 
 var app = builder.Build();

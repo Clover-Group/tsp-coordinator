@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AspNetCore.Proxy" Version="4.4.0" />
     <PackageReference Include="Confluent.Kafka" Version="2.3.0" />
     <PackageReference Include="Dahomey.Json" Version="1.12.2" />
     <PackageReference Include="MudBlazor" Version="6.11.1" />

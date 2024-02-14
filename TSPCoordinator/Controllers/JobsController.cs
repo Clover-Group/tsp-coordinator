@@ -1,4 +1,5 @@
 
+using AspNetCore.Proxy;
 using Microsoft.AspNetCore.Mvc;
 using TspCoordinator.Data;
 
@@ -118,5 +119,24 @@ public class JobsController : Controller
             JobRestartResult.NotFound => NotFound($"Job with {id} not found"),
             _ => StatusCode(500, "Something went wrong, invalid value for job stop status reported.")
         };
+    }
+
+    [HttpGet("{id}/csv")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetCSV(string id)
+    {
+        var completedJobs = await _jobService.GetCompletedQueueAsync();
+        var job = completedJobs?.Find(j => j.JobId == id);
+        if (job != null)
+        {
+            var instance = job.RunningOn!;
+            await this.HttpProxyAsync($"http://{instance.Host.MapToIPv4()}:{instance.Port}/jobs/{id}/csvs");
+            return new EmptyResult();
+        }
+        else
+        {
+            return BadRequest($"Job {id} not found or is not completed yet.");
+        }
     }
 }
