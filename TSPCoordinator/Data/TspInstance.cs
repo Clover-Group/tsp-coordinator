@@ -1,3 +1,4 @@
+using System;
 using System.Net;
 using System.Text.Json.Serialization;
 
@@ -10,6 +11,11 @@ public enum TspInstanceStatus
     NotResponding,
     Busy,
     CannotGetExtendedInfo
+}
+
+public enum TspCapability
+{
+    CSVSparseIntermediate
 }
 
 public class TspInstance
@@ -31,7 +37,7 @@ public class TspInstance
     [JsonIgnore]
     public bool IsPortAdvertised { get; set; } = false;
 
-    public string? Version { get; set; }
+    public Version Version { get; set; } = new Version(0, 0, 0);
 
     public TspInstanceStatus Status { get; set; }
 
@@ -48,6 +54,12 @@ public class TspInstance
     public int SentJobsCount => SentJobsIds?.Count ?? 0;
 
     public int TotalJobCount => RunningJobsCount + SentJobsCount;
+
+    public bool SupportsCapability(TspCapability capability) => capability switch
+    {
+        TspCapability.CSVSparseIntermediate => Version >= new Version(19, 6, 0),
+        _ => false,
+    };
 
     public override string ToString()
     {

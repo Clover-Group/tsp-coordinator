@@ -131,6 +131,10 @@ public class JobsController : Controller
         if (job != null)
         {
             var instance = job.RunningOn!;
+            if (!instance.SupportsCapability(TspCapability.CSVSparseIntermediate))
+            {
+                return BadRequest($"Job {id} ran on TSP version {instance.Version}, which does not support the CSV report (use 19.6.0 or later)");
+            }
             await this.HttpProxyAsync($"http://{instance.Host.MapToIPv4()}:{instance.Port}/jobs/{id}/csvs");
             return new EmptyResult();
         }
