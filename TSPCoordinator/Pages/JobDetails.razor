@@ -73,10 +73,12 @@ else
                     }
                 </MudCardContent>
                 <MudCardActions>
-                    <MudButton Color="@(JobCanBeStopped() ? Color.Error : Color.Default)" @onclick=StopJob
-                        Disabled="@(!JobCanBeStopped())">Stop/Cancel</MudButton>
-                    <MudButton Color="@(JobCanBeRestarted() ? Color.Success : Color.Default)" @onclick=RestartJob
-                        Disabled="@(!JobCanBeRestarted())">Restart</MudButton>
+                    <MudButton Class="mx-1" Color="@(JobCanBeStopped() ? Color.Error : Color.Default)" @onclick=StopJob
+                        Disabled="@(!JobCanBeStopped())" Variant="Variant.Filled">Stop/Cancel</MudButton>
+                    <MudButton Class="mx-1" Color="@(JobCanBeRestarted() ? Color.Success : Color.Default)" @onclick=RestartJob
+                        Disabled="@(!JobCanBeRestarted())" Variant="Variant.Filled">Restart</MudButton>
+                    <MudButton Class="mx-1" Color="Color.Info" Href="@($"/api/jobs/{Job.JobId}/csv")" Target="_blank"
+                        Disabled="@(!JobCanGetCSV())" Variant="Variant.Filled">Get CSV</MudButton>
                 </MudCardActions>
             </MudCard>
         </MudItem>
@@ -264,10 +266,10 @@ else
                 }
                 <MudText>
                     <pre>
-                                                                                    <code style="display: inline-block;white-space: normal;max-width:100%; word-break:break-all; word-wrap:break-word;">
+                                                                                                                                                                                                                                                    <code style="display: inline-block;white-space: normal;max-width:100%; word-break:break-all; word-wrap:break-word;">
                             @pattern.SourceCode
-                                                                                    </code>
-                                                                                </pre>
+                                                                                                                                                                                                                                                    </code>
+                                                                                                                                                                                                                                                </pre>
                 </MudText>
             </MudExpansionPanel>
         }
@@ -351,4 +353,7 @@ new ChartSeries() { Name = "Read speed (\x00d71000 rows per 1 s)", Data = new do
     };
 
     public bool JobCanBeRestarted() => !JobCanBeStopped();
+
+    public bool JobCanGetCSV() => JobCanBeRestarted() &&
+    (Job?.RunningOn?.SupportsCapability(TspCapability.CSVSparseIntermediate) ?? false);
 }
