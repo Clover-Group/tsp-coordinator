@@ -73,7 +73,7 @@ public class TspInteractionController : ControllerBase
             Port = info.AdvertisedPort ?? 8080, //Request.HttpContext.Connection.RemotePort,
             IsHostAdvertised = hostAdvertised,
             IsPortAdvertised = info.AdvertisedPort.HasValue,
-            Version = Version.Parse(info.Version),
+            Version = Version.Parse(new String(info.Version.TakeWhile("0123456789.".Contains).ToArray())),
             HealthCheckDate = DateTime.Now
         };
         if (_instancesService.AddInstance(instance))
