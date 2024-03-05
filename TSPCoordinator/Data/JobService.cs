@@ -1,5 +1,6 @@
 namespace TspCoordinator.Data;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
 using Dahomey.Json;
@@ -349,9 +350,22 @@ public class JobService
             findInRunning.Status = JobStatus.Canceled;
             findInRunning.NotifyStatusChanged();
             _statusReportingService.SendJobStatus(findInRunning, $"Job {findInRunning.JobId} was canceled");
+            // schedule timer
+            var cancelTimer = new Timer(_ => ForceCancel(jobId), null, 60000, Timeout.Infinite);
             return JobStopResult.StopRequested;
         }
         return JobStopResult.NotFound;
+    }
+
+    private void ForceCancel(string jobId)
+    {
+        var findInRunning = runningJobs.Find(j => j.JobId == jobId);
+        if (findInRunning?.Status == JobStatus.Canceled)
+        {
+            lock (runningJobs) runningJobs.Remove(findInRunning);
+            findInRunning.Lifecycle.AddLogMessage($"Job was forcibly transferred to canceled state due to no response from TSP");
+            lock (completedJobs) completedJobs.Add(findInRunning);
+        }
     }
 
     public JobRestartResult RestartJob(string jobId)
