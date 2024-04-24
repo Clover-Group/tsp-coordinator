@@ -187,7 +187,8 @@ public class JobService
     private async void OnInstanceHealthCheckSucceeded(TspInstance instance)
     {
         var registeredJobsForInstance = runningJobs.Where(j => j.RunningOn == instance).Select(j => j.JobId);
-        var externalJobsIds = instance.RunningJobsIds.Where(id => !registeredJobsForInstance.Contains(id));
+        var externalJobsIds = instance.RunningJobsIds.Where(
+            id => !registeredJobsForInstance.Contains(id) && !completedJobs.Select(j => j.JobId).Contains(id));
         foreach (var jobId in externalJobsIds)
         {
             var jobGetRequestUrl = $"http://{instance.Host.MapToIPv4()}:{instance.Port}/job/{jobId}/request";
@@ -362,7 +363,10 @@ public class JobService
         var findInRunning = runningJobs.Find(j => j.JobId == jobId);
         if (findInRunning?.Status == JobStatus.Canceled)
         {
-            lock (runningJobs) runningJobs.Remove(findInRunning);
+            lock (runningJobs)
+            {
+                if (!runningJobs.Remove(findInRunning)) throw new Exception($"Job {jobId} not removed for some reason");
+            }
             findInRunning.Lifecycle.AddLogMessage($"Job was forcibly transferred to canceled state due to no response from TSP");
             lock (completedJobs) completedJobs.Add(findInRunning);
         }
