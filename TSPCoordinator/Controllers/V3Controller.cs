@@ -35,6 +35,14 @@ public class V3Controller : Controller
             return Conflict($"Job with UUID `{request.Uuid}` already exists, cannot assign it right now");
         }
         var actualRequest = Converters.ConvertRequestFromV3(request);
+        try
+        {
+            RequestValidator.Validate(actualRequest);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest($"Request validation failed: {ex.Message}");
+        }
         var job = new Job
         {
             Request = actualRequest,

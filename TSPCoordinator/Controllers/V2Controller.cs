@@ -61,6 +61,14 @@ public class V2Controller : Controller
             return BadRequest("Endpoint does not match source/sink types.");
         }
         var actualRequest = Converters.ConvertRequestFromV2(request);
+        try
+        {
+            RequestValidator.Validate(actualRequest);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest($"Request validation failed: {ex.Message}");
+        }
         var job = new Job
         {
             Request = actualRequest,
