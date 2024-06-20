@@ -104,7 +104,7 @@ public static class Converters
         Id = Int32.TryParse(pattern.Id, out int patid) ? patid : -1,
         SourceCode = pattern.SourceCode,
         Metadata = pattern.Payload,
-        Subunit = Convert.ToInt32(pattern.Payload?.GetValueOrDefault("subunit", "0"))
+        Subunit = Convert.ToInt32(pattern.Payload?.GetValueOrDefault("subunit", pattern.Payload.GetHashCode().ToString()))
     };
 
     public static Actual.Pattern ConvertPatternFromV2(V2.Pattern pattern) => new Actual.Pattern

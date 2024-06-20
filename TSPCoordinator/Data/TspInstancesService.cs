@@ -102,7 +102,10 @@ public class TspInstancesService
                     instance.HealthCheckAttemptsRemaining--;
                     instance.HealthCheckDate = DateTime.Now;
                 }
-                instance.Status = TspInstanceStatus.Busy;
+                else
+                {
+                    instance.Status = TspInstanceStatus.Busy;
+                }
             }
             if (instance.HealthCheckAttemptsRemaining == 0)
             {
