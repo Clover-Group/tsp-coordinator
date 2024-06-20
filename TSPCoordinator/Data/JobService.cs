@@ -49,6 +49,8 @@ public class JobService
 
     private ConfigurationService _configurationService;
 
+    private readonly Dictionary<string, Timer> timers = [];
+
     private readonly JsonSerializerOptions jsonOptions = new JsonSerializerOptions
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -352,7 +354,7 @@ public class JobService
             findInRunning.NotifyStatusChanged();
             _statusReportingService.SendJobStatus(findInRunning, $"Job {findInRunning.JobId} was canceled");
             // schedule timer
-            var cancelTimer = new Timer(_ => ForceCancel(jobId), null, 60000, Timeout.Infinite);
+            timers[jobId] = new Timer(_ => ForceCancel(jobId), null, 60000, Timeout.Infinite);
             return JobStopResult.StopRequested;
         }
         return JobStopResult.NotFound;
@@ -370,6 +372,8 @@ public class JobService
             findInRunning.Lifecycle.AddLogMessage($"Job was forcibly transferred to canceled state due to no response from TSP");
             lock (completedJobs) completedJobs.Add(findInRunning);
         }
+        timers[jobId].Dispose();
+        timers.Remove(jobId);
     }
 
     public JobRestartResult RestartJob(string jobId)

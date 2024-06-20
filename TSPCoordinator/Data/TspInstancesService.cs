@@ -96,6 +96,12 @@ public class TspInstancesService
             }
             catch (TaskCanceledException)
             {
+                if (_configurationService.TreatBusyAsNotResponding)
+                {
+                    instance.Status = TspInstanceStatus.NotResponding;
+                    instance.HealthCheckAttemptsRemaining--;
+                    instance.HealthCheckDate = DateTime.Now;
+                }
                 instance.Status = TspInstanceStatus.Busy;
             }
             if (instance.HealthCheckAttemptsRemaining == 0)

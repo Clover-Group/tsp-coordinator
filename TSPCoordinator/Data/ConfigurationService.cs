@@ -133,6 +133,14 @@ public class ConfigurationService
         {
             _logger.LogWarning($"Health check attempts not set, defaulting to {JobRestartAttempts}");
         }
+        var treatBusyAsNotResponding = Environment.GetEnvironmentVariable("TREAT_BUSY_AS_NOT_RESPONDING") switch
+        {
+            "true" or "on" or "yes" or "1" => true,
+            "false" or "off" or "no" or "0" => false,
+            string x => true,
+            _ => true
+        };
+        TreatBusyAsNotResponding = treatBusyAsNotResponding;
     }
 
     public StatusReportingSettings? StatusReportingSettings { get; private set; }
@@ -150,5 +158,7 @@ public class ConfigurationService
     public uint HealthCheckAttempts { get; set; } = 10;
 
     public uint JobRestartAttempts { get; set; } = 0;
+
+    public bool TreatBusyAsNotResponding { get; set; } = false;
 
 }

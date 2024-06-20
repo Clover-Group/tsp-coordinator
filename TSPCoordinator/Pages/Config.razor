@@ -11,7 +11,7 @@
 <MudGrid>
     <MudItem xs="6">
         <MudText Typo="Typo.h5">@Loc["JobReportingHeader"]</MudText>
-        @if(ConfigurationService.StatusReportingSettings != null)
+        @if (ConfigurationService.StatusReportingSettings != null)
         {
             <MudSimpleTable Striped="true">
                 <thead>
@@ -119,12 +119,17 @@
                     <td>HEALTH_CHECK_ATTEMPTS</td>
                     <td>@ConfigurationService.HealthCheckAttempts</td>
                 </tr>
+                <tr>
+                    <td>@Loc["TreatBusyAsNotResponding"]</td>
+                    <td>TREAT_BUSY_AS_NOT_RESPONDING</td>
+                    <td>@ConfigurationService.TreatBusyAsNotResponding</td>
+                </tr>
             </tbody>
         </MudSimpleTable>
     </MudItem>
     <MudItem xs="6">
         <MudText Typo="Typo.h5">@Loc["QueueStorageHeader"]</MudText>
-        @if(ConfigurationService.QueueStorageRedisSettings != null)
+        @if (ConfigurationService.QueueStorageRedisSettings != null)
         {
             <MudSimpleTable Striped="true">
                 <thead>
