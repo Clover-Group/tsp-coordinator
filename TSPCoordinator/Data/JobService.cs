@@ -125,7 +125,7 @@ public class JobService
     public void OnJobStarted(JobStartedInfo info)
     {
         var job = runningJobs.Find(x => x.JobId == info.JobId);
-        if (job == null)
+        if (job == null || job.Status == JobStatus.Running)
         {
             // TODO: if no job was registered
         }
@@ -137,7 +137,7 @@ public class JobService
         }
     }
 
-    public void OnJobCompleted(JobCompletedInfo info)
+    public async Task OnJobCompleted(JobCompletedInfo info)
     {
         var job = runningJobs.Find(x => x.JobId == info.JobId);
         if (job == null)
@@ -146,26 +146,28 @@ public class JobService
         }
         else
         {
-            if (job.Status != JobStatus.Canceled)
+            //Console.WriteLine($"OnJobCompleted method: {info}");
+            if (!info.Success /*&& !(info?.Fatal ?? false)*/ && job.RestartAttempts < _configurationService.JobRestartAttempts)
             {
-                job.Status = info.Success ? JobStatus.Finished : JobStatus.Failed;
-                job.NotifyStatusChanged();
+                //Console.WriteLine($"Restarting {job.JobId}");
+                // restart on non-fatal error, don't change statuses etc.
+                job.RestartAttempts++;
+                await RestartJob(job.JobId, autoRestart: true);
             }
-            job.Lifecycle.AddFinished(info.Success, info.Error);
-            UpdateJobMetric(job, new() { RowsRead = info.RowsRead ?? 0, RowsWritten = info.RowsWritten ?? 0 });
-            lock (runningJobs) runningJobs.Remove(job);
-            lock (completedJobs) completedJobs.Add(job);
-            _statusReportingService.SendJobStatus(job, $"Job {job.JobId} completed.");
-            // if job completed quickly (between health checks), we remove it from sent ones manually
-            job.RunningOn?.SentJobsIds?.RemoveAll(x => x == job.JobId);
-            if (job.Status == JobStatus.Failed && !(info?.Fatal ?? false))
+            else
             {
-                // restart on non-fatal error
-                if (job.RestartAttempts < _configurationService.JobRestartAttempts)
+                if (job.Status != JobStatus.Canceled)
                 {
-                    job.RestartAttempts++;
-                    RestartJob(job.JobId);
+                    job.Status = info.Success ? JobStatus.Finished : JobStatus.Failed;
+                    job.NotifyStatusChanged();
                 }
+                job.Lifecycle.AddFinished(info.Success, info.Error);
+                UpdateJobMetric(job, new() { RowsRead = info.RowsRead ?? 0, RowsWritten = info.RowsWritten ?? 0 });
+                lock (runningJobs) runningJobs.Remove(job);
+                lock (completedJobs) completedJobs.Add(job);
+                _statusReportingService.SendJobStatus(job, $"Job {job.JobId} completed.");
+                // if job completed quickly (between health checks), we remove it from sent ones manually
+                job.RunningOn?.SentJobsIds?.RemoveAll(x => x == job.JobId);
             }
         }
     }
@@ -284,46 +286,55 @@ public class JobService
                 if (firstFreeInstance == null) return;
 
                 var job = jobQueue.Dequeue()!;
-                job.RunningOn = firstFreeInstance;
-                firstFreeInstance.SentJobsIds.Add(job.JobId);
-                lock (runningJobs) runningJobs.Add(job);
-
-                var jobSubmitUrl = $"http://{firstFreeInstance.Host.MapToIPv4()}:{firstFreeInstance.Port}/job/submit/";
-
-                var client = _clientFactory.CreateClient("TspJobRunner");
-                try
-                {
-                    var requestAsJson = JsonSerializer.Serialize(job.Request, jsonOptions);
-                    //_logger.LogInformation(requestAsJson);
-                    var response = await client.PostAsync(jobSubmitUrl,
-                        new StringContent(
-                            requestAsJson,
-                            Encoding.UTF8,
-                            "application/json")
-                    );
-                    _logger.LogInformation($"Job {job.JobId} sent, response code is {(int)response.StatusCode} with {await response.Content.ReadAsStringAsync()}");
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        // TODO: Failed to send job
-                        _logger.LogCritical($"Failed to send job {job.JobId}, returned status {(int)response.StatusCode} with {await response.Content.ReadAsStringAsync()}");
-                        lock (runningJobs) runningJobs.Remove(job);
-                        job.Status = JobStatus.Failed;
-                        job.NotifyStatusChanged();
-                        job.Lifecycle.AddLogMessage($"Failed to send job {job.JobId}, returned status {(int)response.StatusCode} with {await response.Content.ReadAsStringAsync()}");
-                        _statusReportingService.SendJobStatus(job, $"Job {job.JobId} not started because of TSP failure (HTTP error {(int)response.StatusCode})");
-                        lock (completedJobs) completedJobs.Add(job);
-                    }
-                }
-                catch (HttpRequestException ex)
-                {
-                    // TODO:
-                    _logger.LogCritical($"Failed to send job {job.JobId}, an exception occurred: {ex.Message}");
-                }
+                await SendJob(firstFreeInstance, job, autoRestart: false);
             }
         }
         catch (Exception e)
         {
             _logger.LogWarning($"An exception: `{e.Message}` occurred during queue inspection, skipping that schedule...");
+        }
+    }
+
+    private async Task SendJob(TspInstance instance, Job job, bool autoRestart)
+    {
+        job.RunningOn = instance;
+        // auto-restarted job is already in running
+        if (!autoRestart)
+        {
+            instance.SentJobsIds.Add(job.JobId);
+            lock (runningJobs) runningJobs.Add(job);
+        }
+
+        var jobSubmitUrl = $"http://{instance.Host.MapToIPv4()}:{instance.Port}/job/submit/";
+
+        var client = _clientFactory.CreateClient("TspJobRunner");
+        try
+        {
+            var requestAsJson = JsonSerializer.Serialize(job.Request, jsonOptions);
+            //_logger.LogInformation(requestAsJson);
+            var response = await client.PostAsync(jobSubmitUrl,
+                new StringContent(
+                    requestAsJson,
+                    Encoding.UTF8,
+                    "application/json")
+            );
+            _logger.LogInformation($"Job {job.JobId} sent, response code is {(int)response.StatusCode} with {await response.Content.ReadAsStringAsync()}");
+            if (!response.IsSuccessStatusCode)
+            {
+                // TODO: Failed to send job
+                _logger.LogCritical($"Failed to send job {job.JobId}, returned status {(int)response.StatusCode} with {await response.Content.ReadAsStringAsync()}");
+                lock (runningJobs) runningJobs.Remove(job);
+                job.Status = JobStatus.Failed;
+                job.NotifyStatusChanged();
+                job.Lifecycle.AddLogMessage($"Failed to send job {job.JobId}, returned status {(int)response.StatusCode} with {await response.Content.ReadAsStringAsync()}");
+                _statusReportingService.SendJobStatus(job, $"Job {job.JobId} not started because of TSP failure (HTTP error {(int)response.StatusCode})");
+                lock (completedJobs) completedJobs.Add(job);
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            // TODO:
+            _logger.LogCritical($"Failed to send job {job.JobId}, an exception occurred: {ex.Message}");
         }
     }
 
@@ -376,21 +387,30 @@ public class JobService
         timers.Remove(jobId);
     }
 
-    public JobRestartResult RestartJob(string jobId)
+    public async Task<JobRestartResult> RestartJob(string jobId, bool autoRestart)
     {
-        if (jobQueue.FindById(jobId) != null || runningJobs.Find(j => j.JobId == jobId) != null)
+        //Console.WriteLine($"Restarting method: {jobId}");
+        // Note that the job scheduled for auto-restart resides in running rather then completed
+        if (jobQueue.FindById(jobId) != null || (!autoRestart && runningJobs.Find(j => j.JobId == jobId) != null))
         {
             // cannot (yet) restart a job which is running or enqueued
             return JobRestartResult.Error;
         }
-        if (completedJobs.Find(j => j.JobId == jobId) is Job job)
+        if (autoRestart && runningJobs.Find(j => j.JobId == jobId) is Job runningJob)
+        {
+            //Console.WriteLine($"Sending job: {jobId}");
+            // run the job on the same TSP instance, bypassing the queue
+            await SendJob(runningJob.RunningOn!, runningJob, autoRestart: true);
+            runningJob.Lifecycle.AddLogMessage($"Job {runningJob.JobId} restarted automatically");
+        }
+        if (!autoRestart && completedJobs.Find(j => j.JobId == jobId) is Job completedJob)
         {
             // re-enqueue the job and notify status change
-            completedJobs.Remove(job);
-            job.Status = JobStatus.Enqueued;
-            _statusReportingService.SendJobStatus(job, $"Job {job.JobId} was restarted");
-            job.NotifyStatusChanged();
-            jobQueue.Enqueue(job);
+            completedJobs.Remove(completedJob);
+            completedJob.Status = JobStatus.Enqueued;
+            _statusReportingService.SendJobStatus(completedJob, $"Job {completedJob.JobId} was restarted");
+            completedJob.NotifyStatusChanged();
+            jobQueue.Enqueue(completedJob);
         }
         return JobRestartResult.NotFound;
     }

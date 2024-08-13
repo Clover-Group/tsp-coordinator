@@ -110,9 +110,9 @@ public class JobsController : Controller
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status423Locked)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult Restart(string id)
+    public async Task<IActionResult> Restart(string id)
     {
-        return _jobService.RestartJob(id) switch
+        return await _jobService.RestartJob(id, autoRestart: false) switch
         {
             JobRestartResult.Restarted => Ok($"Job {id} successfully restarted."),
             JobRestartResult.Error => StatusCode(423, $"Job {id} is queued or running thus cannot yet be restarted."),

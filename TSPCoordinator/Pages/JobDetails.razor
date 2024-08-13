@@ -342,7 +342,7 @@ new ChartSeries() { Name = "Read speed (\x00d71000 rows per 1 s)", Data = new do
     public void RestartJob()
     {
         // TODO: Message
-        JobService.RestartJob(Job?.JobId ?? "");
+        JobService.RestartJob(Job?.JobId ?? "", autoRestart: false);
     }
 
     public bool JobCanBeStopped() => Job?.Status switch

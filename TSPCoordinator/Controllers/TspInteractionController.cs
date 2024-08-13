@@ -18,7 +18,7 @@ public class JobStartedInfo
     public string JobId { get; set; } = "";
 }
 
-public class JobCompletedInfo
+public record class JobCompletedInfo
 {
     public string JobId { get; set; } = "";
     public bool Success { get; set; }
@@ -102,9 +102,10 @@ public class TspInteractionController : ControllerBase
     /// </summary>
     /// <response code="200">Coordinator is successfully notified</response>
     [HttpPost("jobcompleted")]
-    public IActionResult JobCompleted([FromBody] JobCompletedInfo info)
+    public async Task<IActionResult> JobCompleted([FromBody] JobCompletedInfo info)
     {
-        _jobService.OnJobCompleted(info);
+        //Console.WriteLine($"OnJobCompleted: {info}");
+        await _jobService.OnJobCompleted(info);
         return Ok();
     }
     public static Guid GetIDFromIP(System.Net.IPAddress address)
