@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Net.Http;
 
 namespace TspCoordinator.Data;
@@ -15,7 +16,11 @@ public class TspInstancesService
         _clientFactory = clientFactory;
         _configurationService = configurationService;
         var healthCheckInterval = (int)_configurationService.HealthCheckInterval;
-        _healthCheckTimer = new Timer(HealthCheck, null, healthCheckInterval * 2, healthCheckInterval);
+        _healthCheckTimer = new Timer(
+            HealthCheck, null,
+            Math.Max(-1, healthCheckInterval * 2),
+            Math.Max(-1, healthCheckInterval)
+        );
     }
 
     private List<TspInstance> instances = new List<TspInstance> { };
@@ -62,7 +67,7 @@ public class TspInstancesService
         return Task.FromResult((instances.Count(), instances.Where(i => i.Status == TspInstanceStatus.Active).Count()));
     }
 
-    public async void HealthCheck(Object? state)
+    public void HealthCheck(Object? state)
     {
         var client = _clientFactory.CreateClient("TspHealthChecker");
         var instancesToRemove = new List<TspInstance>();
@@ -73,8 +78,8 @@ public class TspInstancesService
             var getVersionRequest = new HttpRequestMessage(HttpMethod.Get, tspGetVersionUrl);
             try
             {
-                var response = await client.SendAsync(getVersionRequest);
-                var responseBody = await response.Content.ReadAsStringAsync();
+                var response = client.Send(getVersionRequest);
+                var responseBody = response.Content.ReadAsStringAsync().Result;
                 if (response.IsSuccessStatusCode && responseBody.Contains(instance.Uuid.ToString()))
                 {
                     instance.Status = TspInstanceStatus.Active;
@@ -119,10 +124,10 @@ public class TspInstancesService
                 var getJobsRequest = new HttpRequestMessage(HttpMethod.Get, tspGetJobsUrl);
                 try
                 {
-                    var response = await client.SendAsync(getJobsRequest);
+                    var response = client.Send(getJobsRequest);
                     if (response.IsSuccessStatusCode)
                     {
-                        var jobsIds = await response.Content.ReadFromJsonAsync<List<String>>();
+                        var jobsIds = response.Content.ReadFromJsonAsync<List<String>>().Result;
                         instance.RunningJobsIds = jobsIds ?? new List<string>();
                         instance.SentJobsIds.RemoveAll(x => instance.RunningJobsIds?.Contains(x) ?? false);
                         TspInstanceHealthCheckSucceeded?.Invoke(instance);
