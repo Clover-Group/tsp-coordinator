@@ -5,6 +5,7 @@ public interface IInputConf
     public int SourceId { get; set; }
     public string DatetimeField { get; set; }
     public List<string> PartitionFields { get; set; }
+    public List<string>? AdditionalFields { get; set; }
     public string? UnitIdField { get; set; }
     public int? Parallelism { get; set; }
     public int? NumParallelSources { get; set; }
@@ -33,6 +34,7 @@ public class JdbcInputConf : IInputConf
     public long? ChunkSizeMs { get; set; }
     public int? ProcessingBatchSize { get; set; }
     public List<string> PartitionFields { get; set; } = default!;
+    public List<string>? AdditionalFields { get; set; } = default;
     public string? UnitIdField { get; set; }
     public String UserName { get; set; } = default!;
     public String Password { get; set; } = default!;
@@ -55,6 +57,7 @@ public class KafkaInputConf : IInputConf
     public string? Serializer { get; set; }
     public string DatetimeField { get; set; } = default!;
     public List<string> PartitionFields { get; set; } = default!;
+    public List<string>? AdditionalFields { get; set; } = default;
     public string? UnitIdField { get; set; }
     public ISourceDataTransformation? DataTransformation { get; set; }
     public double? TimestampMultiplier { get; set; }
