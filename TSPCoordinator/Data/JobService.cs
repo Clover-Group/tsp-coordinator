@@ -249,7 +249,18 @@ public class JobService
                     {
                         var statusInfo = await response.Content.ReadFromJsonAsync<JobStatusInfo>();
                         UpdateJobMetric(job, statusInfo ?? new JobStatusInfo());
-
+                        // Check if stalled, then force-kill and restart
+                        if ((DateTime.Now - job.LastStatsChangedTime)?.TotalMilliseconds > _configurationService.StalledJobInterval)
+                        {
+                            job.Lifecycle.AddLogMessage($"Job {job.JobId} has been stalled");
+                            job.LastStatsChangedTime = null;
+                            job.RestartAttempts = 0;
+                            var jobStopUrl = $"http://{instance.Host.MapToIPv4()}:{instance.Port}/job/{job.JobId}/stop/";
+                            var stopResponse = await client.PostAsync(jobStopUrl, null);
+                            // wait for 10 seconds and then restarting the job
+                            Thread.Sleep(10000);
+                            await RestartJob(job.JobId, autoRestart: true);
+                        }
                     }
                     else
                     {
@@ -383,8 +394,11 @@ public class JobService
             findInRunning.Lifecycle.AddLogMessage($"Job was forcibly transferred to canceled state due to no response from TSP");
             lock (completedJobs) completedJobs.Add(findInRunning);
         }
-        timers[jobId].Dispose();
-        timers.Remove(jobId);
+        if (timers.TryGetValue(jobId, out Timer? jobTimer))
+        {
+            jobTimer.Dispose();
+            timers.Remove(jobId);
+        }
     }
 
     public async Task<JobRestartResult> RestartJob(string jobId, bool autoRestart)
@@ -449,6 +463,10 @@ public class JobService
 
     private void UpdateJobMetric(Job job, JobMetricPoint point)
     {
+        if (job.RowsRead != point.RowsRead)
+        {
+            job.LastStatsChangedTime = DateTime.Now;
+        }
         job.MetricHistory.Add(point);
         rowsReadCounter.WithLabels(job.JobId).IncTo(point.RowsRead);
         rowsWrittenCounter.WithLabels(job.JobId).IncTo(point.RowsWritten);

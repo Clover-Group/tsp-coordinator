@@ -95,6 +95,14 @@
                         (@TimeSpan.FromMilliseconds(ConfigurationService.CleanupCompletedInterval))
                     </td>
                 </tr>
+                <tr>
+                    <td>@Loc["StalledInterval"]</td>
+                    <td>STALLED_JOB_INTERVAL</td>
+                    <td>
+                        @ConfigurationService.StalledJobInterval
+                        (@TimeSpan.FromMilliseconds(ConfigurationService.StalledJobInterval))
+                    </td>
+                </tr>
             </tbody>
         </MudSimpleTable>
     </MudItem>

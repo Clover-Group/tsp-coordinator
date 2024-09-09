@@ -131,7 +131,7 @@ public class ConfigurationService
         }
         else
         {
-            _logger.LogWarning($"Health check attempts not set, defaulting to {JobRestartAttempts}");
+            _logger.LogWarning($"Job restart attempts not set, defaulting to {JobRestartAttempts}");
         }
         var treatBusyAsNotResponding = Environment.GetEnvironmentVariable("TREAT_BUSY_AS_NOT_RESPONDING") switch
         {
@@ -141,6 +141,15 @@ public class ConfigurationService
             _ => true
         };
         TreatBusyAsNotResponding = treatBusyAsNotResponding;
+        var stalledJobIntervalVar = Environment.GetEnvironmentVariable("STALLED_JOB_INTERVAL") ?? "";
+        if (UInt32.TryParse(stalledJobIntervalVar, out var stalledJobInterval))
+        {
+            StalledJobInterval = stalledJobInterval;
+        }
+        else
+        {
+            _logger.LogWarning($"Stalled job interval not set, defaulting to {stalledJobInterval}");
+        }
     }
 
     public StatusReportingSettings? StatusReportingSettings { get; private set; }
@@ -153,12 +162,13 @@ public class ConfigurationService
 
     public ulong CleanupCompletedInterval { get; private set; } = 1_800_000;
 
-    public uint MaxJobsPerTsp { get; set; } = 1;
+    public uint MaxJobsPerTsp { get; private set; } = 1;
 
-    public uint HealthCheckAttempts { get; set; } = 10;
+    public uint HealthCheckAttempts { get; private set; } = 10;
 
-    public uint JobRestartAttempts { get; set; } = 0;
+    public uint JobRestartAttempts { get; private set; } = 0;
 
-    public bool TreatBusyAsNotResponding { get; set; } = false;
+    public bool TreatBusyAsNotResponding { get; private set; } = false;
+    public uint StalledJobInterval { get; private set; } = 600_000;
 
 }

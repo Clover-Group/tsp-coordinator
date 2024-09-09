@@ -22,8 +22,10 @@
     <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
         <value>[base64 mime encoded serialized .NET Framework object]</value>
     </data>
-    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing"
+  mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework
+  object]</value>
         <comment>This is a comment</comment>
     </data>
 
@@ -59,46 +61,47 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
           <xsd:element name="metadata">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
               </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string"/>
-              <xsd:attribute name="type" type="xsd:string"/>
-              <xsd:attribute name="mimetype" type="xsd:string"/>
-              <xsd:attribute ref="xml:space"/>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="assembly">
             <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string"/>
-              <xsd:attribute name="name" type="xsd:string"/>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="data">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
-              <xsd:attribute ref="xml:space"/>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required"/>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
@@ -112,69 +115,74 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0,
+      Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0,
+      Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CompletedJobsCleanupInterval" xml:space="preserve">
-    <value>Интервал очистки списка завершенных заданий (в миллисекундах)</value>
-  </data>
+        <value>Интервал очистки списка завершенных заданий (в миллисекундах)</value>
+    </data>
   <data name="Configuration" xml:space="preserve">
-    <value>Конфигурация</value>
-  </data>
+        <value>Конфигурация</value>
+    </data>
   <data name="Disabled" xml:space="preserve">
-    <value>Выключено</value>
-  </data>
+        <value>Выключено</value>
+    </data>
   <data name="Enabled" xml:space="preserve">
-    <value>Включено</value>
-  </data>
+        <value>Включено</value>
+    </data>
   <data name="EnvVariable" xml:space="preserve">
-    <value>Переменная окружения</value>
-  </data>
+        <value>Переменная окружения</value>
+    </data>
   <data name="HealthCheckAttempts" xml:space="preserve">
-    <value>Количество попыток проверки состояния TSP</value>
-  </data>
+        <value>Количество попыток проверки состояния TSP</value>
+    </data>
   <data name="HealthCheckInterval" xml:space="preserve">
-    <value>Интервал проверки состояния TSP (в миллисекундах)</value>
-  </data>
+        <value>Интервал проверки состояния TSP (в миллисекундах)</value>
+    </data>
   <data name="JobManagementHeader" xml:space="preserve">
-    <value>Управление заданиями</value>
-  </data>
+        <value>Управление заданиями</value>
+    </data>
   <data name="JobReporting" xml:space="preserve">
-    <value>Отправка отчетов</value>
-  </data>
+        <value>Отправка отчетов</value>
+    </data>
   <data name="JobReportingBroker" xml:space="preserve">
-    <value>Брокер</value>
-  </data>
+        <value>Брокер</value>
+    </data>
   <data name="JobReportingHeader" xml:space="preserve">
-    <value>Отчеты о заданиях (в Kafka)</value>
-  </data>
+        <value>Отчеты о заданиях (в Kafka)</value>
+    </data>
   <data name="JobReportingTopic" xml:space="preserve">
-    <value>Рубрика (topic)</value>
-  </data>
+        <value>Рубрика (topic)</value>
+    </data>
   <data name="MaxJobsPerTSP" xml:space="preserve">
-    <value>Максимальное количество выполняемых заданий на экземпляр TSP</value>
-  </data>
+        <value>Максимальное количество выполняемых заданий на экземпляр TSP</value>
+    </data>
   <data name="QueueInspectionInterval" xml:space="preserve">
-    <value>Интервал проверки очереди (в миллисекундах)</value>
-  </data>
+        <value>Интервал проверки очереди (в миллисекундах)</value>
+    </data>
   <data name="QueueStorage" xml:space="preserve">
-    <value>Хранение очереди</value>
-  </data>
+        <value>Хранение очереди</value>
+    </data>
   <data name="QueueStorageHeader" xml:space="preserve">
-    <value>Хранение очереди</value>
-  </data>
+        <value>Хранение очереди</value>
+    </data>
   <data name="QueueStorageHost" xml:space="preserve">
-    <value>Адрес хоста Redis</value>
-  </data>
+        <value>Адрес хоста Redis</value>
+    </data>
   <data name="Setting" xml:space="preserve">
-    <value>Настройка</value>
-  </data>
+        <value>Настройка</value>
+    </data>
   <data name="TimeIntervalsHeader" xml:space="preserve">
-    <value>Интервалы времени</value>
-  </data>
+        <value>Интервалы времени</value>
+    </data>
   <data name="Value" xml:space="preserve">
-    <value>Значение</value>
-  </data>
+        <value>Значение</value>
+    </data>
+  <data name="StalledInterval" xml:space="preserve">
+        <value>Время перезапуска зависших заданий</value>
+    </data>
 </root>

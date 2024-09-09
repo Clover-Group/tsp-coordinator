@@ -55,6 +55,8 @@ public class Job
 
     public uint RestartAttempts { get; set; } = 0;
 
+    public DateTime? LastStatsChangedTime { get; set; } = default;
+
     public void NotifyStatusChanged() => Lifecycle.AddStatusChanged(Status);
 
     public void CacheSpeed()
