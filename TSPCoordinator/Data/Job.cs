@@ -57,6 +57,8 @@ public class Job
 
     public DateTime? LastStatsChangedTime { get; set; } = default;
 
+    public DateTime ArrivalTime { get; set; }
+
     public void NotifyStatusChanged() => Lifecycle.AddStatusChanged(Status);
 
     public void CacheSpeed()

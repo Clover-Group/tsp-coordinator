@@ -463,16 +463,19 @@ public class JobService
 
     private void UpdateJobMetric(Job job, JobMetricPoint point)
     {
-        if (job.RowsRead != point.RowsRead)
+        lock (job)
         {
-            job.LastStatsChangedTime = DateTime.Now;
+            if (job.RowsRead != point.RowsRead)
+            {
+                job.LastStatsChangedTime = DateTime.Now;
+            }
+            job.MetricHistory.Add(point);
+            rowsReadCounter.WithLabels(job.JobId).IncTo(point.RowsRead);
+            rowsWrittenCounter.WithLabels(job.JobId).IncTo(point.RowsWritten);
+            job.CacheSpeed();
+            var speed = job.Speed;
+            jobReadSpeedGauge.WithLabels(job.JobId).Set(speed.Item1);
+            jobWriteSpeedGauge.WithLabels(job.JobId).Set(speed.Item2);
         }
-        job.MetricHistory.Add(point);
-        rowsReadCounter.WithLabels(job.JobId).IncTo(point.RowsRead);
-        rowsWrittenCounter.WithLabels(job.JobId).IncTo(point.RowsWritten);
-        job.CacheSpeed();
-        var speed = job.Speed;
-        jobReadSpeedGauge.WithLabels(job.JobId).Set(speed.Item1);
-        jobWriteSpeedGauge.WithLabels(job.JobId).Set(speed.Item2);
     }
 }

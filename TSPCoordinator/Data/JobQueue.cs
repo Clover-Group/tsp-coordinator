@@ -57,7 +57,8 @@ public class JobQueue
     public void Enqueue(Job job)
     {
         int index = 0;
-        while (index < jobs.Count && jobs[index].Request.Priority > job.Request.Priority)
+        while (index < jobs.Count && (jobs[index].Request.Priority > job.Request.Priority
+               || (jobs[index].Request.Priority == job.Request.Priority && jobs[index].ArrivalTime < job.ArrivalTime)))
         {
             index++;
         }
@@ -106,6 +107,6 @@ public class JobQueue
         }
     }
 
-    public Dictionary<JobStatus, int> GetCountsByStatus() => 
+    public Dictionary<JobStatus, int> GetCountsByStatus() =>
         jobs.GroupBy(job => job.Status).ToDictionary(group => group.Key, group => group.Count());
 }

@@ -46,7 +46,8 @@ public class V3Controller : Controller
         var job = new Job
         {
             Request = actualRequest,
-            JobId = actualRequest.Uuid
+            JobId = actualRequest.Uuid,
+            ArrivalTime = DateTime.Now
         };
         _jobService.EnqueueJob(job);
         return Ok(job);
