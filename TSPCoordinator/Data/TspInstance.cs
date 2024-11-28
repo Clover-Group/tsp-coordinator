@@ -7,6 +7,7 @@ namespace TspCoordinator.Data;
 public enum TspInstanceStatus
 {
     Active,
+    RestartScheduled,
     NotWorking,
     NotResponding,
     Busy,
@@ -15,7 +16,8 @@ public enum TspInstanceStatus
 
 public enum TspCapability
 {
-    CSVSparseIntermediate
+    CSVSparseIntermediate,
+    TotalJobsLimit
 }
 
 public class TspInstance
@@ -23,7 +25,7 @@ public class TspInstance
     public Guid Uuid { get; set; }
 
     [JsonIgnore]
-    public IPAddress Host { get; set; } = default! ;
+    public IPAddress Host { get; set; } = default!;
 
     [JsonIgnore]
     public int Port { get; set; }
@@ -55,9 +57,15 @@ public class TspInstance
 
     public int TotalJobCount => RunningJobsCount + SentJobsCount;
 
+    public int TotalSentJobsCounter { get; set; } = 0;
+    public int TotalFinishedJobsCounter { get; set; } = 0;
+
+    public int TotalJobsLimit { get; set; } = 0;
+
     public bool SupportsCapability(TspCapability capability) => capability switch
     {
         TspCapability.CSVSparseIntermediate => Version >= new Version(19, 6, 0),
+        TspCapability.TotalJobsLimit => Version >= new Version(19, 11, 0),
         _ => false,
     };
 

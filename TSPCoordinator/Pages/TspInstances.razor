@@ -15,8 +15,8 @@
 }
 else
 {
-    <MudGrid Spacing="4" Justify="MudBlazor.Justify.FlexStart" >
-        @foreach (var (instance, index) in instances.Select((val, idx) => (val, idx + 1)))
+    <MudGrid Spacing="4" Justify="MudBlazor.Justify.FlexStart">
+    @foreach (var (instance, index) in instances.Select((val, idx) => (val, idx + 1)))
         {
             <MudItem xs="6" sm="4">
                 <MudCard>
@@ -29,10 +29,13 @@ else
                         <CardHeaderContent>
                             <MudText Typo="Typo.h5">TSP @Loc["Number"]@index</MudText>
                             <MudText Typo="Typo.body2">
-                                @switch(instance.Status)
+                                @switch (instance.Status)
                                 {
                                     case TspInstanceStatus.Active:
                                         <MudAlert Dense="true" Severity="Severity.Success">@Loc["Active"]</MudAlert>
+                                        break;
+                                    case TspInstanceStatus.RestartScheduled:
+                                        <MudAlert Dense="true" Severity="Severity.Normal">@Loc["RestartScheduled"]</MudAlert>
                                         break;
                                     case TspInstanceStatus.NotWorking:
                                         <MudAlert Dense="true" Severity="Severity.Error">@Loc["NotWorking"]
@@ -57,19 +60,25 @@ else
                         <MudText>@Loc["Version"] @instance.Version</MudText>
                         <MudText>@Loc["Location"]: @instance.Location</MudText>
                         <MudText>
-                            @Loc["JobsRunning"]: 
+                            @Loc["JobsRunning"]:
                             @(instance.RunningJobsCount)
-                            @if(instance.SentJobsCount > 0)
+                            @if (instance.SentJobsCount > 0)
                             {
-                            @: + @(instance.SentJobsCount)
+                                @: + @(instance.SentJobsCount)
                             }
                         </MudText>
                         <MudText Typo="Typo.body2">@Loc["LastHealthCheck"]: @instance.HealthCheckDate.ToString("G")</MudText>
+                        <MudText Typo="Typo.body2">
+                            @Loc["Limits"]:
+                            @instance.TotalSentJobsCounter /
+                            @instance.TotalFinishedJobsCounter
+                            @instance.TotalJobsLimit
+                        </MudText>
                     </MudCardContent>
                 </MudCard>
             </MudItem>
         }
-    </MudGrid>
+        </MudGrid>
     @* <table class="table table-striped">
         <thead>
             <tr>
@@ -130,11 +139,14 @@ else
     </table> *@
 }
 
-@code {
+@code
+{
     private TspInstance[]? instances;
 
-    private Color GetColorByStatus(TspInstanceStatus status) => status switch {
+    private Color GetColorByStatus(TspInstanceStatus status) => status switch
+    {
         TspInstanceStatus.Active => Color.Success,
+        TspInstanceStatus.RestartScheduled => Color.Primary,
         TspInstanceStatus.NotWorking => Color.Error,
         TspInstanceStatus.NotResponding => Color.Warning,
         TspInstanceStatus.Busy => Color.Warning,
@@ -144,13 +156,13 @@ else
     protected override async Task OnInitializedAsync()
     {
         base.OnInitialized();
-        
+
         var timer = new System.Threading.Timer((_) =>
         {
-            InvokeAsync( async () =>
-            {
-                instances = await TSPInstancesService.GetInstancesAsync();
-                StateHasChanged();
+            InvokeAsync(async () =>
+    {
+    instances = await TSPInstancesService.GetInstancesAsync();
+    StateHasChanged();
             });
         }, null, 0, 5000);
     }

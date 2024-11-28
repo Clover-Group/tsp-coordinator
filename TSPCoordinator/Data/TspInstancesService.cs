@@ -121,14 +121,16 @@ public class TspInstancesService
             if (instance.Status == TspInstanceStatus.Active)
             {
                 var tspGetJobsUrl = $"http://{instance.Host.MapToIPv4()}:{instance.Port}/jobs/overview";
+                var tspGetLimitsUrl = $"http://{instance.Host.MapToIPv4()}:{instance.Port}/jobs/limits";
                 var getJobsRequest = new HttpRequestMessage(HttpMethod.Get, tspGetJobsUrl);
+                var getLimitsRequest = new HttpRequestMessage(HttpMethod.Get, tspGetLimitsUrl);
                 try
                 {
                     var response = client.Send(getJobsRequest);
                     if (response.IsSuccessStatusCode)
                     {
-                        var jobsIds = response.Content.ReadFromJsonAsync<List<String>>().Result;
-                        instance.RunningJobsIds = jobsIds ?? new List<string>();
+                        var jobsIds = response.Content.ReadFromJsonAsync<List<String>>().GetAwaiter().GetResult();
+                        instance.RunningJobsIds = jobsIds ?? [];
                         instance.SentJobsIds.RemoveAll(x => instance.RunningJobsIds?.Contains(x) ?? false);
                         TspInstanceHealthCheckSucceeded?.Invoke(instance);
                     }
@@ -142,6 +144,37 @@ public class TspInstancesService
                 {
                     instance.Status = TspInstanceStatus.CannotGetExtendedInfo;
                     instance.SentJobsIds.Clear();
+                }
+                if (instance.SupportsCapability(TspCapability.TotalJobsLimit))
+                {
+                    try
+                    {
+                        var response = client.Send(getLimitsRequest);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var counters = response.Content.ReadFromJsonAsync<List<int>>().GetAwaiter().GetResult();
+                            instance.TotalSentJobsCounter = counters[0];
+                            instance.TotalFinishedJobsCounter = counters[1];
+                            instance.TotalJobsLimit = counters[2];
+
+                            if (instance.TotalSentJobsCounter >= instance.TotalJobsLimit)
+                            {
+                                instance.Status = TspInstanceStatus.RestartScheduled;
+                            }
+                        }
+                        else
+                        {
+                            instance.TotalSentJobsCounter = 0;
+                            instance.TotalFinishedJobsCounter = 0;
+                            instance.TotalJobsLimit = Int32.MaxValue;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        instance.TotalSentJobsCounter = 0;
+                        instance.TotalFinishedJobsCounter = 0;
+                        instance.TotalJobsLimit = Int32.MaxValue;
+                    }
                 }
             }
         }
