@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Semver;
 using TspCoordinator.Data;
 
 namespace TspCoordinator.Controllers;
@@ -73,7 +74,7 @@ public class TspInteractionController : ControllerBase
             Port = info.AdvertisedPort ?? 8080, //Request.HttpContext.Connection.RemotePort,
             IsHostAdvertised = hostAdvertised,
             IsPortAdvertised = info.AdvertisedPort.HasValue,
-            Version = Version.Parse(new String(info.Version.TakeWhile("0123456789.".Contains).ToArray())),
+            Version = SemVersion.Parse(info.Version),
             HealthCheckDate = DateTime.Now
         };
         if (_instancesService.AddInstance(instance))

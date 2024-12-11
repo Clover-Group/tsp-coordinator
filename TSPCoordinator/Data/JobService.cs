@@ -26,6 +26,14 @@ public enum JobRestartResult
     NotFound
 }
 
+public class ReceivedJobResponse
+{
+    public string Status { get; set; }
+    public int? CurrentJobsCount { get; set; }
+    public int? FinishedJobsCount { get; set; }
+    public int? MaxJobsCount { get; set; }
+}
+
 public class JobService
 {
     private JobQueue jobQueue;
@@ -289,8 +297,9 @@ public class JobService
             {
                 jobCountsByStatusGauge.WithLabels(status.ToString().ToUpper()).Set(count);
             }
+            var instancesCount = await _instancesService.GetInstancesCountAsync();
             //Console.WriteLine($"Inspecting queue: {jobQueue.Jobs.Count} jobs found");
-            while (jobQueue.Jobs.Count > 0)
+            for (int i = 0; i < instancesCount.Item2 && jobQueue.Jobs.Count > 0; i++)
             {
                 var firstFreeInstance = _instancesService.FindFirstFreeInstance();
 
@@ -340,6 +349,14 @@ public class JobService
                 job.Lifecycle.AddLogMessage($"Failed to send job {job.JobId}, returned status {(int)response.StatusCode} with {await response.Content.ReadAsStringAsync()}");
                 _statusReportingService.SendJobStatus(job, $"Job {job.JobId} not started because of TSP failure (HTTP error {(int)response.StatusCode})");
                 lock (completedJobs) completedJobs.Add(job);
+            }
+            else
+            {
+                var deserializedResponse = await response.Content.ReadFromJsonAsync<ReceivedJobResponse>();
+                if (deserializedResponse?.CurrentJobsCount is int c) instance.TotalSentJobsCounter = c;
+                if (deserializedResponse?.FinishedJobsCount is int f) instance.TotalSentJobsCounter = f;
+                if (deserializedResponse?.MaxJobsCount is int m) instance.TotalJobsLimit = m;
+                if (instance.TotalSentJobsCounter >= instance.TotalJobsLimit) instance.Status = TspInstanceStatus.RestartScheduled;
             }
         }
         catch (HttpRequestException ex)

@@ -1,6 +1,7 @@
 using System;
 using System.Net;
 using System.Text.Json.Serialization;
+using Semver;
 
 namespace TspCoordinator.Data;
 
@@ -39,7 +40,7 @@ public class TspInstance
     [JsonIgnore]
     public bool IsPortAdvertised { get; set; } = false;
 
-    public Version Version { get; set; } = new Version(0, 0, 0);
+    public SemVersion Version { get; set; } = new SemVersion(0, 0, 0);
 
     public TspInstanceStatus Status { get; set; }
 
@@ -64,8 +65,8 @@ public class TspInstance
 
     public bool SupportsCapability(TspCapability capability) => capability switch
     {
-        TspCapability.CSVSparseIntermediate => Version >= new Version(19, 6, 0),
-        TspCapability.TotalJobsLimit => Version >= new Version(19, 11, 0),
+        TspCapability.CSVSparseIntermediate => Version.ComparePrecedenceTo(new SemVersion(19, 6, 0)) > 0,
+        TspCapability.TotalJobsLimit => Version.ComparePrecedenceTo(new SemVersion(19, 11, 0)) > 0,
         _ => false,
     };
 

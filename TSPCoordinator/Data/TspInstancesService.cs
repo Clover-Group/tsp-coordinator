@@ -52,7 +52,8 @@ public class TspInstancesService
             .OrderBy(x => x.TotalJobCount)
             .FirstOrDefault(
                 x => x.Status == TspInstanceStatus.Active
-                    && (x.TotalJobCount) < _configurationService.MaxJobsPerTsp
+                    && x.TotalSentJobsCounter < x.TotalJobsLimit
+                    && x.TotalJobCount < _configurationService.MaxJobsPerTsp
                 );
     }
 
@@ -64,7 +65,7 @@ public class TspInstancesService
 
     public Task<(int, int)> GetInstancesCountAsync()
     {
-        return Task.FromResult((instances.Count(), instances.Where(i => i.Status == TspInstanceStatus.Active).Count()));
+        return Task.FromResult((instances.Count, instances.Where(i => i.Status == TspInstanceStatus.Active).Count()));
     }
 
     public void HealthCheck(Object? state)
@@ -153,9 +154,9 @@ public class TspInstancesService
                         if (response.IsSuccessStatusCode)
                         {
                             var counters = response.Content.ReadFromJsonAsync<List<int>>().GetAwaiter().GetResult();
-                            instance.TotalSentJobsCounter = counters[0];
-                            instance.TotalFinishedJobsCounter = counters[1];
-                            instance.TotalJobsLimit = counters[2];
+                            if (counters[0] > instance.TotalSentJobsCounter) instance.TotalSentJobsCounter = counters[0];
+                            if (counters[1] > instance.TotalFinishedJobsCounter) instance.TotalFinishedJobsCounter = counters[1];
+                            if (counters[2] > instance.TotalJobsLimit) instance.TotalJobsLimit = counters[2];
 
                             if (instance.TotalSentJobsCounter >= instance.TotalJobsLimit)
                             {
@@ -164,15 +165,15 @@ public class TspInstancesService
                         }
                         else
                         {
-                            instance.TotalSentJobsCounter = 0;
-                            instance.TotalFinishedJobsCounter = 0;
+                            // instance.TotalSentJobsCounter = 0;
+                            // instance.TotalFinishedJobsCounter = 0;
                             instance.TotalJobsLimit = Int32.MaxValue;
                         }
                     }
                     catch (Exception)
                     {
-                        instance.TotalSentJobsCounter = 0;
-                        instance.TotalFinishedJobsCounter = 0;
+                        // instance.TotalSentJobsCounter = 0;
+                        // instance.TotalFinishedJobsCounter = 0;
                         instance.TotalJobsLimit = Int32.MaxValue;
                     }
                 }
