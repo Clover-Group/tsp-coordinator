@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Net.Http;
+using TspCoordinator.Pages;
 
 namespace TspCoordinator.Data;
 
@@ -55,6 +56,12 @@ public class TspInstancesService
                     && x.TotalSentJobsCounter < x.TotalJobsLimit
                     && x.TotalJobCount < _configurationService.MaxJobsPerTsp
                 );
+    }
+
+    public TspInstance? FindById(Guid id)
+    {
+        var copiedInstances = new List<TspInstance>(instances);
+        return copiedInstances.FirstOrDefault(x => x.Uuid == id);
     }
 
 
@@ -183,5 +190,11 @@ public class TspInstancesService
         {
             instances.Remove(instance);
         }
+    }
+
+    public void RemoveInstance(TspInstance instance)
+    {
+        TspInstanceFailed?.Invoke(instance);
+        instances.Remove(instance);
     }
 }

@@ -14,6 +14,11 @@ public class TspRegisterInfo
     public int? AdvertisedPort { get; set; } = null;
 }
 
+public class TspUnregisterInfo
+{
+    public Guid Uuid { get; set; } = new();
+}
+
 public class JobStartedInfo
 {
     public string JobId { get; set; } = "";
@@ -84,6 +89,28 @@ public class TspInteractionController : ControllerBase
         else
         {
             return StatusCode(StatusCodes.Status208AlreadyReported);
+        }
+    }
+
+    /// <summary>
+    ///  Unregisters TSP instance.
+    /// </summary>
+    /// <param name="info">Information about TSP instance (instance ID)</param>
+    /// <returns>Nothing</returns>
+    /// <response code="204">TSP unregistration is successful.</response>
+    /// <response code="404">No TSP instance with thid ID was found (it may be unregistered earlier).</response>
+    [HttpPost("unregister")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult Unregister([FromBody] TspUnregisterInfo info)
+    {
+        switch (_instancesService.FindById(info.Uuid))
+        {
+            case TspInstance instance:
+                _instancesService.RemoveInstance(instance);
+                return NoContent();
+            case null:
+                return NotFound();
         }
     }
 
