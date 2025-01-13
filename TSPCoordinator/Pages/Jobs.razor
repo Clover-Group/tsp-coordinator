@@ -24,26 +24,28 @@ else
             <MudTh>@Loc["Status"]</MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd><MudLink Href="@("jobs/" +context.JobId)">@context.JobId</MudLink></MudTd>
+            <MudTd>
+                <MudLink Href="@("jobs/" +context.JobId)">@context.JobId</MudLink>
+            </MudTd>
             <MudTd>@(context.Request?.Priority ?? 0)</MudTd>
             <MudTd>@(context.Request?.Patterns.Count ?? 0)</MudTd>
             <MudTd>
                 @switch (context.Status)
                 {
                     case JobStatus.Enqueued:
-                        <MudChip Icon="@Icons.Material.Filled.Queue" Color="Color.Secondary">@Loc["Enqueued"]</MudChip>
+                        <MudChip T=String Icon="@Icons.Material.Filled.Queue" Color="Color.Secondary">@Loc["Enqueued"]</MudChip>
                         break;
                     case JobStatus.Running:
-                        <MudChip Icon="@Icons.Material.Filled.DirectionsRun" Color="Color.Info">@Loc["Running"]</MudChip>
+                        <MudChip T=String Icon="@Icons.Material.Filled.DirectionsRun" Color="Color.Info">@Loc["Running"]</MudChip>
                         break;
                     case JobStatus.Finished:
-                        <MudChip Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success">@Loc["Finished"]</MudChip>
+                        <MudChip T=String Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success">@Loc["Finished"]</MudChip>
                         break;
                     case JobStatus.Failed:
-                        <MudChip Icon="@Icons.Material.Filled.Error">@Loc["Failed"]</MudChip>
+                        <MudChip T=String Icon="@Icons.Material.Filled.Error">@Loc["Failed"]</MudChip>
                         break;
                     case JobStatus.Canceled:
-                        <MudChip Icon="@Icons.Material.Filled.Cancel">@Loc["Canceled"]</MudChip>
+                        <MudChip T=String Icon="@Icons.Material.Filled.Cancel">@Loc["Canceled"]</MudChip>
                         break;
                 }
             </MudTd>
@@ -74,7 +76,9 @@ else
             <MudTh>@Loc["Status"]</MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd><MudLink Href="@("jobs/" +context.JobId)">@context.JobId</MudLink></MudTd>
+            <MudTd>
+                <MudLink Href="@("jobs/" +context.JobId)">@context.JobId</MudLink>
+            </MudTd>
             <MudTd>@(context.Request?.Priority ?? 0)</MudTd>
             <MudTd>@(context.Request?.Patterns.Count ?? 0)</MudTd>
             <MudTd>@context.RunningOn</MudTd>
@@ -85,19 +89,19 @@ else
                 @switch (context.Status)
                 {
                     case JobStatus.Enqueued:
-                        <MudChip Icon="@Icons.Material.Filled.Queue" Color="Color.Secondary">@Loc["Enqueued"]</MudChip>
+                        <MudChip T=String Icon="@Icons.Material.Filled.Queue" Color="Color.Secondary">@Loc["Enqueued"]</MudChip>
                         break;
                     case JobStatus.Running:
-                        <MudChip Icon="@Icons.Material.Filled.DirectionsRun" Color="Color.Info">@Loc["Running"]</MudChip>
+                        <MudChip T=String Icon="@Icons.Material.Filled.DirectionsRun" Color="Color.Info">@Loc["Running"]</MudChip>
                         break;
                     case JobStatus.Finished:
-                        <MudChip Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success">@Loc["Finished"]</MudChip>
+                        <MudChip T=String Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success">@Loc["Finished"]</MudChip>
                         break;
                     case JobStatus.Failed:
-                        <MudChip Icon="@Icons.Material.Filled.Error">@Loc["Failed"]</MudChip>
+                        <MudChip T=String Icon="@Icons.Material.Filled.Error">@Loc["Failed"]</MudChip>
                         break;
                     case JobStatus.Canceled:
-                        <MudChip Icon="@Icons.Material.Filled.Cancel">@Loc["Canceled"]</MudChip>
+                        <MudChip T=String Icon="@Icons.Material.Filled.Cancel">@Loc["Canceled"]</MudChip>
                         break;
                 }
             </MudTd>
@@ -127,7 +131,9 @@ else
             <MudTh>@Loc["Status"]</MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd><MudLink Href="@("jobs/" +context.JobId)">@context.JobId</MudLink></MudTd>
+            <MudTd>
+                <MudLink Href="@("jobs/" +context.JobId)">@context.JobId</MudLink>
+            </MudTd>
             <MudTd>@(context.Request?.Priority ?? 0)</MudTd>
             <MudTd>@(context.Request?.Patterns.Count ?? 0)</MudTd>
             <MudTd>@context.Lifecycle.RunningTime</MudTd>
@@ -137,19 +143,19 @@ else
                 @switch (context.Status)
                 {
                     case JobStatus.Enqueued:
-                        <MudChip Icon="@Icons.Material.Filled.Queue" Color="Color.Secondary">@Loc["Enqueued"]</MudChip>
+                        <MudChip T=String Icon="@Icons.Material.Filled.Queue" Color="Color.Secondary">@Loc["Enqueued"]</MudChip>
                         break;
                     case JobStatus.Running:
-                        <MudChip Icon="@Icons.Material.Filled.DirectionsRun" Color="Color.Info">@Loc["Running"]</MudChip>
+                        <MudChip T=String Icon="@Icons.Material.Filled.DirectionsRun" Color="Color.Info">@Loc["Running"]</MudChip>
                         break;
                     case JobStatus.Finished:
-                        <MudChip Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success">@Loc["Finished"]</MudChip>
+                        <MudChip T=String Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success">@Loc["Finished"]</MudChip>
                         break;
                     case JobStatus.Failed:
-                        <MudChip Icon="@Icons.Material.Filled.Error" Color="Color.Error">@Loc["Failed"]</MudChip>
+                        <MudChip T=String Icon="@Icons.Material.Filled.Error" Color="Color.Error">@Loc["Failed"]</MudChip>
                         break;
                     case JobStatus.Canceled:
-                        <MudChip Icon="@Icons.Material.Filled.Cancel" Color="Color.Dark">@Loc["Canceled"]</MudChip>
+                        <MudChip T=String Icon="@Icons.Material.Filled.Cancel" Color="Color.Dark">@Loc["Canceled"]</MudChip>
                         break;
                 }
             </MudTd>
@@ -160,7 +166,8 @@ else
     </MudTable>
 }
 
-@code {
+@code
+{
     private List<Job>? jobQueue;
     private List<Job>? runningJobs;
     private List<Job>? completedJobs;
@@ -168,15 +175,15 @@ else
     protected override async Task OnInitializedAsync()
     {
         base.OnInitialized();
-        
+
         var timer = new System.Threading.Timer((_) =>
         {
-            InvokeAsync( async () =>
-            {
-                jobQueue = await JobService.GetJobQueueAsync();
-                runningJobs = await JobService.GetRunningJobsAsync();
-                completedJobs = await JobService.GetCompletedQueueAsync();
-                StateHasChanged();
+            InvokeAsync(async () =>
+    {
+    jobQueue = await JobService.GetJobQueueAsync();
+    runningJobs = await JobService.GetRunningJobsAsync();
+    completedJobs = await JobService.GetCompletedQueueAsync();
+    StateHasChanged();
             });
         }, null, 0, 5000);
     }

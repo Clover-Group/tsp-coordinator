@@ -7,11 +7,6 @@ using Dahomey.Json;
 using Prometheus;
 using TspCoordinator.Controllers;
 
-public class PriorityComparer : IComparer<int>
-{
-    public int Compare(int x, int y) => -x.CompareTo(y);
-}
-
 public enum JobStopResult
 {
     Dequeued,

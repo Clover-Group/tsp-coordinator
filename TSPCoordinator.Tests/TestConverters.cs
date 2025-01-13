@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TspCoordinator.Data.TspApi;
 using Dahomey.Json;
 
-namespace TSPCoordinator.Tests;
+namespace TspCoordinator.Tests;
 
 [TestClass]
 public class TestConverters

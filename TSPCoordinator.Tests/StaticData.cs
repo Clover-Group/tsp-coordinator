@@ -3,7 +3,7 @@ using V1 = TspCoordinator.Data.TspApi.V1;
 using V2 = TspCoordinator.Data.TspApi.V2;
 using V3 = TspCoordinator.Data.TspApi.V3;
 
-namespace TSPCoordinator.Tests;
+namespace TspCoordinator.Tests;
 
 public static class StaticData
 {

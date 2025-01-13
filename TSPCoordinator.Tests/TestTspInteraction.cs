@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TspCoordinator.Controllers;
 
-namespace TSPCoordinator.Tests;
+namespace TspCoordinator.Tests;
 [TestClass]
 public class TestTspInteraction
 {
@@ -34,18 +34,37 @@ public class TestTspInteraction
     [TestMethod]
     public async Task TestTspRegister()
     {
-        TspRegisterInfo info = new TspRegisterInfo { Version = "19.0.1" };
-        var client = _factory.CreateClient();
-        var data = JsonSerializer.Serialize(info, _jsonOptions);
-        var buffer = System.Text.Encoding.UTF8.GetBytes(data);
-        var byteContent = new ByteArrayContent(buffer);
-        byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-        var response = await client.PostAsync("api/tspinteraction/register", byteContent);
-        Console.WriteLine($"RESPONSE = {await response.Content.ReadAsStringAsync()}");
-        //Assert.AreEqual(HttpStatusCode.Created, response.StatusCode);
+        // try to register without advertised IP (should fail)
+        {
+            TspRegisterInfo info = new() { Version = "20.0.0", Uuid = Guid.NewGuid() };
+            var client = _factory.CreateClient();
+            var data = JsonSerializer.Serialize(info, _jsonOptions);
+            var buffer = System.Text.Encoding.UTF8.GetBytes(data);
+            var byteContent = new ByteArrayContent(buffer);
+            byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            var response = await client.PostAsync("api/tspinteraction/register", byteContent);
+            Console.WriteLine($"RESPONSE = {await response.Content.ReadAsStringAsync()}");
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
 
-        response = await client.PostAsync("api/tspinteraction/register", byteContent);
-        Console.WriteLine($"RESPONSE = {await response.Content.ReadAsStringAsync()}");
-        //Assert.AreEqual(HttpStatusCode.AlreadyReported, response.StatusCode);
+            response = await client.PostAsync("api/tspinteraction/register", byteContent);
+            Console.WriteLine($"RESPONSE = {await response.Content.ReadAsStringAsync()}");
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+        // try to register with advertised IP (should succeed)
+        {
+            TspRegisterInfo info = new() { Version = "20.0.0", AdvertisedIp = "127.0.0.1", AdvertisedPort = 8080, Uuid = Guid.NewGuid() };
+            var client = _factory.CreateClient();
+            var data = JsonSerializer.Serialize(info, _jsonOptions);
+            var buffer = System.Text.Encoding.UTF8.GetBytes(data);
+            var byteContent = new ByteArrayContent(buffer);
+            byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            var response = await client.PostAsync("api/tspinteraction/register", byteContent);
+            Console.WriteLine($"RESPONSE = {await response.Content.ReadAsStringAsync()}");
+            Assert.AreEqual(HttpStatusCode.Created, response.StatusCode);
+
+            response = await client.PostAsync("api/tspinteraction/register", byteContent);
+            Console.WriteLine($"RESPONSE = {await response.Content.ReadAsStringAsync()}");
+            Assert.AreEqual(HttpStatusCode.AlreadyReported, response.StatusCode);
+        }
     }
 }

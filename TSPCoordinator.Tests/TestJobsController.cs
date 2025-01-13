@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace TSPCoordinator.Tests;
+namespace TspCoordinator.Tests;
 [TestClass]
 public class TestJobsController
 {
@@ -19,13 +19,23 @@ public class TestJobsController
     public async Task TestOverview()
     {
         var client = _factory.CreateClient();
-        var response = await client.GetAsync("api/jobs/overview?show=all");
+        string[] statuses = ["queued", "running", "completed", "all"];
+        foreach (var status in statuses)
+        {
+            var response = await client.GetAsync($"api/jobs/overview?show={status}");
 
-        response.EnsureSuccessStatusCode();
-        Assert.AreEqual("application/json; charset=utf-8", response.Content.Headers.ContentType?.ToString());
+            response.EnsureSuccessStatusCode();
+            Assert.AreEqual("application/json; charset=utf-8", response.Content.Headers.ContentType?.ToString());
 
-        var json = await response.Content.ReadAsStringAsync();
-        Assert.AreEqual("[]", json);
+            var json = await response.Content.ReadAsStringAsync();
+            Assert.AreEqual("[]", json);
+        }
+        // Wrong status type
+        {
+            var response = await client.GetAsync($"api/jobs/overview?show=wrong");
+
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.BadRequest);
+        }
     }
 
     [TestMethod]

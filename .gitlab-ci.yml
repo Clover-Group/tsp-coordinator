@@ -2,9 +2,10 @@ stages:
   - test
   - deploy
   
-image: "mcr.microsoft.com/dotnet/sdk:7.0"
+image: "mcr.microsoft.com/dotnet/sdk:9.0"
 
 before_script:
+  - export PATH="$PATH:/root/.dotnet/tools"
   - apt-get update
   - apt-get install -y bc
   - dotnet tool install -g nbgv
@@ -12,14 +13,21 @@ before_script:
 test:
   stage: test
   script:
-    - dotnet test --collect:"XPlat Code Coverage"
+    - dotnet build
+    - dotnet test -p:CollectCoverage=true -p:CoverletOutputFormat=cobertura
     - chmod +x ./print-dotnet-coverage.sh
-    - ./print-dotnet-coverage.sh TSPCoordinator.Tests/TestResults/
+    - ./print-dotnet-coverage.sh TSPCoordinator.Tests/
   coverage: /TOTAL_COVERAGE=(\d+.\d+)/
   artifacts:
     when: always
     reports:
-      cobertura: TSPCoordinator.Tests/TestResults/*/coverage.cobertura.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: TSPCoordinator.Tests/coverage.cobertura.xml
+  services:
+    - docker:dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375
   only:
     - master
     - tags

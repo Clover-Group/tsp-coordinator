@@ -3,6 +3,7 @@
 <PageTitle>TSP Coordinator</PageTitle>
 
 <MudThemeProvider />
+<MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
 
@@ -12,7 +13,8 @@
             OnClick="@((e) => DrawerToggle())" />
         <MudText Typo="Typo.h5" Class="ml-3">TSP Coordinator</MudText>
         <MudSpacer />
-        <MudLink Href="https://github.com/Clover-Group/tsp-coordinator" Color="Color.Secondary" Target="_blank">About</MudLink>
+        <MudLink Href="https://github.com/Clover-Group/tsp-coordinator" Color="Color.Secondary" Target="_blank">About
+        </MudLink>
         <MudSpacer />
         <CultureSelector />
         <MudSpacer />
@@ -23,14 +25,15 @@
         <NavMenu />
     </MudDrawer>
 
-    <MudMainContent >
+    <MudMainContent>
         <MudContainer Class="my-8 pt-8">
             @Body
         </MudContainer>
     </MudMainContent>
 </MudLayout>
 
-@code {
+@code
+{
     bool drawerOpen = true;
 
     void DrawerToggle()

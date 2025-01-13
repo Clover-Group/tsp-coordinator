@@ -62,15 +62,18 @@ public class TspInteractionController : ControllerBase
     [ProducesResponseType(StatusCodes.Status208AlreadyReported)]
     public IActionResult Register([FromBody] TspRegisterInfo info)
     {
-        if (Request.HttpContext.Connection.RemoteIpAddress == null)
-        {
-            return BadRequest();
-        }
         System.Net.IPAddress host = System.Net.IPAddress.Loopback;
         bool hostAdvertised = System.Net.IPAddress.TryParse(info.AdvertisedIp, out host);
         if (!hostAdvertised)
         {
-            host = Request.HttpContext.Connection.RemoteIpAddress;
+            if (Request.HttpContext.Connection.RemoteIpAddress == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                host = Request.HttpContext.Connection.RemoteIpAddress;
+            }
         }
         TspInstance instance = new()
         {
@@ -90,6 +93,17 @@ public class TspInteractionController : ControllerBase
         {
             return StatusCode(StatusCodes.Status208AlreadyReported);
         }
+    }
+
+    /// <summary>
+    /// Gets the list of TSP instances
+    /// </summary>
+    /// <returns>List of TSP instances</returns>
+    /// <response code="200">Success</response>
+    [HttpGet("instances")]
+    public async Task<IActionResult> Instances()
+    {
+        return Ok(await _instancesService.GetInstancesAsync());
     }
 
     /// <summary>

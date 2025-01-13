@@ -1,0 +1,6 @@
+<Project>
+    <PropertyGroup Condition="$(MSBuildProjectName.Contains('.Tests.'))">
+        <CollectCoverage>true</CollectCoverage>
+        <CoverletOutputFormat>cobertura</CoverletOutputFormat>
+    </PropertyGroup>
+</Project>
