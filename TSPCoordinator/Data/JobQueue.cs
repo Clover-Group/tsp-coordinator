@@ -95,6 +95,8 @@ public class JobQueue
         }
     }
 
+    public int RemoveNulls() => jobs.RemoveAll(j => j is null);
+
     private void Persist()
     {
         //Console.WriteLine("Persisting...");

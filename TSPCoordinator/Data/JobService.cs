@@ -285,6 +285,17 @@ public class JobService
 
     public async void InspectQueue(Object? state)
     {
+        // Clear the job data from potential nulls
+        {
+            int removedJobs = 0;
+            removedJobs += runningJobs.RemoveAll(j => j is null);
+            removedJobs += completedJobs.RemoveAll(j => j is null);
+            removedJobs += jobQueue.RemoveNulls();
+            if (removedJobs > 0)
+            {
+                _logger.LogWarning($"{removedJobs} null jobs removed");
+            }
+        }
         try
         {
             var jobCounts = JobCountsByStatus();
