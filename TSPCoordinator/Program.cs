@@ -10,6 +10,17 @@ using TspCoordinator.Data;
 using TspCoordinator.Data.TspApi;
 using AspNetCore.Proxy;
 
+// reserve threads to avoid queueing upon large tasks
+int workerThreads;
+int portThreads;
+ThreadPool.GetMaxThreads(out workerThreads, out portThreads);
+// cap to a reasonable value
+const int MaxThreads = 256;
+workerThreads = Math.Min(workerThreads, MaxThreads);
+portThreads = Math.Min(portThreads, MaxThreads);
+ThreadPool.SetMinThreads(workerThreads, portThreads);
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
