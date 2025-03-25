@@ -354,6 +354,8 @@ public class JobService
                 job.NotifyStatusChanged();
                 job.Lifecycle.AddLogMessage($"Failed to send job {job.JobId}, returned status {(int)response.StatusCode} with {await response.Content.ReadAsStringAsync()}");
                 _statusReportingService.SendJobStatus(job, $"Job {job.JobId} not started because of TSP failure (HTTP error {(int)response.StatusCode})");
+                // manually remove sent job id on failure to prevent queue clogging
+                instance.SentJobsIds.RemoveAll(x => x == job.JobId);
                 lock (completedJobs) completedJobs.Add(job);
             }
             else

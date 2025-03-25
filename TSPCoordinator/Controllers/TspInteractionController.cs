@@ -12,6 +12,8 @@ public class TspRegisterInfo
     public string? AdvertisedIp { get; set; } = null;
 
     public int? AdvertisedPort { get; set; } = null;
+
+    public int? JobLimit { get; set; } = null;
 }
 
 public class TspUnregisterInfo
@@ -83,6 +85,7 @@ public class TspInteractionController : ControllerBase
             IsHostAdvertised = hostAdvertised,
             IsPortAdvertised = info.AdvertisedPort.HasValue,
             Version = SemVersion.Parse(info.Version),
+            TotalJobsLimit = info.JobLimit ?? 0,
             HealthCheckDate = DateTime.Now
         };
         if (_instancesService.AddInstance(instance))
