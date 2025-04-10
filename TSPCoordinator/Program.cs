@@ -9,6 +9,7 @@ using Prometheus;
 using TspCoordinator.Data;
 using TspCoordinator.Data.TspApi;
 using AspNetCore.Proxy;
+using TspCoordinator.Data.Grammars;
 
 // reserve threads to avoid queueing upon large tasks
 int workerThreads;
@@ -48,6 +49,7 @@ builder.Services.AddLocalization(options => { options.ResourcesPath = "Resources
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<ConfigurationService>();
 builder.Services.AddSingleton<TspInstancesService>();
+builder.Services.AddSingleton<CheckService>();
 builder.Services.AddSingleton<JobService>();
 builder.Services.AddSingleton<JobStatusReportingService>();
 builder.Services.AddHostedService<ApplicationPartsLogger>();

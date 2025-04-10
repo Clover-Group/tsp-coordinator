@@ -1,7 +1,8 @@
-
 using AspNetCore.Proxy;
 using Microsoft.AspNetCore.Mvc;
 using TspCoordinator.Data;
+
+namespace TspCoordinator.Controllers;
 
 [ApiController]
 [Route("api/jobs")]
@@ -44,7 +45,8 @@ public class JobsController : Controller
                 return BadRequest(
                     $"Invalid 'show' query parameter: '{show}'. Must be 'queued', 'running', 'completed' or 'all'."
                     );
-        };
+        }
+        ;
 
         IEnumerable<Job> jobs = show switch
         {

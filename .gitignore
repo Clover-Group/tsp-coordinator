@@ -317,3 +317,6 @@ __pycache__/
 
 reports
 TSPCoordinator.Tests/coverage.cobertura.xml
+
+# ANTLR
+**/.antlr
