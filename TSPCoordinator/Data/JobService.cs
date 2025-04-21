@@ -196,6 +196,8 @@ public class JobService
         var registeredJobsForInstance = runningJobs.Where(j => j.RunningOn == instance).Select(j => j.JobId);
         var externalJobsIds = instance.RunningJobsIds.Where(
             id => !registeredJobsForInstance.Contains(id) && !completedJobs.Select(j => j.JobId).Contains(id));
+        // manually clear completed jobs to prevent queue clogging
+        instance.SentJobsIds.RemoveAll(x => completedJobs.Any(j => j.JobId == x));
         foreach (var jobId in externalJobsIds)
         {
             var jobGetRequestUrl = $"http://{instance.Host.MapToIPv4()}:{instance.Port}/job/{jobId}/request";
@@ -394,6 +396,8 @@ public class JobService
             {
                 return JobStopResult.NotFound;
             }
+            // manually remove sent job id on failure to prevent queue clogging
+            instance.SentJobsIds.RemoveAll(x => x == findInRunning.JobId);
             var jobStopUrl = $"http://{instance.Host.MapToIPv4()}:{instance.Port}/job/{jobId}/stop/";
             var response = await client.PostAsync(jobStopUrl, null);
             // TODO: Handle response
@@ -417,6 +421,8 @@ public class JobService
                 if (!runningJobs.Remove(findInRunning)) throw new Exception($"Job {jobId} not removed for some reason");
             }
             findInRunning.Lifecycle.AddLogMessage($"Job was forcibly transferred to canceled state due to no response from TSP");
+            // manually remove sent job id on failure to prevent queue clogging
+            findInRunning.RunningOn?.SentJobsIds.RemoveAll(x => x == findInRunning.JobId);
             lock (completedJobs) completedJobs.Add(findInRunning);
         }
         if (timers.TryGetValue(jobId, out Timer? jobTimer))
