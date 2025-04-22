@@ -145,7 +145,10 @@ public class JobService
         var job = runningJobs.Find(x => x.JobId == info.JobId);
         if (job == null)
         {
-
+            // try to find in completed jobs
+            var completedJob = completedJobs.Find(x => x.JobId == info.JobId);
+            // if job completed quickly (between health checks), we remove it from sent ones manually
+            completedJob?.RunningOn?.SentJobsIds?.RemoveAll(x => x == completedJob.JobId);
         }
         else
         {
