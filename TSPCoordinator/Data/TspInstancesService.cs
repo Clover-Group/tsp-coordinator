@@ -153,6 +153,19 @@ public class TspInstancesService
                     instance.Status = TspInstanceStatus.CannotGetExtendedInfo;
                     instance.SentJobsIds.Clear();
                 }
+                catch (TaskCanceledException)
+                {
+                    if (_configurationService.TreatBusyAsNotResponding)
+                    {
+                        instance.Status = TspInstanceStatus.NotResponding;
+                        instance.HealthCheckAttemptsRemaining--;
+                        instance.HealthCheckDate = DateTime.Now;
+                    }
+                    else
+                    {
+                        instance.Status = TspInstanceStatus.Busy;
+                    }
+                }
                 if (instance.SupportsCapability(TspCapability.TotalJobsLimit))
                 {
                     try

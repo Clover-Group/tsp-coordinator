@@ -1,4 +1,5 @@
 namespace TspCoordinator.Data;
+
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -201,7 +202,12 @@ public class JobService
             id => !registeredJobsForInstance.Contains(id) && !completedJobs.Select(j => j.JobId).Contains(id));
         // manually clear completed jobs to prevent queue clogging
         instance.SentJobsIds.RemoveAll(x => completedJobs.Any(j => j.JobId == x));
-        foreach (var jobId in externalJobsIds)
+        List<string> externalsCopy;
+        lock (externalJobsIds)
+        {
+            externalsCopy = [.. externalJobsIds];
+        }
+        foreach (var jobId in externalsCopy)
         {
             var jobGetRequestUrl = $"http://{instance.Host.MapToIPv4()}:{instance.Port}/job/{jobId}/request";
             var jobGetRequestRequest = new HttpRequestMessage(HttpMethod.Get, jobGetRequestUrl);
