@@ -53,7 +53,8 @@ public class JobService
 
     private ConfigurationService _configurationService;
 
-    private readonly Dictionary<string, Timer> timers = [];
+    private readonly Dictionary<string, Timer> cancelTimers = [];
+    private readonly Dictionary<string, Timer> successStartTimers = [];
 
     private readonly JsonSerializerOptions jsonOptions = new JsonSerializerOptions
     {
@@ -376,6 +377,8 @@ public class JobService
                 if (deserializedResponse?.FinishedJobsCount is int f) instance.TotalSentJobsCounter = f;
                 if (deserializedResponse?.MaxJobsCount is int m) instance.TotalJobsLimit = m;
                 if (instance.TotalSentJobsCounter >= instance.TotalJobsLimit) instance.Status = TspInstanceStatus.RestartScheduled;
+                // schedule timer for 5 health-check intervals
+                successStartTimers[job.JobId] = new Timer(_ => ForceReenqueue(job.JobId), null, (int)_configurationService.HealthCheckInterval * 5, Timeout.Infinite);
             }
         }
         catch (HttpRequestException ex)
@@ -414,10 +417,31 @@ public class JobService
             findInRunning.NotifyStatusChanged();
             _statusReportingService.SendJobStatus(findInRunning, $"Job {findInRunning.JobId} was canceled");
             // schedule timer
-            timers[jobId] = new Timer(_ => ForceCancel(jobId), null, 60000, Timeout.Infinite);
+            cancelTimers[jobId] = new Timer(_ => ForceCancel(jobId), null, 60000, Timeout.Infinite);
             return JobStopResult.StopRequested;
         }
         return JobStopResult.NotFound;
+    }
+
+    private void ForceReenqueue(string jobId)
+    {
+        var findInRunning = runningJobs.Find(j => j.JobId == jobId);
+        // if the job still lingers as sent, re-enqueue it to the end of the queue
+        if (findInRunning?.RunningOn?.SentJobsIds.Contains(jobId) ?? false)
+        {
+            lock (runningJobs)
+            {
+                if (!runningJobs.Remove(findInRunning)) throw new Exception($"Job {jobId} not removed for some reason");
+            }
+            findInRunning.Lifecycle.AddLogMessage($"Job was forcibly added to end of the queue due to no response from TSP");
+            findInRunning.RunningOn?.SentJobsIds.RemoveAll(x => x == findInRunning.JobId);
+            lock (jobQueue) jobQueue.EnqueueToEnd(findInRunning);
+        }
+        if (successStartTimers.TryGetValue(jobId, out Timer? jobTimer))
+        {
+            jobTimer.Dispose();
+            successStartTimers.Remove(jobId);
+        }
     }
 
     private void ForceCancel(string jobId)
@@ -434,10 +458,10 @@ public class JobService
             findInRunning.RunningOn?.SentJobsIds.RemoveAll(x => x == findInRunning.JobId);
             lock (completedJobs) completedJobs.Add(findInRunning);
         }
-        if (timers.TryGetValue(jobId, out Timer? jobTimer))
+        if (cancelTimers.TryGetValue(jobId, out Timer? jobTimer))
         {
             jobTimer.Dispose();
-            timers.Remove(jobId);
+            cancelTimers.Remove(jobId);
         }
     }
 

@@ -56,17 +56,38 @@ public class JobQueue
 
     public void Enqueue(Job job)
     {
-        int index = 0;
-        while (index < jobs.Count && jobs[index]?.Request is not null && (jobs[index].Request.Priority > job.Request.Priority
-               || (jobs[index].Request.Priority == job.Request.Priority && jobs[index].ArrivalTime < job.ArrivalTime)))
+        try
         {
-            if (jobs[index] is null) Console.WriteLine($"Null occured in the job queue at position {index}");
-            else if (jobs[index].Request is null) Console.WriteLine($"Request for job {job.JobId} is null");
-            index++;
+            int index = 0;
+            while (index < jobs.Count && jobs[index]?.Request is not null && (jobs[index].Request.Priority > job.Request.Priority
+                   || (jobs[index].Request.Priority == job.Request.Priority && jobs[index].ArrivalTime < job.ArrivalTime)))
+            {
+                if (jobs[index] is null) Console.WriteLine($"Null occured in the job queue at position {index}");
+                else if (jobs[index].Request is null) Console.WriteLine($"Request for job {job.JobId} is null");
+                index++;
+            }
+            jobs.Insert(index, job);
+            Persist();
         }
-        jobs.Insert(index, job);
-        Persist();
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Could not enqueue the job: {ex.Message}");
+            if (job is not null)
+            {
+                string json = JsonSerializer.Serialize<Job>(job);
+                Console.WriteLine($"Job data: {json}");
+            }
+            else
+            {
+                Console.WriteLine("Job is null for some unknown reason");
+            }
+        }
+    }
 
+    // Enqueue the job to the end of the queue, ignoring priority
+    public void EnqueueToEnd(Job job)
+    {
+        jobs.Add(job);
     }
 
 
